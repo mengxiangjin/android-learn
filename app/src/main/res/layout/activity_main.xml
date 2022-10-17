@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context=".MainActivity">
+
+    <Button
+        android:id="@+id/obvious_jump"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="obvious jump"
+        />
+
+    <Button
+        android:id="@+id/hide_jump"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="hide jump"
+        />
+
+    <Button
+        android:id="@+id/browse_jump"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="browse jump"
+        />
+
+    <Button
+        android:id="@+id/mine_browse_jump"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="mine browse jump"
+        />
+
+
+</LinearLayout>
