@@ -35,5 +35,25 @@
         android:text="mine browse jump"
         />
 
+    <Button
+        android:id="@+id/data_jump"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="data jump"
+        />
+
+    <Button
+        android:id="@+id/receive_data_jump"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="receive data from next"
+        />
+
+
+    <TextView
+        android:id="@+id/data"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="right|bottom"/>
 
 </LinearLayout>

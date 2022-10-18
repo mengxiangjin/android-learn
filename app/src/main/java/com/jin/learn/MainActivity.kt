@@ -7,15 +7,24 @@ import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
 import android.widget.Button
+import android.widget.TextView
 import android.widget.Toast
 
 class MainActivity : AppCompatActivity() {
+
+
+    companion object {
+        private val REQUEST_CODE = 100
+    }
 
 
     private lateinit var jumpObvious: Button
     private lateinit var jumpHide: Button
     private lateinit var jumpBrowse: Button
     private lateinit var jumpMineBrowse: Button
+    private lateinit var jumpData: Button
+    private lateinit var jumpDataReceive: Button
+    private lateinit var data: TextView
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -29,6 +38,7 @@ class MainActivity : AppCompatActivity() {
         jumpHide = findViewById(R.id.hide_jump)
         jumpBrowse = findViewById(R.id.browse_jump)
         jumpMineBrowse = findViewById(R.id.mine_browse_jump)
+        jumpData = findViewById(R.id.data_jump)
     }
 
     private fun initListener() {
@@ -62,6 +72,17 @@ class MainActivity : AppCompatActivity() {
             intent.data = Uri.parse("https://www.baidu.com")
             intent.addCategory("android.intent.category.BROWSABLE")
             startActivity(intent)
+        }
+        jumpData.setOnClickListener {
+            //数据跳转（向上传递数据）
+            val intent = Intent(this,SecondActivity::class.java)
+            intent.putExtra("name","zhangsan")
+            startActivity(intent)
+        }
+        jumpDataReceive.setOnClickListener {
+            val intent = Intent(this,SecondActivity::class.java)
+            intent.putExtra("name","zhangsan")
+            startActivityForResult(intent, REQUEST_CODE)
         }
     }
 
