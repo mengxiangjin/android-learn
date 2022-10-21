@@ -4,6 +4,7 @@ import android.content.Intent
 import android.net.Uri
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import android.widget.Button
@@ -24,7 +25,6 @@ class MainActivity : AppCompatActivity() {
     private lateinit var jumpMineBrowse: Button
     private lateinit var jumpData: Button
     private lateinit var jumpDataReceive: Button
-    private lateinit var data: TextView
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -39,6 +39,7 @@ class MainActivity : AppCompatActivity() {
         jumpBrowse = findViewById(R.id.browse_jump)
         jumpMineBrowse = findViewById(R.id.mine_browse_jump)
         jumpData = findViewById(R.id.data_jump)
+        jumpDataReceive = findViewById(R.id.receive_data_jump)
     }
 
     private fun initListener() {
@@ -82,7 +83,19 @@ class MainActivity : AppCompatActivity() {
         jumpDataReceive.setOnClickListener {
             val intent = Intent(this,SecondActivity::class.java)
             intent.putExtra("name","zhangsan")
+            //REQUEST_CODE，用于onActivityResult中监听请求者
             startActivityForResult(intent, REQUEST_CODE)
+        }
+    }
+
+    //startActivityForResult 上一个activity返回过来的回调
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        when(requestCode) {
+            REQUEST_CODE -> {
+                var age = data?.getIntExtra("age",0);
+                jumpDataReceive.text = age.toString()
+            }
         }
     }
 

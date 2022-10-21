@@ -21,10 +21,20 @@ class SecondActivity : AppCompatActivity() {
         title.text = name
 
         back.setOnClickListener {
+            //回传数据给上一个activity
             val intent = Intent()
-            intent.putExtra("age",back.text)
+            intent.putExtra("age",18)
             setResult(200,intent)
+            finish()
         }
+    }
+
+    override fun onBackPressed() {
+        val intent = Intent()
+        intent.putExtra("age",68)
+        setResult(300,intent)
+        //注意此行代码顺序
+        super.onBackPressed()
     }
 
     fun initView() {
