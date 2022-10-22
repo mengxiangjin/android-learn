@@ -8,10 +8,10 @@
     tools:context=".MainActivity">
 
     <Button
-        android:id="@+id/single_top"
+        android:id="@+id/singleInstance"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="SingleTop"
+        android:text="singleInstance"
         android:textAllCaps="false"
         />
 
@@ -19,7 +19,7 @@
         android:id="@+id/jump"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="jump thirdActivity"
+        android:text="Jump SecondActivity"
         android:textAllCaps="false"
         />
 

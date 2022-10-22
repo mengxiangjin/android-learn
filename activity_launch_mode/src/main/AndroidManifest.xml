@@ -9,15 +9,25 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.Learn">
         <activity
+            android:name=".FourthActivity"
+            android:exported="false"
+            android:launchMode="singleInstance">
+            <meta-data
+                android:name="android.app.lib_name"
+                android:value="" />
+        </activity>
+        <activity
             android:name=".ThirdActivity"
-            android:exported="false">
+            android:exported="false"
+            android:launchMode="singleTask">
             <meta-data
                 android:name="android.app.lib_name"
                 android:value="" />
         </activity>
         <activity
             android:name=".SecondActivity"
-            android:exported="false">
+            android:exported="false"
+            android:launchMode="singleTop">
             <meta-data
                 android:name="android.app.lib_name"
                 android:value="" />
