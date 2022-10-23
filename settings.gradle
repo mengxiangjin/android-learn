@@ -16,3 +16,4 @@ rootProject.name = "learn"
 include ':app'
 include ':activity_lifecycle'
 include ':activity_launch_mode'
+include ':title_layout_custom'

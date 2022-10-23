@@ -13,6 +13,7 @@
             <option value="$PROJECT_DIR$/activity_launch_mode" />
             <option value="$PROJECT_DIR$/activity_lifecycle" />
             <option value="$PROJECT_DIR$/app" />
+            <option value="$PROJECT_DIR$/title_layout_custom" />
           </set>
         </option>
       </GradleProjectSettings>
