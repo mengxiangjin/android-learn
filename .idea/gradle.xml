@@ -13,6 +13,7 @@
             <option value="$PROJECT_DIR$/activity_launch_mode" />
             <option value="$PROJECT_DIR$/activity_lifecycle" />
             <option value="$PROJECT_DIR$/app" />
+            <option value="$PROJECT_DIR$/broadcast_logout" />
             <option value="$PROJECT_DIR$/broadcast_receive" />
             <option value="$PROJECT_DIR$/chat_demo" />
             <option value="$PROJECT_DIR$/fragment_simple_use" />
