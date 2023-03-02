@@ -49,6 +49,8 @@ public class ViewGroup extends View{
                 //可以接受事件，分发给view (view不消费事件再回传过来到viewGroup)
                 if (dispatchTransformedTouchEvent(event,childView)) {
                     //子view消费了此事件
+                    //频繁创建与销毁 可能会内存抖动 TouchTarget touchTarget = new TouchTarget();
+                    TouchTarget.obtain(childView);
                     handle = true;
                 }
             }
@@ -74,6 +76,48 @@ public class ViewGroup extends View{
     //
     public boolean onInterceptTouchEvent(MotionEvent event) {
         return false;
+    }
+
+    //处理move事件 数据结构（单向链表）
+    private static final class TouchTarget {
+        public View child;
+        public TouchTarget next;
+
+        //静态对象 头指针
+        public static TouchTarget sRecycleBin;
+        public static int sRecycledCount;
+
+        private static final Object sRecycleLock = new Object();
+
+        public static TouchTarget obtain(View view) {
+            TouchTarget target;
+            synchronized (sRecycleLock) {
+                if (sRecycleBin == null) {
+                    target = new TouchTarget();
+                } else {
+                    target = sRecycleBin;
+                }
+                sRecycleBin = target.next;
+                sRecycledCount--;
+                target.next = null;
+            }
+            target.child = view;
+            return target;
+        }
+
+        public void recycle() {
+            if (child == null) {
+                throw new IllegalStateException("已经被回收过了");
+            }
+            synchronized (sRecycleLock) {
+                if (sRecycledCount < 32) {
+                    next = sRecycleBin;
+                    sRecycleBin = this;
+                    sRecycledCount += 1;
+                }
+            }
+        }
+
     }
 
 }
