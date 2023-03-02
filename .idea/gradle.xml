@@ -21,10 +21,12 @@
             <option value="$PROJECT_DIR$/datasave_file" />
             <option value="$PROJECT_DIR$/datasave_sharepreference" />
             <option value="$PROJECT_DIR$/fragment_simple_use" />
+            <option value="$PROJECT_DIR$/gesture" />
             <option value="$PROJECT_DIR$/recycle_view" />
             <option value="$PROJECT_DIR$/title_layout_custom" />
           </set>
         </option>
+        <option name="delegatedBuild" value="false" />
       </GradleProjectSettings>
     </option>
   </component>
