@@ -4,6 +4,7 @@
   <component name="GradleSettings">
     <option name="linkedExternalProjectsSettings">
       <GradleProjectSettings>
+        <option name="delegatedBuild" value="false" />
         <option name="testRunner" value="GRADLE" />
         <option name="distributionType" value="DEFAULT_WRAPPED" />
         <option name="externalProjectPath" value="$PROJECT_DIR$" />
@@ -14,6 +15,7 @@
             <option value="$PROJECT_DIR$/activity_lifecycle" />
             <option value="$PROJECT_DIR$/android_permission" />
             <option value="$PROJECT_DIR$/app" />
+            <option value="$PROJECT_DIR$/basic_custom_view_01" />
             <option value="$PROJECT_DIR$/broadcast_logout" />
             <option value="$PROJECT_DIR$/broadcast_receive" />
             <option value="$PROJECT_DIR$/chat_demo" />
@@ -27,7 +29,6 @@
             <option value="$PROJECT_DIR$/title_layout_custom" />
           </set>
         </option>
-        <option name="delegatedBuild" value="false" />
       </GradleProjectSettings>
     </option>
   </component>
