@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:background="#889fdf"
+    tools:context=".MainActivity">
+
+    <com.jin.my_view.view.InputNumberView
+        android:id="@+id/input_view"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:maxValue="20"
+        app:minValue="-20"
+        app:defaultValue="5"
+        app:disabled="false"
+        app:step="2"
+        app:btnBg="@drawable/num_btn_right_bg_selector"
+        android:gravity="center" />
+
+</LinearLayout>
