@@ -5,12 +5,20 @@ import android.graphics.Canvas
 import android.util.Log
 import android.view.MotionEvent
 import android.view.View
+import com.jin.note.manager.IModelManager
 
 class DoodleTouchLayer2(context: Context): View(context) {
 
 
+    private var modelManager: IModelManager? = null
+
     companion object {
         const val TAG = "DoodleTouchLayer2"
+    }
+
+
+    fun setModelManager(modelManager: IModelManager) {
+        this.modelManager = modelManager
     }
 
     override fun onDraw(canvas: Canvas?) {
@@ -25,6 +33,7 @@ class DoodleTouchLayer2(context: Context): View(context) {
 
     override fun onTouchEvent(event: MotionEvent?): Boolean {
         Log.d(TAG, "onTouchEvent: " + event)
-        return super.onTouchEvent(event)
+        if (modelManager == null) return false
+        return modelManager!!.onTouchEvent(event)
     }
 }

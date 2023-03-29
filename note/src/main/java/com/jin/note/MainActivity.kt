@@ -17,15 +17,4 @@ class MainActivity : AppCompatActivity() {
     }
 
 
-    override fun dispatchTouchEvent(ev: MotionEvent?): Boolean {
-        Log.d(TAG, "dispatchTouchEvent: " + ev)
-        return false
-    }
-
-    override fun onTouchEvent(event: MotionEvent?): Boolean {
-        Log.d(TAG, "onTouchEvent: " + event)
-        return super.onTouchEvent(event)
-    }
-
-
 }
