@@ -3,20 +3,15 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:gravity="center"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:background="#889fdf"
     tools:context=".MainActivity">
 
-    <com.jin.my_view.view.InputNumberView
-        android:id="@+id/input_view"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        app:maxValue="20"
-        app:minValue="-20"
-        app:defaultValue="5"
-        app:disabled="false"
-        app:step="2"
-        app:btnBg="@drawable/num_btn_right_bg_selector"
-        android:gravity="center" />
+   <Button
+       android:id="@+id/to_login"
+       android:layout_width="wrap_content"
+       android:layout_height="wrap_content"
+       android:text="去登录页"/>
+
 
 </LinearLayout>

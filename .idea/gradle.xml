@@ -31,6 +31,7 @@
             <option value="$PROJECT_DIR$/note" />
             <option value="$PROJECT_DIR$/recycle_view" />
             <option value="$PROJECT_DIR$/title_layout_custom" />
+            <option value="$PROJECT_DIR$/viewgroup" />
           </set>
         </option>
       </GradleProjectSettings>
