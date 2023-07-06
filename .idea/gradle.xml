@@ -4,10 +4,10 @@
   <component name="GradleSettings">
     <option name="linkedExternalProjectsSettings">
       <GradleProjectSettings>
-        <option name="delegatedBuild" value="false" />
         <option name="testRunner" value="GRADLE" />
         <option name="distributionType" value="DEFAULT_WRAPPED" />
         <option name="externalProjectPath" value="$PROJECT_DIR$" />
+        <option name="gradleJvm" value="11" />
         <option name="modules">
           <set>
             <option value="$PROJECT_DIR$" />
@@ -16,6 +16,8 @@
             <option value="$PROJECT_DIR$/android_permission" />
             <option value="$PROJECT_DIR$/app" />
             <option value="$PROJECT_DIR$/basic_custom_view_01" />
+            <option value="$PROJECT_DIR$/basic_view_book_one_01" />
+            <option value="$PROJECT_DIR$/basic_view_book_one_02" />
             <option value="$PROJECT_DIR$/broadcast_logout" />
             <option value="$PROJECT_DIR$/broadcast_receive" />
             <option value="$PROJECT_DIR$/chat_demo" />
@@ -29,9 +31,11 @@
             <option value="$PROJECT_DIR$/my_view" />
             <option value="$PROJECT_DIR$/navigation" />
             <option value="$PROJECT_DIR$/note" />
+            <option value="$PROJECT_DIR$/open_gl" />
             <option value="$PROJECT_DIR$/recycle_view" />
             <option value="$PROJECT_DIR$/title_layout_custom" />
             <option value="$PROJECT_DIR$/viewgroup" />
+            <option value="$PROJECT_DIR$/weather_pager" />
           </set>
         </option>
       </GradleProjectSettings>

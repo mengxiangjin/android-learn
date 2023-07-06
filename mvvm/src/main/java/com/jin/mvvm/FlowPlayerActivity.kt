@@ -12,7 +12,7 @@ class FlowPlayerActivity : AppCompatActivity(), IPlayerCallback {
     private lateinit var binding: ActivityFlowPlayerActiityBinding
 
     private val playerPresenter by lazy {
-        PlayerPresenter.instance
+//        PlayerPresenter.instance
     }
 
 
@@ -28,21 +28,21 @@ class FlowPlayerActivity : AppCompatActivity(), IPlayerCallback {
 
     private fun initListener() {
         binding.playOrPause.setOnClickListener {
-            playerPresenter.doPlayOrPause()
+//            playerPresenter.doPlayOrPause()
         }
     }
 
     private fun initDataListener() {
-        playerPresenter.currentState.addListener {
-            if (it == PlayerPresenter.PlayState.PLAYING) {
-                binding.playOrPause.text = "暂停"
-            } else {
-                binding.playOrPause.text = "播放"
-            }
-        }
-        playerPresenter.currentMusic.addListener {
-
-        }
+//        playerPresenter.currentState.addListener {
+//            if (it == PlayerPresenter.PlayState.PLAYING) {
+//                binding.playOrPause.text = "暂停"
+//            } else {
+//                binding.playOrPause.text = "播放"
+//            }
+//        }
+//        playerPresenter.currentMusic.addListener {
+//
+//        }
     }
 
     override fun onDestroy() {
