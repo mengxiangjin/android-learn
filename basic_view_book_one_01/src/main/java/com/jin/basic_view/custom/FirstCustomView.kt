@@ -4,6 +4,7 @@ import android.content.Context
 import android.graphics.Canvas
 import android.graphics.Color
 import android.graphics.Paint
+import android.graphics.Path
 import android.graphics.Rect
 import android.graphics.RectF
 import android.util.AttributeSet
@@ -88,6 +89,14 @@ class FirstCustomView @JvmOverloads constructor
         //颜色 4个字节存储 8位 argb Int(0~255)
         //alpha << 24 | red << 16 | green << 8 | blue
         Color.argb(255,255,255,255)
+
+        val mPath = Path()
+        mPaint.color = Color.BLACK
+        mPaint.style = Paint.Style.STROKE
+        val newRect = RectF(20F,400F,180F,600F)
+        mPath.addRect(newRect, Path.Direction.CW)
+
+        canvas?.drawPath(mPath,mPaint)
     }
 
 

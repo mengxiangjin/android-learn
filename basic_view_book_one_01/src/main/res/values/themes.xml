@@ -6,4 +6,16 @@
     </style>
 
     <style name="Theme.Learn" parent="Base.Theme.Learn" />
+    <declare-styleable name="BubbleArrowTextView">
+        <attr name="bubbleColor" format="reference|color" />
+        <attr name="bubbleStrokeColor" format="reference|color" />
+        <attr name="bubbleStrokeWidth" format="dimension" />
+        <attr name="triangleHeight" format="dimension" />
+        <attr name="triangleWidth" format="dimension" />
+        <attr name="bubbleRadius" format="dimension" />
+        <attr name="triangleDirection">
+            <flag name="top" value="1" />
+            <flag name="bottom" value="2" />
+        </attr>
+    </declare-styleable>
 </resources>
