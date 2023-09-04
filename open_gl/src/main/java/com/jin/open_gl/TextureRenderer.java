@@ -1,4 +1,4 @@
-package com.example.open_gl;
+package com.jin.open_gl;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Color;
@@ -9,6 +9,8 @@ import android.opengl.GLES20;
 import android.opengl.GLSurfaceView;
 import android.opengl.GLUtils;
 import android.util.Log;
+
+import com.example.open_gl.R;
 import com.xiangji.daka.bean.GLToolbox;
 
 import java.nio.ByteBuffer;

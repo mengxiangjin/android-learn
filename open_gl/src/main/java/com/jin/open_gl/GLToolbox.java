@@ -1,4 +1,4 @@
-package com.xiangji.daka.bean;
+package com.jin.open_gl;
 import android.opengl.GLES20;
 
 public class GLToolbox {

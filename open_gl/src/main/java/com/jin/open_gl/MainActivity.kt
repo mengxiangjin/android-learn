@@ -1,4 +1,4 @@
-package com.example.open_gl
+package com.jin.open_gl
 
 import android.graphics.BitmapFactory
 import android.opengl.GLSurfaceView
@@ -8,6 +8,7 @@ import android.view.Menu
 import android.view.MenuItem
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
+import com.example.open_gl.R
 
 
 class MainActivity : AppCompatActivity() {

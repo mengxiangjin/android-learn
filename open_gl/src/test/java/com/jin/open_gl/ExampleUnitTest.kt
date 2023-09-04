@@ -1,4 +1,4 @@
-package com.example.open_gl
+package com.jin.open_gl
 
 import org.junit.Test
 

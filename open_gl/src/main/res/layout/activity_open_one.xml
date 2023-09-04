@@ -4,13 +4,11 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.jin.open_gl.MainActivity">
+    tools:context="com.jin.learn.OpenOneActivity">
 
     <android.opengl.GLSurfaceView
-        android:id="@+id/effectsview"
+        android:id="@+id/surface_view"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        app:layout_constraintTop_toTopOf="parent"
-        />
+        android:layout_height="match_parent"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
