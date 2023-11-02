@@ -18,6 +18,7 @@
             <option value="$PROJECT_DIR$/basic_custom_view_01" />
             <option value="$PROJECT_DIR$/basic_view_book_one_01" />
             <option value="$PROJECT_DIR$/basic_view_book_one_02" />
+            <option value="$PROJECT_DIR$/basic_view_book_one_canvas" />
             <option value="$PROJECT_DIR$/broadcast_logout" />
             <option value="$PROJECT_DIR$/broadcast_receive" />
             <option value="$PROJECT_DIR$/chat_demo" />
@@ -33,6 +34,8 @@
             <option value="$PROJECT_DIR$/note" />
             <option value="$PROJECT_DIR$/open_gl" />
             <option value="$PROJECT_DIR$/recycle_view" />
+            <option value="$PROJECT_DIR$/ripper_view" />
+            <option value="$PROJECT_DIR$/ripple_view" />
             <option value="$PROJECT_DIR$/test" />
             <option value="$PROJECT_DIR$/title_layout_custom" />
             <option value="$PROJECT_DIR$/viewgroup" />
