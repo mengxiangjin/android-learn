@@ -24,7 +24,6 @@ class BrightnessSeekBar@JvmOverloads constructor
         progressDrawable
         thumb = brightnessDrawable
         splitTrack = false
-
     }
 
 
