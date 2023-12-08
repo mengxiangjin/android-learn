@@ -14,6 +14,7 @@
             <option value="$PROJECT_DIR$/activity_launch_mode" />
             <option value="$PROJECT_DIR$/activity_lifecycle" />
             <option value="$PROJECT_DIR$/android_permission" />
+            <option value="$PROJECT_DIR$/android_stroage" />
             <option value="$PROJECT_DIR$/app" />
             <option value="$PROJECT_DIR$/basic_custom_view_01" />
             <option value="$PROJECT_DIR$/basic_view_book_one_01" />
@@ -28,6 +29,7 @@
             <option value="$PROJECT_DIR$/fragment_simple_use" />
             <option value="$PROJECT_DIR$/gesture" />
             <option value="$PROJECT_DIR$/hencoder_custom_view" />
+            <option value="$PROJECT_DIR$/hencoder_custom_view_02" />
             <option value="$PROJECT_DIR$/lifecycle" />
             <option value="$PROJECT_DIR$/mvvm" />
             <option value="$PROJECT_DIR$/my_view" />

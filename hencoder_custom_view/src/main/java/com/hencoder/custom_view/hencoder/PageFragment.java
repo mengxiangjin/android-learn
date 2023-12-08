@@ -16,7 +16,8 @@ import com.hencoder.custom_view.R;
 public class PageFragment extends Fragment {
     @LayoutRes
     int sampleLayoutRes;
-    @LayoutRes int practiceLayoutRes;
+    @LayoutRes
+    int practiceLayoutRes;
 
     public static PageFragment newInstance(@LayoutRes int sampleLayoutRes, @LayoutRes int practiceLayoutRes) {
         PageFragment fragment = new PageFragment();
