@@ -7,7 +7,6 @@ import android.graphics.Paint
 import android.graphics.Paint.Style
 import android.graphics.Path
 import android.graphics.Path.FillType
-import android.graphics.Path.Op
 import android.graphics.Rect
 import android.graphics.RectF
 import android.graphics.Region
@@ -20,9 +19,8 @@ import android.util.TypedValue.COMPLEX_UNIT_DIP
 import android.util.TypedValue.COMPLEX_UNIT_SP
 import android.view.MotionEvent
 import android.view.View
-import androidx.core.graphics.iterator
 
-class CustomView @JvmOverloads constructor(
+class CustomViewOne @JvmOverloads constructor(
     context: Context,
     attributeSet: AttributeSet? = null,
     defStyleAttr: Int = 0
@@ -32,7 +30,7 @@ class CustomView @JvmOverloads constructor(
     var pointY = 0f
     val paint = Paint().apply {
         color = Color.RED
-        style = Style.FILL
+        style = Style.STROKE
         strokeWidth = TypedValue.applyDimension(COMPLEX_UNIT_DIP,2f,resources.displayMetrics)
     }
 
@@ -48,16 +46,20 @@ class CustomView @JvmOverloads constructor(
 //        testSeven(canvas)
 //        testEight(canvas)
 //        testNine(canvas)
+//        testTen(canvas)
+//        testEleven(canvas)
+    }
 
+    private fun testEleven(canvas: Canvas) {
         /*
-        * Region 的相交处理 OP
-            DIFFERENCE(0),  this与region不同的区域
-            INTERSECT(1),   this与region相交的区域
-            UNION(2),       this与region合并的区域
-            XOR(3),         this与region相交之外的区域
-            REVERSE_DIFFERENCE(4),  region与this不同的区域
-            REPLACE(5);     region区域
-        * */
+     * Region 的相交处理 OP
+         DIFFERENCE(0),  this与region不同的区域
+         INTERSECT(1),   this与region相交的区域
+         UNION(2),       this与region合并的区域
+         XOR(3),         this与region相交之外的区域
+         REVERSE_DIFFERENCE(4),  region与this不同的区域
+         REPLACE(5);     region区域
+     * */
         val rectOne = Rect(100,100,400,200)
         val rectTwo = Rect(200,0,300,300)
 
@@ -89,6 +91,18 @@ class CustomView @JvmOverloads constructor(
         while (regionIterator.next(rect)) {
             canvas.drawRect(rect,paint)
         }
+    }
+
+    private fun testTen(canvas: Canvas) {
+        val path = Path()
+        val newPath = Path()
+        val rectf = RectF(100f,100f,300f,300f)
+        path.addRoundRect(rectf,10f,10f,Path.Direction.CCW)
+        newPath.moveTo(180f,300f)
+        newPath.lineTo(200f,320f)
+        newPath.lineTo(220f,300f)
+        path.op(newPath,Path.Op.UNION)
+        canvas.drawPath(path,paint)
     }
 
     private fun testNine(canvas: Canvas) {
