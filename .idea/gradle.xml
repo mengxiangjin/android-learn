@@ -15,15 +15,15 @@
             <option value="$PROJECT_DIR$/activity_lifecycle" />
             <option value="$PROJECT_DIR$/android_permission" />
             <option value="$PROJECT_DIR$/app" />
+            <option value="$PROJECT_DIR$/application" />
+            <option value="$PROJECT_DIR$/application/KilonotesAndroid" />
             <option value="$PROJECT_DIR$/datasave_db" />
             <option value="$PROJECT_DIR$/datasave_file" />
             <option value="$PROJECT_DIR$/datasave_sharepreference" />
             <option value="$PROJECT_DIR$/fragment_simple_use" />
+            <option value="$PROJECT_DIR$/qi_jian_anim_basic_one" />
             <option value="$PROJECT_DIR$/qi_jian_draw_basic_one" />
-            <option value="$PROJECT_DIR$/ripple_view" />
             <option value="$PROJECT_DIR$/touch_gesture" />
-            <option value="$PROJECT_DIR$/viewgroup" />
-            <option value="$PROJECT_DIR$/weather_pager" />
           </set>
         </option>
       </GradleProjectSettings>
