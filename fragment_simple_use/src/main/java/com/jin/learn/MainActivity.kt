@@ -34,7 +34,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun initListener() {
-        var fragment = supportFragmentManager.findFragmentById(R.id.left_fragment)
+        val fragment = supportFragmentManager.findFragmentById(R.id.left_fragment)
         fragment?.let {
             val leftFragment  = it as LeftFragment
             leftFragment.button?.setOnClickListener {
@@ -44,7 +44,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun replaceFragment(fragment: Fragment) {
-        var transaction = supportFragmentManager.beginTransaction()
+        val transaction = supportFragmentManager.beginTransaction()
         //要替换的布局ID （ViewGroup）
         transaction.replace(R.id.right_fragment,fragment)
         //将此次操作加入到fragment回退栈中(back时是否回退fragment)，参数无意义，一般为null
