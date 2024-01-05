@@ -2,8 +2,8 @@
 <set xmlns:android="http://schemas.android.com/apk/res/android">
 
     <alpha
-        android:fromAlpha="0f"
-        android:toAlpha="1f"/>
+        android:fromAlpha="0"
+        android:toAlpha="1"/>
 
     <rotate
         android:fromDegrees="0"
@@ -12,8 +12,7 @@
         android:pivotY="50%"/>
 
     <scale
-        android:fromXScale="0.2f"
-        android:toXScale="1.2f"
-        android:fromYScale="0.2f"
-        android:toYScale="1.2f"/>
+        android:fromXScale="0.2"
+        android:toXScale="1.2"
+        android:fromYScale="0.2" android:toYScale="1.2"/>
 </set>
