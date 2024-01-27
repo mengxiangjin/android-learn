@@ -88,3 +88,18 @@ private fun introduceSaveLayer(canvas: Canvas) {
 - 图层：canvas.drawXXX(),即新建一个透明图层绘制内容覆盖到画布中
 - 画布（Bitmap）：每块画布其实都是一个Bitmap。原始画布：即view原始的draw，人造画布：通过Canvas构造函数
 - Canvas：对画布的操作工具、比如clip等会改变画布大小
+
+#### 画布的恢复
+
+##### Canvas.restore与restoreToCount(int ID)
+
+- 当调用canvas.save、saveLayer都会返回一个ID
+- 此ID为当前画布在栈的标记ID
+- 原始画布ID = 0，递增
+- saveID== 1
+- **restoreToCount(ID)即在此之前的画布ID全部弹出，此ID也弹出，恢复此ID之前的画布状态。restoreToCount（2），即恢复成ID = 1的画布状态**
+- **restore（）即弹出栈顶即可**
+
+```kotlin
+var saveID = canvas.save()
+```

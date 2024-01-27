@@ -42,7 +42,6 @@ class CanvasView @JvmOverloads constructor(
         dstCanvas.drawOval(0f,0f,400f,400f,mPaint)
 
         canvas.drawColor(Color.GREEN)
-        canvas.save()
 
         val saveLayerID = canvas.saveLayer(0f, 0f, width.toFloat(), height.toFloat(), mPaint)
         canvas.drawBitmap(dstBitmap,0f,0f,mPaint)
