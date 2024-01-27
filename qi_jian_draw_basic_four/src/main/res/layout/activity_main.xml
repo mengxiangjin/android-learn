@@ -4,7 +4,7 @@
     android:layout_height="match_parent"
     >
 
-    <com.jin.draw.widgit.XferModeViewP
+    <com.jin.draw.widgit.XferModeView
         android:layout_width="match_parent"
         android:layout_height="match_parent"/>
 
