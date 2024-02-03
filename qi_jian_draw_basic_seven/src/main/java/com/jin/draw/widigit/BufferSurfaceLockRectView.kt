@@ -15,13 +15,10 @@ class BufferSurfaceLockRectView @JvmOverloads constructor(
 ) :
     SurfaceView(context, attributeSet, def), SurfaceHolder.Callback {
 
-
-
     private val paint = Paint().apply {
         style = Paint.Style.FILL_AND_STROKE
         strokeWidth = 30f
     }
-
 
     init {
         holder.addCallback(this)
