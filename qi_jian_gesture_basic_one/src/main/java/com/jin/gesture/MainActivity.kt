@@ -81,7 +81,6 @@ class MainActivity : AppCompatActivity() {
                 Log.d("TAG", "onDoubleTapEvent: ")
                 return true
             }
-
         })
         binding.tvExample.setOnTouchListener { v, event ->
             gestureDetector.onTouchEvent(event)
