@@ -20,6 +20,7 @@
             <option value="$PROJECT_DIR$/datasave_db" />
             <option value="$PROJECT_DIR$/datasave_file" />
             <option value="$PROJECT_DIR$/datasave_sharepreference" />
+            <option value="$PROJECT_DIR$/exchangeFile" />
             <option value="$PROJECT_DIR$/fragment_simple_use" />
             <option value="$PROJECT_DIR$/qi_jian_anim_basic_one" />
             <option value="$PROJECT_DIR$/qi_jian_anim_basic_three" />
@@ -34,6 +35,7 @@
             <option value="$PROJECT_DIR$/qi_jian_draw_basic_two" />
             <option value="$PROJECT_DIR$/qi_jian_gesture_basic_one" />
             <option value="$PROJECT_DIR$/qi_jian_layout_basic_one" />
+            <option value="$PROJECT_DIR$/qi_jian_matrix_advanced_one" />
             <option value="$PROJECT_DIR$/qi_jian_matrix_basic_one" />
             <option value="$PROJECT_DIR$/touch_gesture" />
           </set>
