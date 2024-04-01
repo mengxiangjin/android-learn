@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".MainActivity">
+
+    <com.jin.touch.widgit.FirstViewGroup
+        android:layout_width="200dp"
+        android:layout_height="200dp"
+        android:background="#D10E0E"
+        android:gravity="center"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent">
+
+        <com.jin.touch.widgit.SecondViewGroup
+            android:layout_width="100dp"
+            android:layout_height="100dp"
+            android:background="#4C2929"
+            android:gravity="center">
+
+
+            <com.jin.touch.widgit.FirstView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="我在最上层"
+                android:gravity="center"
+                android:textColor="@color/white"
+                android:layout_gravity="center"
+               />
+
+        </com.jin.touch.widgit.SecondViewGroup>
+
+    </com.jin.touch.widgit.FirstViewGroup>
+
+
+
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>
