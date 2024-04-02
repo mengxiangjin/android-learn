@@ -25,6 +25,6 @@ class SecondViewGroup @JvmOverloads constructor(
 
     override fun onInterceptTouchEvent(ev: MotionEvent): Boolean {
         Log.d("TAG---SecondViewGroup", "onInterceptTouchEvent: ")
-        return super.onInterceptTouchEvent(ev)
+        return true
     }
 }
