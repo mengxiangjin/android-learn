@@ -13,12 +13,12 @@ class FirstView @JvmOverloads constructor(
 
 
     override fun onTouchEvent(event: MotionEvent): Boolean {
-        Log.d("TAG---FirstView", "onTouchEvent: ")
+        Log.d("TAG---FirstView", "onTouchEvent: " + event.action)
         return super.onTouchEvent(event)
     }
 
     override fun dispatchTouchEvent(ev: MotionEvent): Boolean {
-        Log.d("TAG---FirstView", "dispatchTouchEvent: ")
+        Log.d("TAG---FirstView", "dispatchTouchEvent: " + ev.action)
         return super.dispatchTouchEvent(ev)
     }
 
