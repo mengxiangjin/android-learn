@@ -127,5 +127,81 @@
 
 ##### dispatchTouchEvent
 
-- 在dispatchTouchEvent中返回true，Action_Move与Action_Down完全一样，都会被截断
-- 
+- 在diszpatchTouchEvent中返回true，Action_Move与Action_Down完全一样，都会被截断
+-  在ViewGroup中的onTouchEvent对逻辑进行处理，对down事件进行拦截，对其他事件放行
+- ```kotlin
+  override fun onTouchEvent(event: MotionEvent): Boolean {
+      Log.d("TAG---SecondViewGroup", "onTouchEvent: " + event.action)
+      when(event.action) {
+          MotionEvent.ACTION_DOWN -> {
+              return true
+          }
+      }
+      return super.dispatchTouchEvent(event)
+  }
+  ```
+
+- **当点击FirstView时，ActionDown事件传递：**
+  
+  - Activity(DispatchTouchEvent) --->ViewGroup(DispatchTouchEvent) ---> ViewGroup(onIntercepterTouchEvent)--->View(dispatchTouchevent) --->View(onTouchEvent) --->ViewGroup(onTouchEvent(返回true，down事件被拦截))
+- ActionMove事件传递：
+  - Activity(DispatchTouchEvent) --->ViewGroup(DispatchTouchEvent) ---> ViewGroup(onTouchEvent（返回super.xxxx）)--->Activity(onTouchEvent) ![image.png](https://s2.loli.net/2024/04/03/tsL2j1f8owvCuUJ.png)
+
+- **在View中的dispatchTouchEvent对Down事件返回false，在ViewGroup中的pnTouchEvent对Down返回true进行拦截，ActionDown事件传递**
+
+  - Activity(DispatchTouchEvent) --->ViewGroup(DispatchTouchEvent) ---> ViewGroup(onIntercepterTouchEvent)--->View(dispatchTouchevent return false) --->ViewGroup(onTouchEvent return true拦截) 
+
+- ActionMove事件传递：
+
+  - Activity(DispatchTouchEvent) --->ViewGroup(DispatchTouchEvent) ---> ViewGroup(onTouchEvent)![image.png](https://s2.loli.net/2024/04/04/DjBogSqnWzy5Fbr.png)
+
+
+- 在ViewGroup中的onInterceptTouchEvent中多Down事件返回true，其余默认，ViewGroup中的onTouchEvent对所有事件返回true,ActionDown事件传递
+  - Activity(DispatchTouchEvent) --->ViewGroup(DispatchTouchEvent) ---> ViewGroup(onIntercepterTouchEvent return true) --->ViewGroup(onTouchEvent return true拦截) 
+
+- Action_MOVE事件传递
+  - Activity(DispatchTouchEvent) --->ViewGroup(DispatchTouchEvent) ---> ViewGroup(onTouchEvent) 结束
+
+- ```kotlin
+  override fun onTouchEvent(event: MotionEvent): Boolean {
+      Log.d("TAG---SecondViewGroup", "onTouchEvent: " + event.action)
+      when(event.action) {
+          MotionEvent.ACTION_DOWN -> {
+              return true
+          }
+      }
+      return super.onTouchEvent(event)
+  }
+  
+  override fun onInterceptTouchEvent(ev: MotionEvent): Boolean {
+      Log.d("TAG---SecondViewGroup", "onInterceptTouchEvent: " + ev.action)
+      when(ev.action) {
+          MotionEvent.ACTION_DOWN -> {
+              return true
+          }
+      }
+      return super.onInterceptTouchEvent(ev)
+  }
+  ```
+
+- ![image.png](https://s2.loli.net/2024/04/04/cYsxW1aMpIJ4lCw.png)
+
+##### 总结
+
+- **在DispathTouchEvent中返回ture，Down事件会在其停止传递，MOVE与UP事件同Down事件相同，传递到该控件后不再向下传递**
+- **无论Down的传递是怎样的，只要最后在控件A的onTouchEvent上返回ture，即MOVE与UP事件都会流向该控件的dispatchTouchEvent后直接传递到该控件的onTouchEvent事件上**
+
+##### Action_Move事件到来时进行拦截
+
+- View中的onTouchEvent事件中return true，即对所以事件进行拦截
+- ViewGroup中的onInterceptTouchEvent对Action_Move事件进行return true，对ViewGroup中的onTouchEvent对move事件return true
+- 当点击View时候，Action_Down事件分发：
+  - Activity(DispatchTouchEvent) --->ViewGroup(DispatchTouchEvent) ---> ViewGroup(onIntercepterTouchEvent )  --->View(dispatchTouchEvent) --->View(onTouchEvent)
+- Action_Move事件分发：
+  - Activity(DispatchTouchEvent) --->ViewGroup(DispatchTouchEvent) ---> ViewGroup(onIntercepterTouchEvent )  --->ViewGroup(onTouchEvent) 
+  - 此时Action_Move事件被拦截，转换为Action_Cance继续向下分发（按照未被拦截逻辑）![image.png](https://s2.loli.net/2024/04/06/OKZLzJvHs8oxUEk.png)
+
+- ViewGroup中DispatchTouchEvent对Move事件进行return true拦截![image.png](https://s2.loli.net/2024/04/06/GFySzDTPoIvrVsY.png)
+
+- ViewGroup中DispatchTouchEvent对Move事件进行return false拦截![image.png](https://s2.loli.net/2024/04/06/UQwrM2obYtgjfZa.png)
+  - 事件会直接走向Activity的onTouchEvent中，无论哪个控件的DispathTouchEvent中对Move事件返回false，事件都会直接走向Activity的onTouchEvent中
