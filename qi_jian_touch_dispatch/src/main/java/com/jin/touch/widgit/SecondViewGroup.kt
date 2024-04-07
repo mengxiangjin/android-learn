@@ -15,16 +15,11 @@ class SecondViewGroup @JvmOverloads constructor(
 
     override fun onTouchEvent(event: MotionEvent): Boolean {
         Log.d("TAG---SecondViewGroup", "onTouchEvent: " + event.action)
-        return true
+        return super.onTouchEvent(event)
     }
 
     override fun dispatchTouchEvent(ev: MotionEvent): Boolean {
         Log.d("TAG---SecondViewGroup", "dispatchTouchEvent: " + ev.action)
-        when (ev.action) {
-            MotionEvent.ACTION_MOVE -> {
-                return true
-            }
-        }
         return super.dispatchTouchEvent(ev)
     }
 

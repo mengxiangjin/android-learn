@@ -205,3 +205,261 @@
 
 - ViewGroup中DispatchTouchEvent对Move事件进行return false拦截![image.png](https://s2.loli.net/2024/04/06/UQwrM2obYtgjfZa.png)
   - 事件会直接走向Activity的onTouchEvent中，无论哪个控件的DispathTouchEvent中对Move事件返回false，事件都会直接走向Activity的onTouchEvent中
+
+#### requestDisallowInterceptTouchEvent(Boolean)
+
+- ViewGroup自带拦截失效函数：true：对事件不进行拦截，默认false
+
+- View可以调用getParent().requestDisallowInterceptTouchEvent(true)请求ViewGroup不拦截事件
+
+- ViewGroup中对事件进行拦截（return true），View中的onTouchEvent与dispatchTouchEvent请求ViewGroup对事件进行放行
+
+  - ```kotlin
+    override fun onInterceptTouchEvent(ev: MotionEvent): Boolean {
+        Log.d("TAG---SecondViewGroup", "dispatchTouchEvent: " + ev.action)
+        return true
+    }
+    ```
+
+  - ```kotlin
+    override fun onTouchEvent(event: MotionEvent): Boolean {
+        Log.d("TAG---FirstView", "onTouchEvent: " + event.action)
+        parent.requestDisallowInterceptTouchEvent(true)
+        return super.onTouchEvent(event)
+    }
+    
+    override fun dispatchTouchEvent(ev: MotionEvent): Boolean {
+        Log.d("TAG---FirstView", "dispatchTouchEvent: " + ev.action)
+        parent.requestDisallowInterceptTouchEvent(true)
+        return super.dispatchTouchEvent(ev)
+    }
+    ```
+
+  - 对View进行触摸：Activity(dispatchTouchEvent)--->ViewGroup(dispatchTouchEvent) --->ViewGroup(onInterceptTouchEvent) --->View(dispathchTouchEvent)--->View(onTouchEvent return true)结束
+
+  - 发现事件仍然被拦截了，原因？因为View中的onTouchEvent与dispatchTouchEvent根本没有被执行到，代码根本没有生效。即getParent().requestDisallowInterceptTouchEvent(true)根本未被执行到
+
+  - 改写ViewGroup的onInterceptTouchEvent，对down事件进行放行，以便于能执行到View中的parent.requestDisallowInterceptTouchEvent(true)此行代码，对Move事件进行拦截
+
+    - ```kotlin
+      override fun onInterceptTouchEvent(ev: MotionEvent): Boolean {
+          Log.d("TAG---SecondViewGroup", "onInterceptTouchEvent: " + ev.action)
+          when(ev.action) {
+              MotionEvent.ACTION_MOVE -> {
+                  return true
+              }
+          }
+          return super.onInterceptTouchEvent(ev)
+      }
+      ```
+
+    - Action_Down事件：
+      - Activity（dispatchTouchEvent）--->ViewGroup(dispathchTouchEvent)--->ViewGroup(onInterceptTouchEvent)--->View(dispathchTouchEvent)--->View(onTouchEvent return true)
+    - Action_Move事件：
+      - Activity（dispatchTouchEvent）--->ViewGroup(dispathchTouchEvent)--->View(dispathchTouchEvent)--->View(onTouchEvent return true)
+    - **总结：当对Move事件进行请求不拦截时，所有父控件的onInterceptTouchEvent将不会执行**
+
+##### 总结
+
+- requestDisallowInterceptTouchEvent（true）生效：即需要执行到该行代码，要求父控件不能对Down事件进行拦截
+- requestDisallowInterceptTouchEvent只针对父控件的onInterceptTouchEvent，若在父控件的dispatchTouchEvent对事件进行拦截，子控件的requestDisallowInterceptTouchEvent将不会生效
+- 通过requestDisallowInterceptTouchEvent请求放行后，所有父控件的onInterceptTouchEvent将不会被回调
+
+#### 滑动冲突解决思路（可滑动的ViewGroup内部嵌套可滑动的子View）
+
+##### 外部拦截法
+
+- ViewGroup中的onInterceptTouchEvent选择对Move事件进行拦截、放行
+
+- 需要自己处理的事件，再onTouchEvent中进行逻辑即可
+
+- ```kotlin
+  override fun onInterceptTouchEvent(ev: MotionEvent): Boolean {
+      Log.d("TAG---SecondViewGroup", "onInterceptTouchEvent: " + ev.action)
+      when(ev.action) {
+          MotionEvent.ACTION_DOWN -> {
+              return false
+          }
+          MotionEvent.ACTION_MOVE -> {
+              if (需要自己处理) {
+                  return true
+              } else {
+                  return false
+              }
+          }
+          else -> {
+              return false
+          }
+      }
+  }
+  ```
+
+##### 内部拦截法
+
+- 在ViewGroup中对所有的事件都进行不拦截，全都分发的子View
+
+- 在View中对事件进行请求父控件操作
+
+- ```kotlin
+  override fun dispatchTouchEvent(ev: MotionEvent): Boolean {
+      Log.d("TAG---FirstView", "dispatchTouchEvent: " + ev.action)
+      when(ev.action) {
+          MotionEvent.ACTION_MOVE -> {
+              if (需要自己处理) {
+                  parent.requestDisallowInterceptTouchEvent(true)
+              } else {
+                  parent.requestDisallowInterceptTouchEvent(false)
+              }
+          }
+      }
+      return super.dispatchTouchEvent(ev)
+  }
+  ```
+
+##### 滑动冲突案例
+
+- ScrollView包裹固定高度的TextView
+
+- ```xml
+  <?xml version="1.0" encoding="utf-8"?>
+  <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+      android:layout_width="match_parent"
+      android:layout_height="match_parent"
+      android:background="#BC1A1A">
+  
+      <LinearLayout
+          android:layout_width="match_parent"
+          android:layout_height="wrap_content"
+          android:orientation="vertical">
+  
+          <com.jin.touch.widgit.CustomTextView
+              android:layout_width="match_parent"
+              android:layout_height="50dp"
+              android:text="这是一段测试用例这是一段测试用例这是一段测试用例这是一段测试用例这是一段测试用例这是一段测试用例这是一段测试用例这是一段测试用例这是一段测试用例这是一段测试用例这是一段测试用例这是一段测试用例这是一段测试用例这是一段测试用例这是一段测试用例这是一段测试用例这是一段测试用例这是一段测试用例这是一段测试用例这是一段测试用例这是一段测试用例这是一段测试用例这是一段测试用例这是一段测试用例这是一段测试用例这是一段测试用例这是一段测试用例这是一段测试用例这是一段测试用例这是一段测试用例这是一段测试用例这是一段测试用例这是一段测试用例这是一段测试用例这是一段测试用例这是一段测试用例这是一段测试用例这是一段测试用例这是一段测试用例这是一段测试用例这是一段测试用例这是一段测试用例这是一段测试用例这是一段测试用例这是一段测试用例这是一段测试用例这是一段测试用例这是一段测试用例这是一段测试用例这是一段测试用例这是一段测试用例这是一段测试用例这是一段测试用例这是一段测试用例这是一段测试用例这是一段测试用例这是一段测试用例这是一段测试用例这是一段测试用例这是一段测试用例这是一段测试用例这是一段测试用例这是一段测试用例这是一段测试用例这是一段测试用例这是一段测试用例这是一段测试用例这是一段测试用例这是一段测试用例这是一段测试用例这是一段测试用例这是一段测试用例这是一段测试用例这是一段测试用例这是一段测试用例这是一段测试用例这是一段测试用例这是一段测试用例这是一段测试用例这是一段测试用例这是一段测试用例这是一段测试用例这是一段测试用例这是一段测试用例这是一段测试用例这是一段测试用例这是一段测试用例这是一段测试用例这是一段测试用例"/>
+  
+          <TextView
+              android:layout_width="match_parent"
+              android:layout_height="5000dp"
+              android:background="#F19494"/>
+  
+      </LinearLayout>
+  
+  </ScrollView>
+  ```
+
+- ![tutieshi_576x1280_5s.gif](https://s2.loli.net/2024/04/07/JoWMz7LTiabrO3x.gif)
+
+- 滑动固定高度的TextView但是确触发了ScrollView的滑动
+- 如何解决？
+  - 外部拦截法：通过ScrollView判断手指触摸位置，如果为TextView的区域，放行，交由TextView进行处理，否则进行拦截
+  - 内部拦截法：TextView通过监听Move事件，请求ScrollView是否进行拦截
+  
+- 外部拦截法：CustomScrollView
+
+  - ```kotlin
+    private var downY = 0f
+    
+    private var textViewHeight = TypedValue.applyDimension(COMPLEX_UNIT_DIP,50f,context.resources.displayMetrics)
+    
+    override fun onInterceptTouchEvent(ev: MotionEvent): Boolean {
+        Log.d("TAG---CustomScrollView", "onInterceptTouchEvent: " + ev.action)
+        when(ev.action) {
+            MotionEvent.ACTION_DOWN -> {
+                downY = ev.y
+                Log.d("TAG", "onInterceptTouchEvent:downY " + downY)
+                Log.d("TAG", "onInterceptTouchEvent:textViewHeight " + textViewHeight)
+            }
+            MotionEvent.ACTION_MOVE -> {
+                return downY >= textViewHeight
+            }
+        }
+        return super.onInterceptTouchEvent(ev)
+    }
+    
+    override fun dispatchTouchEvent(ev: MotionEvent): Boolean {
+        Log.d("TAG---CustomScrollView", "dispatchTouchEvent: " + ev.action)
+        return super.dispatchTouchEvent(ev)
+    }
+    
+    override fun onTouchEvent(ev: MotionEvent): Boolean {
+        Log.d("TAG---CustomScrollView", "onTouchEvent: " + ev.action)
+        return super.onTouchEvent(ev)
+    }
+    ```
+
+  - CustomTextView
+
+  - ```kotlin
+    init {
+        movementMethod = ScrollingMovementMethod.getInstance()
+    }
+    
+    override fun dispatchTouchEvent(event: MotionEvent): Boolean {
+        Log.d("TAG---CustomTextView", "dispatchTouchEvent: " + event.action)
+        return super.dispatchTouchEvent(event)
+    }
+    
+    override fun onTouchEvent(event: MotionEvent): Boolean {
+        Log.d("TAG---CustomTextView", "onTouchEvent: " + event.action)
+        return super.onTouchEvent(event)
+    }
+    ```
+
+  - Action_Down、Action_Move事件相同
+
+    - CustomScrollView（dispatchTouchEvent）--->CustomScrollView（onInterceptTouchEvent）--->CustomTextView（dispatchTouchEvent）--->CustomTextView（onTouchEvent super返回true）
+
+- 内部拦截法：CustomScrollView
+
+  - ```kotlin
+    override fun onInterceptTouchEvent(ev: MotionEvent): Boolean {
+        return super.onInterceptTouchEvent(ev)
+    }
+    
+    override fun dispatchTouchEvent(ev: MotionEvent): Boolean {
+        Log.d("TAG---CustomScrollView", "dispatchTouchEvent: " + ev.action)
+        return super.dispatchTouchEvent(ev)
+    }
+    
+    override fun onTouchEvent(ev: MotionEvent): Boolean {
+        Log.d("TAG---CustomScrollView", "onTouchEvent: " + ev.action)
+        return super.onTouchEvent(ev)
+    }
+    ```
+
+  - CustomTextView
+
+  - ```kotlin
+    init {
+        movementMethod = ScrollingMovementMethod.getInstance()
+    }
+    
+    override fun dispatchTouchEvent(event: MotionEvent): Boolean {
+        Log.d("TAG---CustomTextView", "dispatchTouchEvent: " + event.action)
+        when(event.action) {
+            MotionEvent.ACTION_MOVE -> {
+                parent.requestDisallowInterceptTouchEvent(true)
+            }
+        }
+        return super.dispatchTouchEvent(event)
+    }
+    
+    override fun onTouchEvent(event: MotionEvent): Boolean {
+        Log.d("TAG---CustomTextView", "onTouchEvent: " + event.action)
+        return super.onTouchEvent(event)
+    }
+    ```
+
+  - Action_Down事件：
+
+    - CustomScrollView（dispatchTouchEvent）--->CustomScrollView（onInterceptTouchEvent）--->CustomTextView（dispatchTouchEvent）--->CustomTextView（onTouchEvent super返回true）
+
+  - 第一次Action_Move事件：
+
+    - CustomScrollView（dispatchTouchEvent）--->CustomScrollView（onInterceptTouchEvent）--->CustomTextView（dispatchTouchEvent 通知父控件不拦截Move事件）--->CustomTextView（onTouchEvent super返回true）
+
+  - 后续Action_Move事件：
+
+    - CustomScrollView（dispatchTouchEvent--->CustomTextView（dispatchTouchEvent 通知父控件不拦截Move事件）--->CustomTextView（onTouchEvent super返回true）
+
+![tutieshi_640x1422_6s.gif](https://s2.loli.net/2024/04/07/LrxhRK8XsygQSuk.gif)
