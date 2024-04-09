@@ -37,6 +37,7 @@
             <option value="$PROJECT_DIR$/qi_jian_layout_basic_one" />
             <option value="$PROJECT_DIR$/qi_jian_matrix_advanced_one" />
             <option value="$PROJECT_DIR$/qi_jian_matrix_basic_one" />
+            <option value="$PROJECT_DIR$/qi_jian_scroller" />
             <option value="$PROJECT_DIR$/qi_jian_touch_dispatch" />
             <option value="$PROJECT_DIR$/qi_jian_touch_pointer" />
             <option value="$PROJECT_DIR$/touch_gesture" />

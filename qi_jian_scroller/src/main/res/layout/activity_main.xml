@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".MainActivity">
+
+    <LinearLayout
+        android:id="@+id/ll_content"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginTop="20dp"
+        android:orientation="vertical">
+
+        <Button
+            android:id="@+id/btn_scroll_to"
+            android:layout_width="200dp"
+            android:layout_height="wrap_content"
+            android:text="scroll to" />
+
+        <Button
+            android:id="@+id/btn_scroll_by"
+            android:layout_width="200dp"
+            android:layout_height="wrap_content"
+            android:text="scroll by" />
+
+        <Button
+            android:id="@+id/btn_reset"
+            android:layout_width="200dp"
+            android:layout_height="wrap_content"
+            android:text="reset" />
+
+        <LinearLayout
+            android:id="@+id/ll_action"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:background="@color/black"/>
+
+            <View
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:background="#EC2D2D"/>
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+
+</LinearLayout>
