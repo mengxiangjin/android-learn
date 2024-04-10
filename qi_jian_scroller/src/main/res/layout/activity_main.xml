@@ -48,6 +48,25 @@
 
         </LinearLayout>
 
+        <com.jin.scroller.widgit.ScrollerView
+            android:id="@+id/scroll_view"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:layout_marginTop="30dp"
+            android:orientation="horizontal">
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:background="@color/black"/>
+
+            <View
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:background="#EC2D2D"/>
+
+        </com.jin.scroller.widgit.ScrollerView>
+
     </LinearLayout>
 
 
