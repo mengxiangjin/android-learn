@@ -23,7 +23,6 @@ class ScrollerView @JvmOverloads constructor(
 
 
     override fun computeScroll() {
-        Log.d("TAG", "computeScroll: ")
         if (scrollerView!!.computeScrollOffset()) {
             scrollTo(scrollerView!!.currX, scrollerView!!.currY)
         }

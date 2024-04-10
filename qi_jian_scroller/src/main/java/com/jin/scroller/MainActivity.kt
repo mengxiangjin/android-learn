@@ -16,7 +16,6 @@ class MainActivity : AppCompatActivity() {
 
 
         binding.btnScrollTo.setOnClickListener {
-//            binding.llContent.scrollTo(-50,-50)
 
             binding.scrollView.scroll(0,100)
         }
