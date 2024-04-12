@@ -2,10 +2,12 @@ package com.jin.drag.helper.widgit
 
 import android.content.Context
 import android.util.AttributeSet
+import android.util.Log
 import android.view.MotionEvent
 import android.view.View
 import android.widget.LinearLayout
 import androidx.customview.widget.ViewDragHelper
+import com.jin.drag.helper.R
 
 class DragLayout @JvmOverloads constructor(
     context: Context,
@@ -19,7 +21,7 @@ class DragLayout @JvmOverloads constructor(
     init {
         dragHelper = ViewDragHelper.create(this, 1f, object : ViewDragHelper.Callback() {
             override fun tryCaptureView(child: View, pointerId: Int): Boolean {
-                return true
+                return child.id == R.id.view_one || child.id == R.id.view_two
             }
 
             override fun clampViewPositionHorizontal(child: View, left: Int, dx: Int): Int {
@@ -37,7 +39,23 @@ class DragLayout @JvmOverloads constructor(
             override fun getViewVerticalDragRange(child: View): Int {
                 return 1
             }
+
+            override fun onEdgeTouched(edgeFlags: Int, pointerId: Int) {
+                Log.d("TAG", "onEdgeTouched: " + edgeFlags)
+                super.onEdgeTouched(edgeFlags, pointerId)
+            }
+
+            override fun onEdgeDragStarted(edgeFlags: Int, pointerId: Int) {
+                Log.d("TAG", "onEdgeDragStarted: " + edgeFlags)
+                dragHelper.captureChildView(findViewById(R.id.view_three),pointerId)
+                super.onEdgeDragStarted(edgeFlags, pointerId)
+            }
+
+            override fun onEdgeLock(edgeFlags: Int): Boolean {
+                return super.onEdgeLock(edgeFlags)
+            }
         })
+        dragHelper.setEdgeTrackingEnabled(ViewDragHelper.EDGE_LEFT or ViewDragHelper.EDGE_TOP)
     }
 
     override fun onInterceptTouchEvent(ev: MotionEvent): Boolean {
