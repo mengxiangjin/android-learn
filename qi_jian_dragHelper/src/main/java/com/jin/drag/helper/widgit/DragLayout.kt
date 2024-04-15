@@ -21,7 +21,7 @@ class DragLayout @JvmOverloads constructor(
     init {
         dragHelper = ViewDragHelper.create(this, 1f, object : ViewDragHelper.Callback() {
             override fun tryCaptureView(child: View, pointerId: Int): Boolean {
-                return child.id == R.id.view_one || child.id == R.id.view_two
+                return true
             }
 
             override fun clampViewPositionHorizontal(child: View, left: Int, dx: Int): Int {
@@ -41,29 +41,54 @@ class DragLayout @JvmOverloads constructor(
             }
 
             override fun onEdgeTouched(edgeFlags: Int, pointerId: Int) {
-                Log.d("TAG", "onEdgeTouched: " + edgeFlags)
                 super.onEdgeTouched(edgeFlags, pointerId)
             }
 
             override fun onEdgeDragStarted(edgeFlags: Int, pointerId: Int) {
-                Log.d("TAG", "onEdgeDragStarted: " + edgeFlags)
                 dragHelper.captureChildView(findViewById(R.id.view_three),pointerId)
                 super.onEdgeDragStarted(edgeFlags, pointerId)
             }
 
             override fun onEdgeLock(edgeFlags: Int): Boolean {
-                return super.onEdgeLock(edgeFlags)
+                if (edgeFlags == ViewDragHelper.EDGE_LEFT) {
+                    return true
+                }
+                return false
+            }
+
+            override fun onViewReleased(releasedChild: View, xvel: Float, yvel: Float) {
+                if (releasedChild.id == R.id.view_three) {
+                    val viewOne = findViewById<View>(R.id.view_one)
+                    dragHelper.settleCapturedViewAt(viewOne.left,viewOne.top)
+                    invalidate()
+                }
+                super.onViewReleased(releasedChild, xvel, yvel)
             }
         })
+
         dragHelper.setEdgeTrackingEnabled(ViewDragHelper.EDGE_LEFT or ViewDragHelper.EDGE_TOP)
     }
 
+
     override fun onInterceptTouchEvent(ev: MotionEvent): Boolean {
-        return dragHelper.shouldInterceptTouchEvent(ev)
+        val result = dragHelper.shouldInterceptTouchEvent(ev)
+        Log.d("TAG", "onInterceptTouchEvent: " + result + ev.action)
+        return result
     }
 
+
     override fun onTouchEvent(event: MotionEvent): Boolean {
+        Log.d("TAG", "onTouchEvent:action " + event.action)
         dragHelper.processTouchEvent(event)
         return true
     }
+
+    override fun computeScroll() {
+        if (dragHelper.continueSettling(true)) {
+            invalidate()
+        }
+        super.computeScroll()
+    }
+
+
 }

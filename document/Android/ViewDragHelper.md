@@ -35,6 +35,7 @@
   - **返回值：是否对此View进行各种事件的捕捉**
     - **true：对此View进行触摸事件**
     - **false：触摸事件对此View无效**
+
 - **clampViewPositionHorizontal(child: View, left: Int, dx: Int)：Int**
 
   - **空实现：return 0**
@@ -44,6 +45,7 @@
   - **返回值：返回子View新的坐标的left值**
     - **一般都是return left 即让view跟随手指移动**
     - **默认return 0 即让View水平方向永远贴最左边界**
+
 - **clampViewPositionVertical(child: View, top: Int, dy: Int)：Int**
 
   - **空实现：return 0**
@@ -53,53 +55,63 @@
   - **返回值：返回子View新的坐标的Top值**
     - **一般都是return top 即让view跟随手指移动**
     - **默认return 0 即让View垂直方向永远贴最上边界**
-- **getViewHorizontalDragRange(child: View)：Int水平方向**
-  - **空实现：return 0**
-  - **child：当前跟随手指拖动的view**
-  - **返回值：是否交由父parent进行拦截事件、dragHelper.shouldInterceptTouchEvent(ev)**
-    - **大于0：dragHelper.shouldInterceptTouchEvent(ev) 返回true**
+- **getViewHorizontalDragRange（child： View）： Int 水平方向**
+  - **返回值大于0：对捕捉事件进行拦截**
+    - **onInterceptTouchEvent中 dragHelper.shouldInterceptTouchEvent(ev) 返回true**
 
-    - **小于等于0：dragHelper.shouldInterceptTouchEvent(ev)返回false**
+  - **返回值小于等于0：对捕捉事件不进行拦截**
+    - **onInterceptTouchEvent中 dragHelper.shouldInterceptTouchEvent(ev) 返回false**
 
-    - **取决于onInterceptTouchEvent中是否拦截消息（子View可能会存在点击事件，导致消费了Move事件，Move事件传递不到父parent的onTouchEvent中导致viewDragHelper失效，可通过此函数使自定义ViewGroup中拦截器return true，将消息分发给自己的onTouchEvent中）**
+  - **当ViewGroup中的子View有点击事件消费时，触摸事件将不会分发到viewGroup的onTouchEvent上、此时仍想要获取触摸事件，则需要在onInterceptTouchEvent中return true即可**
 
-- **getViewVerticalDragRange(child: View)：Int 垂直方向**
-  - **空实现：return 0**
-  - **child：当前跟随手指拖动的view**
-  - **返回值：是否交由父parent进行拦截事件、dragHelper.shouldInterceptTouchEvent(ev)**
-    - **大于0：dragHelper.shouldInterceptTouchEvent(ev) 返回true**
-
-    - **小于等于0：dragHelper.shouldInterceptTouchEvent(ev)返回false**
-
-    - **取决于onInterceptTouchEvent中是否拦截消息（子View可能会存在点击事件，导致消费了Move事件，Move事件传递不到父parent的onTouchEvent中导致viewDragHelper失效，可通过此函数使自定义ViewGroup中拦截器return true，将消息分发给自己的onTouchEvent中）**
-- **onEdgeTouched(edgeFlags: Int, pointerId: Int)：Void**
-  - **在ViewGroup的边缘进行点击、触摸时的回调（会被调用多次）**
-  - **edgeFlags：触摸位置**
+- **getViewVerticalDragRange（child： View）： Int 垂直方向**
+  - **返回值大于0：对捕捉事件进行拦截**
+    - **onInterceptTouchEvent中 dragHelper.shouldInterceptTouchEvent(ev) 返回true**
+  - **返回值小于等于0：对捕捉事件不进行拦截**
+    - **onInterceptTouchEvent中 dragHelper.shouldInterceptTouchEvent(ev) 返回false**
+  - **当ViewGroup中的子View有点击事件消费时，触摸事件将不会分发到viewGroup的onTouchEvent上、此时仍想要获取触摸事件，则需要在onInterceptTouchEvent中return true即可**
+- **onEdgeTouched（edgeFlags: Int, pointerId: Int）：Void**
+  - **边界触摸的回调（一次触摸事件可能会回调多次）**
+  - **edgeFlags：**
     - **EDGE_LEFT：左边缘**
+    - **EDGE_RIGHT：右边缘**
     - **EDGE_TOP：上边缘**
     - **EDGE_BOTTOM：下边缘**
-    - **EDGE_RIGHT：右边缘**
 
-  - **pointerId：触摸事件对应的手指PointerId**
+  - **pointerId：触摸事件所对应的手指pointerId**
 
-- **onEdgeDragStarted(edgeFlags: Int, pointerId: Int)：Void**
-  - **在ViewGroup的边缘进行拖动时的回调（会被调用一次）**
-  - **edgeFlags：触摸位置**
+- **onEdgeDragStarted（edgeFlags: Int, pointerId: Int）：Void**
+  - **边界拖动的回调（一次触摸事件只会回调一次）**
+  - **edgeFlags：**
     - **EDGE_LEFT：左边缘**
+    - **EDGE_RIGHT：右边缘**
     - **EDGE_TOP：上边缘**
     - **EDGE_BOTTOM：下边缘**
-    - **EDGE_RIGHT：右边缘**
-  - **pointerId：触摸事件对应的手指PointerId**
-- **onEdgeLock(edgeFlags: Int)：Boolean**
-  - **在ViewGroup的边缘锁定、多拖动不进行触摸事件处理**
-  - **edgeFlags：触摸位置**
+  - **pointerId：触摸事件所对应的手指pointerId**
+- **onEdgeLock（edgeFlags: Int）：Boolean**
+  - **边界锁住**
+  - **edgeFlags：**
     - **EDGE_LEFT：左边缘**
+    - **EDGE_RIGHT：右边缘**
     - **EDGE_TOP：上边缘**
     - **EDGE_BOTTOM：下边缘**
-    - **EDGE_RIGHT：右边缘**
-  - **返回值：是否对该边缘进行拖动锁定**
+  - **返回值：是否锁住边界拖动事件的捕捉（onEdgeDragStarted）**
+- **onViewReleased（childView：View，speedX：Float，speedY：Float）: Void**
+  - **子View手指离开了屏幕（即UP事件触发）**
+  - **childView：子View**
+  - **speedX：离开屏幕时的X方向的速度**
+  - **speedY：离开屏幕时的Y方向的速度**
+- **onViewPositionChanged（changedView：View，left：Int，top：Int，dx：Int，dy：Int）**
+  - **触摸反馈的view视图变化回调**
+  - **changedView：变化的view**
+  - **left：新的left**
+  - **top：新的top**
+  - **dx：变化的x距离**
+  - **dy：变化的y距离**
 
-##### 消息分发
+
+
+##### 使用
 
 - 自定义的ViewGroup进行消息拦截，以便于**viewDragHelper**能响应事件
 
@@ -228,7 +240,7 @@
 
       - **当return 值 > 0 时，shouldInterceptTouchEvent(event) return true、否则retur false**
 
-      - **getViewHorizontalDragRange、getViewVerticalDragRange**
+      - getViewHorizontalDragRange、getViewVerticalDragRange
 
       - ```kotlin
         override fun getViewHorizontalDragRange(child: View): Int {
@@ -270,124 +282,482 @@
 
       - ![tutieshi_640x1422_3s _1_.gif](https://s2.loli.net/2024/04/11/bqLSwX5sNf3x4Wo.gif)
 
-##### 边界触摸通知
+##### 边界触摸判断
 
-- Callback中的边界回调函数：
+- CallBack回调函数中提供了一系列边界触摸的回调
 
-  - **onEdgeTouched(edgeFlags: Int, pointerId: Int)：Void**
-    - **在ViewGroup的边缘进行点击、触摸时的回调（会被调用多次）**
-    - **edgeFlags：触摸位置**
-      - **EDGE_LEFT：左边缘**
-      - **EDGE_TOP：上边缘**
-      - **EDGE_BOTTOM：下边缘**
-      - **EDGE_RIGHT：右边缘**
+- **onEdgeTouched（edgeFlags: Int, pointerId: Int）：Void**
 
-    - **pointerId：触摸事件对应的手指PointerId**
-  - **onEdgeDragStarted(edgeFlags: Int, pointerId: Int)：Void**
-    - **在ViewGroup的边缘进行拖动时的回调（会被调用一次）**
-    - **edgeFlags：触摸位置**
-      - **EDGE_LEFT：左边缘**
-      - **EDGE_TOP：上边缘**
-      - **EDGE_BOTTOM：下边缘**
-      - **EDGE_RIGHT：右边缘**
-    - **pointerId：触摸事件对应的手指PointerId**
-  - **onEdgeLock(edgeFlags: Int)：Boolean**
-    - **在ViewGroup的边缘锁定、多拖动不进行触摸事件处理**
-    - **edgeFlags：触摸位置**
-      - **EDGE_LEFT：左边缘**
-      - **EDGE_TOP：上边缘**
-      - **EDGE_BOTTOM：下边缘**
-      - **EDGE_RIGHT：右边缘**
-    - **返回值：是否对该边缘进行拖动锁定**
+  - **边界触摸的回调（一次触摸事件可能会回调多次）**
+  - **edgeFlags：**
+    - **EDGE_LEFT：左边缘**
+    - **EDGE_RIGHT：右边缘**
+    - **EDGE_TOP：上边缘**
+    - **EDGE_BOTTOM：下边缘**
+  - **pointerId：触摸事件所对应的手指pointerId**
 
-- 边界回调函数默认不会触发、需手动调用对边界触摸进行监听
+- **onEdgeDragStarted（edgeFlags: Int, pointerId: Int）：Void**
 
-  - ```
+  - **边界拖动的回调（一次触摸事件只会回调一次）**
+  - **edgeFlags：**
+    - **EDGE_LEFT：左边缘**
+    - **EDGE_RIGHT：右边缘**
+    - **EDGE_TOP：上边缘**
+    - **EDGE_BOTTOM：下边缘**
+  - **pointerId：触摸事件所对应的手指pointerId**
+
+- **onEdgeLock（edgeFlags: Int）：Boolean**
+
+  - **边界锁住**
+  - **edgeFlags：**
+    - **EDGE_LEFT：左边缘**
+    - **EDGE_RIGHT：右边缘**
+    - **EDGE_TOP：上边缘**
+    - **EDGE_BOTTOM：下边缘**
+  - **返回值：是否锁住边界拖动事件的捕捉（onEdgeDragStarted）**
+
+- 默认三个函数都不会被触发回调，需手动设置监听
+
+  - 上边界、右边界触摸捕捉
+
+  - ```kotlin
     dragHelper.setEdgeTrackingEnabled(ViewDragHelper.EDGE_LEFT or ViewDragHelper.EDGE_TOP)
     ```
 
-- 边界回调函数针对的是ViewGroup的边缘而非屏幕的边缘，若viewGroup充满整个屏幕，即为屏幕边缘
+- 当对边界进行触摸不住时、onEdgeTouched可能会被调用多次，而onEdgeDragStarted只会被调用一次
+- 常常配合CaptureChildView进行事件捕捉
 
-- 边界回调函数的触发是触发事件开始在边缘触发、而非将View拖动到边缘触发（不会触发回调）。即Down事件开始于边缘
+##### CaptureChildView（view： View，pointerId：Int）
 
-- ```kotlin
-  override fun onEdgeTouched(edgeFlags: Int, pointerId: Int) {
-      Log.d("TAG", "onEdgeTouched: " + edgeFlags)
-      super.onEdgeTouched(edgeFlags, pointerId)
-  }
+- ViewDragHelper类对象方法
+
+- 手动开启对view进行事件捕捉
+
+- view：开启触摸捕捉的view
+
+- pointerId：捕捉对应手指的pointerId
+
+- Callback当中存在 tryCaptureView(child: View, pointerId: Int)：Boolean回调返回对哪些View进行触摸捕捉、而CaptureChildView函数可临时开启一次（up结束即取消）对某子View的触摸捕捉（尽管tryCaptureView中没有对其进行触摸捕捉）
+
+- ```xml
+  <com.jin.drag.helper.widgit.DragLayout
+      android:layout_width="match_parent"
+      android:layout_height="match_parent"
+      android:orientation="vertical">
   
-  override fun onEdgeDragStarted(edgeFlags: Int, pointerId: Int) {
-      Log.d("TAG", "onEdgeDragStarted: " + edgeFlags)
-      super.onEdgeDragStarted(edgeFlags, pointerId)
-  }
+      <View
+          android:id="@+id/view_one"
+          android:layout_width="150dp"
+          android:layout_height="150dp"
+          android:layout_gravity="center"
+          android:layout_marginTop="30dp"
+          android:background="#BF3030" />
   
-  override fun onEdgeLock(edgeFlags: Int): Boolean {
-      return super.onEdgeLock(edgeFlags)
-  }
+      <View
+          android:id="@+id/view_two"
+          android:layout_width="150dp"
+          android:layout_height="150dp"
+          android:layout_gravity="center"
+          android:layout_marginTop="30dp"
+          android:background="#5A1818" />
+  
+      <View
+          android:id="@+id/view_three"
+          android:layout_width="150dp"
+          android:layout_height="150dp"
+          android:layout_gravity="center"
+          android:layout_marginTop="30dp"
+          android:background="#D58D8D" />
+  
+  
+  </com.jin.drag.helper.widgit.DragLayout>
   ```
 
+- tryCaptureView中只对第一个、第二个view进行事件捕捉
+
+- setEdgeTrackingEnabled监听左边缘与上边缘触摸
+
+- 当拖动回调onEdgeDragStarted触发手动调用captureChildView对第三个view进行触摸捕捉
+
 - ```kotlin
-  dragHelper.setEdgeTrackingEnabled(ViewDragHelper.EDGE_LEFT or ViewDragHelper.EDGE_TOP)
-  ```
-
-- 当触摸左边界、上边界时onEdgeTouched会被触发多次，而onEdgeDragStarted会被触发一次
-
-##### 边界触摸通知结合captureChildView函数使用
-
-- captureChildView（view：View,pointerId： Int）
-
-  - viewDragHelper对象的方法
-  - 手动捕捉view对触摸事件的处理
-  - view：要捕捉的View
-  - PointerId：捕捉view的触摸手指ID
-
-- **captureChildView与Callback中的tryCaptureView**
-
-  - tryCaptureView属于Callback中的回调、而captureChildView是viewDragHelper类对象的方法
-
-  - tryCaptureView回调返回值：Boolean 用来表明对哪些View进行捕捉触摸事件
-
-    - 仅仅对view_one、view_two进行触摸分发
-
-    - ```kotlin
+  dragHelper = ViewDragHelper.create(this, 1f, object : ViewDragHelper.Callback() {
       override fun tryCaptureView(child: View, pointerId: Int): Boolean {
           return child.id == R.id.view_one || child.id == R.id.view_two
       }
-      ```
+  
+      override fun clampViewPositionHorizontal(child: View, left: Int, dx: Int): Int {
+          return left
+      }
+  
+      override fun clampViewPositionVertical(child: View, top: Int, dy: Int): Int {
+          return top
+      }
+  
+      override fun getViewHorizontalDragRange(child: View): Int {
+          return 1
+      }
+  
+      override fun getViewVerticalDragRange(child: View): Int {
+          return 1
+      }
+  
+      override fun onEdgeTouched(edgeFlags: Int, pointerId: Int) {
+          Log.d("TAG", "onEdgeTouched: " + edgeFlags)
+          super.onEdgeTouched(edgeFlags, pointerId)
+      }
+  
+      override fun onEdgeDragStarted(edgeFlags: Int, pointerId: Int) {
+          Log.d("TAG", "onEdgeDragStarted: " + edgeFlags)
+          dragHelper.captureChildView(findViewById(R.id.view_three),pointerId)
+          super.onEdgeDragStarted(edgeFlags, pointerId)
+      }
+  
+      override fun onEdgeLock(edgeFlags: Int): Boolean {
+          return super.onEdgeLock(edgeFlags)
+      }
+  })
+  
+  dragHelper.setEdgeTrackingEnabled(ViewDragHelper.EDGE_LEFT or ViewDragHelper.EDGE_TOP)
+  ```
 
-  - captureChildView手动开启触摸分发
+- 事件拦截
 
-- 示例
+- ```kotlin
+  override fun onInterceptTouchEvent(ev: MotionEvent): Boolean {
+      return dragHelper.shouldInterceptTouchEvent(ev)
+  }
+  
+  override fun onTouchEvent(event: MotionEvent): Boolean {
+      dragHelper.processTouchEvent(event)
+      return true
+  }
+  ```
 
-  - 仅仅对view_one、view_two进行触摸分发
+- ![thc6n-bw5of.gif](https://s2.loli.net/2024/04/12/yB7bVj6Hd1n2aQm.gif)
+
+- 注意：当一次边缘触摸结束时，第三个view触摸捕捉结束，直到再次出现边缘捕捉。边缘捕捉只会移动子View的相对位置，而不会实时跟随手指移动
+
+##### onEdgeLocked（edgeFlags: Int）： Boolean
+
+- Callback中的回调函数
+
+- 是否锁住某边缘，依据条件禁止拖动（即不会触发onEdgeDragStarted函数）
+
+- 返回值：true --上锁 false-解锁
+
+- ```xaml
+  <com.jin.drag.helper.widgit.DragLayout
+      android:layout_width="match_parent"
+      android:layout_height="match_parent"
+      android:orientation="vertical">
+  
+      <View
+          android:id="@+id/view_one"
+          android:layout_width="150dp"
+          android:layout_height="150dp"
+          android:layout_gravity="center"
+          android:layout_marginTop="30dp"
+          android:background="#BF3030" />
+  
+      <View
+          android:id="@+id/view_two"
+          android:layout_width="150dp"
+          android:layout_height="150dp"
+          android:layout_gravity="center"
+          android:layout_marginTop="30dp"
+          android:background="#5A1818" />
+  
+      <View
+          android:id="@+id/view_three"
+          android:layout_width="150dp"
+          android:layout_height="150dp"
+          android:layout_gravity="center"
+          android:layout_marginTop="30dp"
+          android:background="#D58D8D" />
+  
+  
+  </com.jin.drag.helper.widgit.DragLayout>
+  ```
+
+  - onEdgeLock将左边缘锁住（return true）同时监听左边缘与上边缘
+
+  - ```kotlin
+    dragHelper = ViewDragHelper.create(this, 1f, object : ViewDragHelper.Callback() {
+        override fun tryCaptureView(child: View, pointerId: Int): Boolean {
+            return child.id == R.id.view_one || child.id == R.id.view_two
+        }
+    
+        override fun clampViewPositionHorizontal(child: View, left: Int, dx: Int): Int {
+            return left
+        }
+    
+        override fun clampViewPositionVertical(child: View, top: Int, dy: Int): Int {
+            return top
+        }
+    
+        override fun getViewHorizontalDragRange(child: View): Int {
+            return 1
+        }
+    
+        override fun getViewVerticalDragRange(child: View): Int {
+            return 1
+        }
+    
+        override fun onEdgeTouched(edgeFlags: Int, pointerId: Int) {
+            Log.d("TAG", "onEdgeTouched: " + edgeFlags)
+            super.onEdgeTouched(edgeFlags, pointerId)
+        }
+    
+        override fun onEdgeDragStarted(edgeFlags: Int, pointerId: Int) {
+            Log.d("TAG", "onEdgeDragStarted: " + edgeFlags)
+            dragHelper.captureChildView(findViewById(R.id.view_three),pointerId)
+            super.onEdgeDragStarted(edgeFlags, pointerId)
+        }
+    
+        override fun onEdgeLock(edgeFlags: Int): Boolean {
+            Log.d("TAG", "onEdgeLock: " + edgeFlags)
+            if (edgeFlags == ViewDragHelper.EDGE_LEFT) {
+                return true
+            }
+            return false
+        }
+    })
+    
+    dragHelper.setEdgeTrackingEnabled(ViewDragHelper.EDGE_LEFT or ViewDragHelper.EDGE_TOP)
+    ```
+
+  - ViewGroup中拦截事件
+
+  - ```kotlin
+    override fun onInterceptHoverEvent(event: MotionEvent): Boolean {
+        return dragHelper.shouldInterceptTouchEvent(event)
+    }
+    
+    override fun onTouchEvent(event: MotionEvent): Boolean {
+        dragHelper.processTouchEvent(event)
+        return true
+    }
+    ```
+
+  - 效果
+
+    - 当在左边缘触摸拖动（**上下拖动时**）时：
+      - onEdgeTouched （可能多次触发）
+      - onEdgeLock（触发一次）：左边缘return true、
+      - onEdgeDragStarted：并不会触发（被上锁）
+    - 当在左边缘触摸拖动（**左右拖动时**）时：
+      - onEdgeTouched （可能多次触发）
+      - onEdgeLock（触发一次）：左边缘return true、
+      - onEdgeDragStarted：会触发一次（即使被上锁）
+    - 为何锁定左边缘，当左右拖动时还会响应到拖动事件onEdgeDragStarted、而上下拖动时不会响应
+      - onEdgeLock触发前提：
+        - 针对左边缘拖动（上边缘、下边缘、右边缘同理）
+          - 当拖动的横向距离 < 拖动的纵向距离 * 0.5 此时会被系统认为左边缘的上下拖动，此时会触发 onEdgeLock函数，判断是否锁住了左边缘，进而不会触发onEdgeDragStarted
+          - 当拖动的横向距离 < 拖动的纵向距离 * 0.5 此时会被系统认为左边缘的左右拖动，此时不会触发 onEdgeLock函数，故会触发onEdgeDragStarted
+        - 为什么要这样设计？
+          - 一般对于左边缘来说，偏向用户是可以左右拖动的，当在左边缘出现上下拖动这下反常行为，系统会回调onEdgeLock判断是否该回调onEdgeDragStarted
+          - 同理对于上边缘来说，偏向用户是可以上下拖动的，当在上边缘出现左右拖动这一反常行为，系统会回调onEdgeLock判断是否该回调onEdgeDragStarted
+          - 但是对于左边缘来说，用户进行左右拖动，此时是不会触发onEdgeLock的，被认为是正常触摸行为，所以仍然会回调onEdgeDragStarted
+
+##### onViewReleased（childView：View，speedX：Float，speedY：Float）: Void
+
+- **CallBack中的回调函数**
+
+- **子View手指离开了屏幕（即UP事件触发）**
+- **childView：子View**
+- **speedX：离开屏幕时的X方向的速度**
+- **speedY：离开屏幕时的Y方向的速度**
+
+##### smoothSlideViewTo（view：View，left：Int，top：Int）：Boolean
+
+- **ViewDragHelper类对象的smoothSlideViewTo方法**
+
+- **将view滑动到left、top位置**
+
+- **view：将要滑动的view**
+
+- **left：拖动的目标位置left**
+
+- **top：拖动的目标位置top**
+
+- **返回值：当前是否需要继续移动，如果移动未结束需要继续则返回true，否则返回false**
+
+- **smoothSlideViewTo同Scroller相同，调用后，需要重绘界面让移动生效 invalidate()**
+
+- **重绘后会回调到自定义ViewGroup的computeScroll 函数回调上，在其中做循环重绘的步骤（移动）**
+
+- **onViewReleased中对view_three调用smoothSlideViewTo 滚动到与view_one相同位置**
+
+- ```kotlin
+  init {
+      dragHelper = ViewDragHelper.create(this, 1f, object : ViewDragHelper.Callback() {
+          override fun tryCaptureView(child: View, pointerId: Int): Boolean {
+              return true
+          }
+  
+          override fun clampViewPositionHorizontal(child: View, left: Int, dx: Int): Int {
+              return left
+          }
+  
+          override fun clampViewPositionVertical(child: View, top: Int, dy: Int): Int {
+              return top
+          }
+  
+          override fun getViewHorizontalDragRange(child: View): Int {
+              return 1
+          }
+  
+          override fun getViewVerticalDragRange(child: View): Int {
+              return 1
+          }
+  
+          override fun onEdgeTouched(edgeFlags: Int, pointerId: Int) {
+              super.onEdgeTouched(edgeFlags, pointerId)
+          }
+  
+          override fun onEdgeDragStarted(edgeFlags: Int, pointerId: Int) {
+              dragHelper.captureChildView(findViewById(R.id.view_three),pointerId)
+              super.onEdgeDragStarted(edgeFlags, pointerId)
+          }
+  
+          override fun onEdgeLock(edgeFlags: Int): Boolean {
+              if (edgeFlags == ViewDragHelper.EDGE_LEFT) {
+                  return true
+              }
+              return false
+          }
+  
+          override fun onViewReleased(releasedChild: View, xvel: Float, yvel: Float) {
+              if (releasedChild.id == R.id.view_three) {
+                  val viewOne = findViewById<View>(R.id.view_one)
+                  dragHelper.smoothSlideViewTo(releasedChild,viewOne.left,viewOne.top)
+                  invalidate()
+              }
+              super.onViewReleased(releasedChild, xvel, yvel)
+          }
+      })
+  ```
+
+  - 重写computeScroll函数，循环重绘（移动）dragHelper.continueSettling(true)
+
+  - ```kotlin
+    override fun computeScroll() {
+        if (dragHelper.continueSettling(true)) {
+            invalidate()
+        }
+        super.computeScroll()
+    }
+    ```
+
+  - 拦截事件
+
+  - ```kotlin
+     override fun onInterceptTouchEvent(ev: MotionEvent): Boolean {
+            return dragHelper.shouldInterceptTouchEvent(ev)
+        }
+      
+    override fun onTouchEvent(event: MotionEvent): Boolean {
+        dragHelper.processTouchEvent(event)
+        return true
+    }
+    ```
+
+  - 效果：当拖动view_three后放开的时候view_three会移动到与view_one相同的位置![zxv93-egu7a.gif](https://s2.loli.net/2024/04/13/7RGfYTkpOQ8FsB5.gif)
+
+
+
+##### settleCapturedViewAt（left：Int，top：Int）
+
+-  	`**ViewDragHelper类对象的settleCapturedViewAt方法**
+- **left：拖动的目标位置left**
+- **top：拖动的目标位置top**
+- **同smoothSlideViewTo作用类似，将view移动到目标位置**
+- **没有子View参数，该函数只能在onViewReleased被调用，只能将当前release的view对象进行移动**
+- **不同于smoothSlideViewTo，settleCapturedViewAt移动开始的起始速度为手指脱离屏幕时的速度，而smoothSlideViewTo移动开始的起始速度为0**
+
+#### 仿照QQ侧滑
+
+- ![tutieshi_640x1422_8s _2_.gif](https://s2.loli.net/2024/04/15/b8oS9TcpzuGAvHa.gif)
+
+- 利用ViewDragHelper对子view进行触摸反馈
+
+  - 主页MainView（捕捉触摸事件）
+
+  - 侧边栏SlideView（存在点击事件），点击菜单item，MainView中text发生改变
+
+  - 对mainView触摸事件进行捕捉
 
   - ```kotlin
     override fun tryCaptureView(child: View, pointerId: Int): Boolean {
-        return child.id == R.id.view_one || child.id == R.id.view_two
+        return child == mainView
     }
+    ```
+
+  - 捕捉事件，对应left，top进行限制。top始终在最上边缘，left根据当前slideWidth进行判断
+
+  - ```kotlin
     override fun clampViewPositionHorizontal(child: View, left: Int, dx: Int): Int {
-                    return left
-                }
+        if (left < 0) {
+            return 0
+        }
+        return min(slideWidth,left)
+    }
     
-                override fun clampViewPositionVertical(child: View, top: Int, dy: Int): Int {
-                    return top
-                }
-    ```
-
-  - 边界拖动时，手动对view_three进行触摸分发
-
-  - ```kotlin
-    override fun onEdgeDragStarted(edgeFlags: Int, pointerId: Int) {
-        Log.d("TAG", "onEdgeDragStarted: " + edgeFlags)
-        dragHelper.captureChildView(findViewById(R.id.view_three),pointerId)
-        super.onEdgeDragStarted(edgeFlags, pointerId)
+    override fun clampViewPositionVertical(child: View, top: Int, dy: Int): Int {
+        return 0
     }
     ```
 
-  - 设置触摸边缘（上边缘、下边缘）
+  - mainView触摸结束后，根据当前left，决定展示或是收回
 
   - ```kotlin
-    dragHelper.setEdgeTrackingEnabled(ViewDragHelper.EDGE_LEFT or ViewDragHelper.EDGE_TOP)
+    override fun onViewReleased(releasedChild: View, xvel: Float, yvel: Float) {
+        if (releasedChild == mainView) {
+            if (mainView!!.left <= slideWidth / 2) {
+                dragHelper.smoothSlideViewTo(releasedChild,0,0)
+            } else {
+                dragHelper.smoothSlideViewTo(releasedChild,slideWidth,0)
+            }
+            invalidate()
+        }
+        super.onViewReleased(releasedChild, xvel, yvel)
+    }
+    ```
+
+  - ```kotlin
+    override fun computeScroll() {
+        if (dragHelper.continueSettling(true)) {
+            invalidate()
+        }
+        super.computeScroll()
+    }
+    ```
+
+  - 当view位置发生改变时的回调，设置mainView的缩放相关以及SlideView的缩放与平移相关
+
+  - ```kotlin
+    override fun onViewPositionChanged(
+        changedView: View,
+        left: Int,
+        top: Int,
+        dx: Int,
+        dy: Int
+    ) {
+        super.onViewPositionChanged(changedView, left, top, dx, dy)
+        val scale = mainView!!.left / 1f / slideWidth
+        setScale(scale)
+    }
+    ```
+
+  - ```kotlin
+    fun setScale(showPercent: Float) {
+        mainView!!.scaleX = (1 - 0.2 * showPercent).toFloat()
+        mainView!!.scaleY = (1 - 0.2 * showPercent).toFloat()
+    
+        slideView!!.scaleX = (0.5 + 0.5 * showPercent).toFloat()
+        slideView!!.scaleY = (0.5 + 0.5 * showPercent).toFloat()
+        slideView!!.translationX = -slideWidth / 2 + slideWidth / 2 * showPercent
+    }
     ```
 
   - 拦截事件
@@ -403,10 +773,235 @@
     }
     ```
 
-  - 效果如图：
+  - 提供接口向ViewGroup中添加MainView以及SlideView
 
-    - 当触摸ViewThree时，此时并没有效果，因为tryCaptureView中并没有对ViewThree进行触摸反馈
-    - 当拖动上边缘或者左边缘时，ViewThree会根据拖动位置进行触摸反馈（onEdgeDragStarted回调中手动调用了captureChildView方法导致）
-    - 可以发现：ViewThree始终在与他的相对位置进行拖动，尽管此时触摸拖动在最左方或者最上方
+  - ```kotlin
+    fun addCustomView(mainView: View,mainViewParams: ViewGroup.LayoutParams,slideView: View,slideViewParams: ViewGroup.LayoutParams) {
+        this.slideView = slideView
+        this.mainView = mainView
+        this.slideWidth = slideViewParams.width
+        addView(slideView,slideViewParams)
+        addView(mainView,mainViewParams)
+    }
+    ```
 
-  - ![tutieshi_640x1422_10s.gif](https://s2.loli.net/2024/04/12/9iVXt5xqZlbOTzk.gif)
+  - SlideFrameLayout
+
+  - ```kotlin
+    class SlideFrameLayout @JvmOverloads constructor(
+        context: Context,
+        attributeSet: AttributeSet? = null,
+        defInt: Int = 0
+    ) :
+        FrameLayout(context, attributeSet, defInt) {
+    
+        private var mainView: View? = null
+        private var slideView: View? = null
+    
+        private var slideWidth = 0
+        private lateinit var dragHelper: ViewDragHelper
+    
+    
+        init {
+            dragHelper = ViewDragHelper.create(this,object : ViewDragHelper.Callback() {
+                override fun tryCaptureView(child: View, pointerId: Int): Boolean {
+                    return child == mainView
+                }
+    
+                override fun clampViewPositionHorizontal(child: View, left: Int, dx: Int): Int {
+                    if (left < 0) {
+                        return 0
+                    }
+                    return min(slideWidth,left)
+                }
+    
+                override fun clampViewPositionVertical(child: View, top: Int, dy: Int): Int {
+                    return 0
+                }
+    
+                override fun onViewReleased(releasedChild: View, xvel: Float, yvel: Float) {
+                    if (releasedChild == mainView) {
+                        if (mainView!!.left <= slideWidth / 2) {
+                            dragHelper.smoothSlideViewTo(releasedChild,0,0)
+                        } else {
+                            dragHelper.smoothSlideViewTo(releasedChild,slideWidth,0)
+                        }
+                        invalidate()
+                    }
+                    super.onViewReleased(releasedChild, xvel, yvel)
+                }
+    
+                override fun onViewPositionChanged(
+                    changedView: View,
+                    left: Int,
+                    top: Int,
+                    dx: Int,
+                    dy: Int
+                ) {
+                    super.onViewPositionChanged(changedView, left, top, dx, dy)
+                    val scale = mainView!!.left / 1f / slideWidth
+                    setScale(scale)
+                }
+            })
+        }
+    
+        fun setScale(showPercent: Float) {
+            mainView!!.scaleX = (1 - 0.2 * showPercent).toFloat()
+            mainView!!.scaleY = (1 - 0.2 * showPercent).toFloat()
+    
+            slideView!!.scaleX = (0.5 + 0.5 * showPercent).toFloat()
+            slideView!!.scaleY = (0.5 + 0.5 * showPercent).toFloat()
+            slideView!!.translationX = -slideWidth / 2 + slideWidth / 2 * showPercent
+        }
+    
+    
+        fun addCustomView(mainView: View,mainViewParams: ViewGroup.LayoutParams,slideView: View,slideViewParams: ViewGroup.LayoutParams) {
+            this.slideView = slideView
+            this.mainView = mainView
+            this.slideWidth = slideViewParams.width
+            addView(slideView,slideViewParams)
+            addView(mainView,mainViewParams)
+        }
+    
+        override fun computeScroll() {
+            if (dragHelper.continueSettling(true)) {
+                invalidate()
+            }
+            super.computeScroll()
+        }
+    
+        override fun onInterceptTouchEvent(ev: MotionEvent): Boolean {
+            return dragHelper.shouldInterceptTouchEvent(ev)
+        }
+    
+        override fun onTouchEvent(event: MotionEvent): Boolean {
+            dragHelper.processTouchEvent(event)
+            return true
+        }
+    
+        fun resetMainView() {
+            if (mainView == null) return
+            dragHelper.smoothSlideViewTo(mainView!!,0,0)
+            invalidate()
+        }
+    ```
+
+  - SlideFrameLayoutActivity
+
+  - ```kotlin
+    class SlideFrameLayoutActivity : AppCompatActivity() {
+    
+        private lateinit var binding: ActivitySlideBinding
+    
+        private lateinit var tvMainContent: TextView
+    
+        override fun onCreate(savedInstanceState: Bundle?) {
+            super.onCreate(savedInstanceState)
+            binding = ActivitySlideBinding.inflate(layoutInflater)
+            setContentView(binding.root)
+    
+            val mainView = layoutInflater.inflate(R.layout.main_view, null, false)
+            val slideView = layoutInflater.inflate(R.layout.slide_view, null, false)
+    
+            tvMainContent = mainView.findViewById(R.id.tv_content)
+    
+            slideView.findViewById<TextView>(R.id.tv_one).setOnClickListener {
+                tvMainContent.text = (it as TextView).text
+                binding.slideLayout.resetMainView()
+            }
+    
+            slideView.findViewById<TextView>(R.id.tv_two).setOnClickListener {
+                tvMainContent.text = (it as TextView).text
+                binding.slideLayout.resetMainView()
+            }
+    
+            slideView.findViewById<TextView>(R.id.tv_three).setOnClickListener {
+                tvMainContent.text = (it as TextView).text
+                binding.slideLayout.resetMainView()
+            }
+    
+            val mainViewLayoutParams = ViewGroup.LayoutParams(
+                ViewGroup.LayoutParams.MATCH_PARENT,
+                ViewGroup.LayoutParams.MATCH_PARENT
+            )
+    
+            val slideLayoutParams = ViewGroup.LayoutParams(
+                resources.getDimension(R.dimen.dp_160).toInt(),
+                ViewGroup.LayoutParams.MATCH_PARENT
+            )
+            binding.slideLayout.addCustomView(
+                mainView,
+                mainViewLayoutParams,
+                slideView,
+                slideLayoutParams
+            )
+        }
+    ```
+
+  - activity_slide.xml
+
+  - ```xml
+    <?xml version="1.0" encoding="utf-8"?>
+    <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@drawable/bg"
+        tools:context=".MainActivity">
+    
+        <com.jin.drag.helper.widgit.SlideFrameLayout
+            android:id="@+id/slide_layout"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+    
+    
+    </androidx.constraintlayout.widget.ConstraintLayout>
+    ```
+
+  - slide_view
+
+  - ```xml
+    <?xml version="1.0" encoding="utf-8"?>
+    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="200dp"
+        android:layout_height="match_parent"
+        android:background="#00ffffff"
+        android:gravity="center_horizontal"
+        android:orientation="vertical">
+    
+        <TextView
+            android:id="@+id/tv_one"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:text="One"
+            android:textColor="@color/black"
+            android:textSize="22sp"
+            android:textStyle="bold" />
+    
+    
+        <TextView
+            android:id="@+id/tv_two"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:text="two"
+            android:textColor="@color/black"
+            android:textSize="22sp"
+            android:textStyle="bold" />
+    
+        <TextView
+            android:id="@+id/tv_three"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:text="three"
+            android:textColor="@color/black"
+            android:textSize="22sp"
+            android:textStyle="bold" />
+    
+    </LinearLayout>
+    ```
+
+  
+
