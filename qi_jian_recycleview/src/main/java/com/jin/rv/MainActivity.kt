@@ -16,6 +16,7 @@ import androidx.recyclerview.widget.RecyclerView.ItemDecoration
 import com.jin.rv.adpater.RvAdapter
 import com.jin.rv.databinding.ActivityMainBinding
 import com.jin.rv.manager.CustomLayoutManager
+import com.jin.rv.manager.RepeatUseLayoutManager
 
 class MainActivity : AppCompatActivity() {
 
@@ -27,7 +28,7 @@ class MainActivity : AppCompatActivity() {
         setContentView(binding.root)
 
         val layoutManager = LinearLayoutManager(this,LinearLayoutManager.VERTICAL,false)
-        binding.rv.layoutManager = CustomLayoutManager()
+        binding.rv.layoutManager = RepeatUseLayoutManager()
         binding.rv.adapter = RvAdapter(this)
 
         val paint = Paint().apply {
@@ -45,7 +46,7 @@ class MainActivity : AppCompatActivity() {
             ) {
                 Log.d("TAG", "getItemOffsets:")
                 super.getItemOffsets(outRect, view, parent, state)
-                outRect.bottom = 10
+                outRect.bottom = 5
                 outRect.left = 160
                 outRect.right = 80
             }
