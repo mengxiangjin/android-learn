@@ -6,7 +6,7 @@ import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.RecyclerView.LayoutManager
 import kotlin.math.max
 
-class RepeatUseLayoutManager : LayoutManager() {
+class RepeatUseLayoutManagerTwo : LayoutManager() {
 
     override fun generateDefaultLayoutParams(): RecyclerView.LayoutParams {
         return RecyclerView.LayoutParams(
@@ -60,7 +60,6 @@ class RepeatUseLayoutManager : LayoutManager() {
         state: RecyclerView.State
     ): Int {
         if (childCount <= 0) return dy
-
         var travel = dy
         if (mSumDy + dy < 0) {
             //到顶
@@ -90,14 +89,19 @@ class RepeatUseLayoutManager : LayoutManager() {
             }
         }
 
+        val firstView = getChildAt(0)
+        val lastView = getChildAt(childCount - 1)
+
+        detachAndScrapAttachedViews(recycler)
+        mSumDy += travel
+
         //底部view复用
-        val legalScreenRect = getLegalScreenRect(travel)
+        val legalScreenRect = getLegalScreenRect()
 
         if (travel > 0) {
             //复用底部
-            val lastShowView = getChildAt(childCount - 1)
-            if (lastShowView != null) {
-                var position = getPosition(lastShowView) + 1
+            if (firstView != null) {
+                var position = getPosition(firstView)
                 while (position < itemCount) {
                     if (rectMap[position] == null) break
                     if (legalScreenRect.intersect(rectMap[position]!!)) {
@@ -106,17 +110,14 @@ class RepeatUseLayoutManager : LayoutManager() {
                         addView(childView)
                         measureChildWithMargins(childView,0,0)
                         layoutDecorated(childView,rectMap[position]!!.left,rectMap[position]!!.top - mSumDy,rectMap[position]!!.right,rectMap[position]!!.bottom - mSumDy)
-                    } else {
-                        break
                     }
                     position++
                 }
             }
         } else {
             //复用顶部
-            val firstShowView = getChildAt(0)
-            if (firstShowView != null) {
-                var position = getPosition(firstShowView) - 1
+            if (lastView != null) {
+                var position = getPosition(lastView)
                 while (position >= 0) {
                     if (rectMap[position] == null) break
                     if (legalScreenRect.intersect(rectMap[position]!!)) {
@@ -126,21 +127,16 @@ class RepeatUseLayoutManager : LayoutManager() {
                         addView(childView,0)
                         measureChildWithMargins(childView,0,0)
                         layoutDecorated(childView,rectMap[position]!!.left,rectMap[position]!!.top - mSumDy,rectMap[position]!!.right,rectMap[position]!!.bottom - mSumDy)
-                    } else {
-                        break
                     }
                     position--
                 }
             }
         }
-
-        offsetChildrenVertical(-travel)
-        mSumDy += travel
         return dy
     }
 
-    private fun getLegalScreenRect(offset: Int): Rect {
-        return Rect(paddingLeft,mSumDy + offset + paddingTop,width + paddingRight,mSumDy + offset + getVerticalHeight())
+    private fun getLegalScreenRect(): Rect {
+        return Rect(paddingLeft,mSumDy  + paddingTop,width + paddingRight,mSumDy  + getVerticalHeight())
     }
 
     private fun getVerticalHeight(): Int {
