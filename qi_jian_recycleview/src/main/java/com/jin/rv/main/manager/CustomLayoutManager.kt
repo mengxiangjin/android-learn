@@ -1,4 +1,4 @@
-package com.jin.rv.manager
+package com.jin.rv.main.manager
 
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.RecyclerView.LayoutManager

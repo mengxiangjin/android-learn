@@ -1,4 +1,4 @@
-package com.jin.rv.manager
+package com.jin.rv.main.manager
 
 import android.graphics.Rect
 import android.util.Log

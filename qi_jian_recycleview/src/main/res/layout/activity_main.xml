@@ -3,7 +3,6 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#E80C0C"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     tools:context=".MainActivity">
 
@@ -11,10 +10,18 @@
         android:id="@+id/rv"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:visibility="invisible"
         app:layout_constraintTop_toTopOf="parent"/>
 
 
-    <com.jin.rv.widgit.CustomLinearLayout
+    <com.jin.rv.main.recycleView.GalleryRecycleView
+        android:id="@+id/rv_gallery"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintBottom_toBottomOf="parent"/>
+
+
+    <com.jin.rv.main.widgit.CustomLinearLayout
         android:layout_width="match_parent"
         android:layout_height="600dp"
         android:visibility="gone"
@@ -22,7 +29,7 @@
         app:layout_constraintTop_toTopOf="parent"
         >
 
-        <com.jin.rv.widgit.CustomView
+        <com.jin.rv.main.widgit.CustomView
             android:layout_width="match_parent"
             android:layout_height="300dp"
             android:background="@color/black"
@@ -30,6 +37,6 @@
 
 
 
-    </com.jin.rv.widgit.CustomLinearLayout>
+    </com.jin.rv.main.widgit.CustomLinearLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

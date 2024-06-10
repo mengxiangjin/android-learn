@@ -1,4 +1,4 @@
-package com.jin.rv.adpater
+package com.jin.rv.main.adpater
 
 import android.content.Context
 import android.graphics.Color

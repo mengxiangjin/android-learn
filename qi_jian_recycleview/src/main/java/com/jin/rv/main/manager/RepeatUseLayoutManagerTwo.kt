@@ -1,4 +1,4 @@
-package com.jin.rv.manager
+package com.jin.rv.main.manager
 
 import android.graphics.Rect
 import android.util.Log
@@ -68,6 +68,8 @@ class RepeatUseLayoutManagerTwo : LayoutManager() {
             //到底
             travel = totalHeight - getVerticalHeight() - mSumDy
         }
+        mSumDy += travel
+        val legalScreenRect = getLegalScreenRect()
 
         for (i in 0 until childCount) {
             val childView = getChildAt(i) ?: break
@@ -82,7 +84,6 @@ class RepeatUseLayoutManagerTwo : LayoutManager() {
                 //从上往下滑动
                 //回收底部的item
                 if (getDecoratedTop(childView) - travel >= height - paddingBottom) {
-                    Log.d("TAG", "scrollVerticallyBy:回收底部的 " + i)
                     removeAndRecycleView(childView,recycler)
                     continue
                 }
@@ -93,40 +94,39 @@ class RepeatUseLayoutManagerTwo : LayoutManager() {
         val lastView = getChildAt(childCount - 1)
 
         detachAndScrapAttachedViews(recycler)
-        mSumDy += travel
 
         //底部view复用
-        val legalScreenRect = getLegalScreenRect()
-
         if (travel > 0) {
             //复用底部
             if (firstView != null) {
                 var position = getPosition(firstView)
+
                 while (position < itemCount) {
-                    if (rectMap[position] == null) break
-                    if (legalScreenRect.intersect(rectMap[position]!!)) {
+                    if (Rect.intersects(rectMap[position]!!,legalScreenRect)) {
                         //存在交集，说明需要复用展示
                         val childView = recycler.getViewForPosition(position)
                         addView(childView)
                         measureChildWithMargins(childView,0,0)
                         layoutDecorated(childView,rectMap[position]!!.left,rectMap[position]!!.top - mSumDy,rectMap[position]!!.right,rectMap[position]!!.bottom - mSumDy)
+                        childView.rotationY = childView.rotationY + 1
                     }
                     position++
                 }
             }
-        } else {
+        }
+        else {
             //复用顶部
             if (lastView != null) {
                 var position = getPosition(lastView)
                 while (position >= 0) {
                     if (rectMap[position] == null) break
-                    if (legalScreenRect.intersect(rectMap[position]!!)) {
+                    if (Rect.intersects(rectMap[position]!!,legalScreenRect)) {
                         //存在交集，说明需要复用展示
-                        Log.d("TAG", "scrollVerticallyBy:复用顶部 " + position)
                         val childView = recycler.getViewForPosition(position)
                         addView(childView,0)
                         measureChildWithMargins(childView,0,0)
                         layoutDecorated(childView,rectMap[position]!!.left,rectMap[position]!!.top - mSumDy,rectMap[position]!!.right,rectMap[position]!!.bottom - mSumDy)
+                        childView.rotationY = childView.rotationY + 1
                     }
                     position--
                 }

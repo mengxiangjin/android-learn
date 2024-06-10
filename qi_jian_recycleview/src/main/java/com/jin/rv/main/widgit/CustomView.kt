@@ -1,4 +1,4 @@
-package com.jin.rv.widgit
+package com.jin.rv.main.widgit
 
 import android.content.Context
 import android.graphics.Bitmap
