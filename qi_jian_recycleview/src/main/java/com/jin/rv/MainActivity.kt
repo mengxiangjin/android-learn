@@ -1,13 +1,11 @@
 package com.jin.rv
 
-import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.graphics.Canvas
 import android.graphics.Color
 import android.graphics.Paint
 import android.graphics.Rect
 import android.os.Bundle
-import android.util.Log
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -18,7 +16,6 @@ import com.jin.rv.databinding.ActivityMainBinding
 import com.jin.rv.main.adpater.GalleryAdapter
 import com.jin.rv.main.manager.RepeatUseLayoutManagerForHorizontally
 import com.jin.rv.main.manager.RepeatUseLayoutManagerTwo
-import com.jin.rv.main.recycleView.GalleryRecycleView
 
 
 /*
