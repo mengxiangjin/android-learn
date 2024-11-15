@@ -4,51 +4,41 @@
   <component name="GradleSettings">
     <option name="linkedExternalProjectsSettings">
       <GradleProjectSettings>
-        <option name="testRunner" value="GRADLE" />
-        <option name="distributionType" value="DEFAULT_WRAPPED" />
         <option name="externalProjectPath" value="$PROJECT_DIR$" />
-        <option name="gradleJvm" value="jbr-17" />
+        <option name="gradleJvm" value="#GRADLE_LOCAL_JAVA_HOME" />
         <option name="modules">
           <set>
             <option value="$PROJECT_DIR$" />
             <option value="$PROJECT_DIR$/activity_launch_mode" />
-            <option value="$PROJECT_DIR$/activity_lifecycle" />
-            <option value="$PROJECT_DIR$/android_permission" />
-            <option value="$PROJECT_DIR$/app" />
+            <option value="$PROJECT_DIR$/android_content_provider_client" />
+            <option value="$PROJECT_DIR$/android_content_provider_server" />
+            <option value="$PROJECT_DIR$/android_data_save" />
+            <option value="$PROJECT_DIR$/android_http_net" />
+            <option value="$PROJECT_DIR$/android_socket_exchange_file" />
             <option value="$PROJECT_DIR$/application" />
             <option value="$PROJECT_DIR$/application/KilonotesAndroid" />
-            <option value="$PROJECT_DIR$/datasave_db" />
-            <option value="$PROJECT_DIR$/datasave_file" />
-            <option value="$PROJECT_DIR$/datasave_sharepreference" />
-            <option value="$PROJECT_DIR$/exchangeFile" />
-            <option value="$PROJECT_DIR$/fragment_simple_use" />
-            <option value="$PROJECT_DIR$/http_net" />
             <option value="$PROJECT_DIR$/jin_widgit_view" />
+            <option value="$PROJECT_DIR$/note" />
             <option value="$PROJECT_DIR$/qi_jian_anim_basic_one" />
-            <option value="$PROJECT_DIR$/qi_jian_anim_basic_three" />
             <option value="$PROJECT_DIR$/qi_jian_anim_basic_two" />
-            <option value="$PROJECT_DIR$/qi_jian_arc_parctice" />
-            <option value="$PROJECT_DIR$/qi_jian_camera_3d_advanced_one" />
+            <option value="$PROJECT_DIR$/qi_jian_camera_3d" />
             <option value="$PROJECT_DIR$/qi_jian_dragHelper" />
             <option value="$PROJECT_DIR$/qi_jian_draw_basic_five" />
             <option value="$PROJECT_DIR$/qi_jian_draw_basic_four" />
             <option value="$PROJECT_DIR$/qi_jian_draw_basic_one" />
-            <option value="$PROJECT_DIR$/qi_jian_draw_basic_seven" />
-            <option value="$PROJECT_DIR$/qi_jian_draw_basic_six" />
             <option value="$PROJECT_DIR$/qi_jian_draw_basic_three" />
             <option value="$PROJECT_DIR$/qi_jian_draw_basic_two" />
-            <option value="$PROJECT_DIR$/qi_jian_gesture_basic_one" />
-            <option value="$PROJECT_DIR$/qi_jian_layout_basic_one" />
-            <option value="$PROJECT_DIR$/qi_jian_matrix_advanced_one" />
-            <option value="$PROJECT_DIR$/qi_jian_matrix_basic_one" />
+            <option value="$PROJECT_DIR$/qi_jian_matrix" />
             <option value="$PROJECT_DIR$/qi_jian_qq_slide_delete" />
             <option value="$PROJECT_DIR$/qi_jian_recycleview" />
             <option value="$PROJECT_DIR$/qi_jian_scroller" />
             <option value="$PROJECT_DIR$/qi_jian_touch_dispatch" />
             <option value="$PROJECT_DIR$/qi_jian_touch_pointer" />
+            <option value="$PROJECT_DIR$/qi_jian_view_view_group" />
             <option value="$PROJECT_DIR$/touch_gesture" />
           </set>
         </option>
+        <option name="resolveExternalAnnotations" value="false" />
       </GradleProjectSettings>
     </option>
   </component>

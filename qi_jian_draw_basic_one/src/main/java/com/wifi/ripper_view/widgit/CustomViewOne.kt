@@ -47,7 +47,7 @@ class CustomViewOne @JvmOverloads constructor(
 //        testEight(canvas)
 //        testNine(canvas)
 //        testTen(canvas)
-//        testEleven(canvas)
+        testEleven(canvas)
     }
 
     private fun testEleven(canvas: Canvas) {
@@ -79,12 +79,12 @@ class CustomViewOne @JvmOverloads constructor(
         val regionTwo = Region(rectTwo)
 
         //regionOne 与 regionTwo 不同的区域
-        regionOne.op(regionTwo,Region.Op.DIFFERENCE)
-        regionOne.op(regionTwo,Region.Op.INTERSECT)
-        regionOne.op(regionTwo,Region.Op.UNION)
-        regionOne.op(regionTwo,Region.Op.XOR)
-        regionOne.op(regionTwo,Region.Op.REVERSE_DIFFERENCE)
-        regionOne.op(regionTwo,Region.Op.REPLACE)
+//        regionOne.op(regionTwo,Region.Op.DIFFERENCE)
+//        regionOne.op(regionTwo,Region.Op.INTERSECT)
+//        regionOne.op(regionTwo,Region.Op.UNION)
+//        regionOne.op(regionTwo,Region.Op.XOR)
+//        regionOne.op(regionTwo,Region.Op.REVERSE_DIFFERENCE)
+//        regionOne.op(regionTwo,Region.Op.REPLACE)
 
         val regionIterator = RegionIterator(regionOne)
         val rect = Rect()
@@ -271,9 +271,9 @@ class CustomViewOne @JvmOverloads constructor(
         return super.onTouchEvent(event)
     }
 
-    private fun testOne(canvas: Canvas) {
+    private fun  testOne(canvas: Canvas) {
         val paint = Paint().apply {
-            style = Paint.Style.FILL_AND_STROKE
+            style = Paint.Style.STROKE
             strokeWidth = 3.0f  //PX
             color = 0xFFFFFF    //Color.RED  Color.parseColor("#ffffff")
             setARGB(255, 255, 255, 255) // 等同于setColor
@@ -281,9 +281,9 @@ class CustomViewOne @JvmOverloads constructor(
         }
 
         canvas.drawColor(Color.RED)
-        canvas.drawARGB(255, 255, 255, 255)
-        canvas.drawColor(0xFFFFFF)
-        canvas.drawRGB(255, 255, 255)
+//        canvas.drawARGB(255, 255, 255, 255)
+//        canvas.drawColor(0xFFFFFF)
+//        canvas.drawRGB(255, 255, 255)
 
 
         canvas.drawLine(100f, 100f, 200f, 200f, paint)  //(100,100) -> (200,200)

@@ -16,15 +16,12 @@ class MainActivity : AppCompatActivity() {
 
 
         binding.btnScrollTo.setOnClickListener {
-
             binding.scrollView.scroll(0,100)
         }
         binding.btnScrollBy.setOnClickListener {
             binding.llAction.scrollBy(10,0)
         }
         binding.btnReset.setOnClickListener {
-//            binding.llContent.scrollTo(0,0)
-
             binding.scrollView.scroll(100,-100)
 
         }

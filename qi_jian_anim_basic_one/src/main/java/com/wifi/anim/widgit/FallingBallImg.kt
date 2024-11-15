@@ -12,9 +12,6 @@ class FallingBallImg @JvmOverloads constructor(
     defInt: Int = 0
 ) :
     AppCompatImageView(context, attributeSet, defInt) {
-
-
-
     //提供set方法，入参Point即object
     fun setPoint(point: Point) {
         Log.d("lzy", "setPoint: " + point.toString())

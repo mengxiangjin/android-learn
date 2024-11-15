@@ -88,7 +88,6 @@ class HorizontalViewGroup @JvmOverloads constructor(context: Context,attributeSe
             MotionEvent.ACTION_MOVE -> {
                 val offsetX = event.x - lastTouchX
                 scrollBy(-offsetX.toInt(),0)
-
             }
             MotionEvent.ACTION_UP -> {
                 val distance = scrollX - currentShowChildIndex * getChildAt(0).width

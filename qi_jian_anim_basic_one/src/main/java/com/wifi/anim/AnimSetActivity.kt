@@ -28,13 +28,10 @@ class AnimSetActivity : AppCompatActivity() {
 //        playSetBuilder()
 //        testAnimSetListener()
 //        testAnimSetStartDelay()
-//        testExample()
-        testPropertyHolder()
+        testExample()
     }
 
-    private fun testPropertyHolder() {
 
-    }
 
     private fun testExample() {
         val radius = 400
@@ -92,8 +89,6 @@ class AnimSetActivity : AppCompatActivity() {
             animSet.duration = 1000
             animSet.start()
         }
-
-
     }
 
     private fun testAnimSetStartDelay() {

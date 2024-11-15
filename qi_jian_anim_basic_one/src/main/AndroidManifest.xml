@@ -18,8 +18,11 @@
             </intent-filter>
         </activity>
 
-        <activity android:name=".PropertyAnimActivity" android:exported="true"/>
+        <activity android:name=".ObjectAnimActivity" android:exported="true"/>
         <activity android:name=".AnimSetActivity"/>
+
+        <activity android:name=".PropertyValueAnimActivity"/>
+        <activity android:name=".GroupAnimActivity"/>
     </application>
 
 </manifest>

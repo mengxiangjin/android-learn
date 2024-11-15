@@ -39,7 +39,7 @@ class CustomViewTwo : View {
 //        testTwo(canvas)
 //        testThree(canvas)
 //        testFour(canvas)
-//        testFive(canvas)
+        testFive(canvas)
     }
 
 
@@ -65,7 +65,7 @@ class CustomViewTwo : View {
             }
             i++
         }
-        clipWidth += 5
+        clipWidth += 1
         canvas.clipPath(path)
         canvas.drawBitmap(bitmap,0f,0f,generatePaint(Paint.Style.FILL_AND_STROKE,Color.GREEN,2f))
         invalidate()
@@ -122,6 +122,7 @@ class CustomViewTwo : View {
         * */
         canvas.clipPath(path)
         canvas.drawColor(Color.GREEN)
+//        canvas.drawPoint(100f,100f,generatePaint(Paint.Style.FILL_AND_STROKE,Color.RED,12f))
     }
 
     private fun testOne(canvas: Canvas) {
@@ -139,8 +140,6 @@ class CustomViewTwo : View {
         canvas.rotate(90f,0f,0f)
         canvas.scale(0.8f,0.8f)
         canvas.drawRect(0f,0f,100f,100f,generatePaint)
-
-
     }
 
 

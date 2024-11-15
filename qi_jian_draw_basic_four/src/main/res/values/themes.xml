@@ -6,19 +6,4 @@
     </style>
 
     <style name="Theme.Learn" parent="Base.Theme.Learn" />
-
-
-
-    <style name="calculator_btn_grey">
-        <item name="android:textStyle">bold</item>
-        <item name="android:textSize">22sp</item>
-        <item name="android:textColor">#FF060606</item>
-        <item name="android:background">@drawable/ic_calculator_symbol_bg</item>
-        <item name="android:textAllCaps">false</item>
-        <item name="android:layout_width">0dp</item>
-        <item name="android:layout_height">52dp</item>
-        <item name="android:layout_weight">1</item>
-        <item name="android:onClick">squareRoot</item>
-        <item name="android:gravity">center</item>
-    </style>
 </resources>

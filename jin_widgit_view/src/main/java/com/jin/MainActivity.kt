@@ -1,9 +1,7 @@
 package com.jin
 
 import android.graphics.Color
-import android.os.AsyncTask
 import android.os.Bundle
-import android.util.Log
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -45,28 +43,6 @@ class MainActivity : AppCompatActivity() {
 
         binding.rvSix.adapter = HorizontalViewGroupAdapter(this,rvSixDatas)
         binding.rvSix.layoutManager = LinearLayoutManager(this,LinearLayoutManager.VERTICAL,false)
-
-
-//        binding.numberPicker.minValue = 10
-//        binding.numberPicker.maxValue = 90
-//        binding.numberPicker.value = 30
-
-        val nums = mutableListOf<String>()
-        var i = 10
-        while (i < 100) {
-            nums.add("${i}%")
-            i+=10
-        }
-        nums.add(nums.size / 2,"关闭")
-        binding.numberPicker.value = nums.size / 2
-        binding.numberPicker.displayedValues = nums.toTypedArray()
-        binding.numberPicker.maxValue = nums.size
-        binding.numberPicker.minValue = 1
-
-        binding.numberPicker.setOnValueChangedListener { picker, oldVal, newVal ->
-            Log.d("TAG", "onCreate:oldVal " + oldVal)
-            Log.d("TAG", "onCreate:newVal " + newVal)
-        }
 
     }
 

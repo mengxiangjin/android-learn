@@ -13,9 +13,6 @@ class AutoUpdateTextView @JvmOverloads constructor(
     defInt: Int = 0
 ) :
     AppCompatTextView(context, attributeSet, defInt) {
-
-
-
     //提供set方法，入参Point即object
     fun setTextChar(char: Int) {
         Log.d("lzy", "setTextChar: " + char)

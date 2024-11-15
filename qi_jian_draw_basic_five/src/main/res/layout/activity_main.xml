@@ -6,8 +6,26 @@
     android:layout_height="match_parent"
     tools:context=".MainActivity">
 
-    <com.jin.draw.widgit.CanvasView
+    <com.jin.draw.widigit.CustomSurfaceView
         android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+        android:layout_height="match_parent"
+        android:visibility="gone"
+        />
+
+    <com.jin.draw.widigit.BufferSurfaceView
+        android:id="@+id/surface_buffer"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:visibility="gone"
+        />
+
+    <com.jin.draw.widigit.BufferSurfaceLockRectView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        />
+
+
+
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>

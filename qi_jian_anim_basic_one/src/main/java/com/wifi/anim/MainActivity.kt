@@ -1,6 +1,5 @@
 package com.wifi.anim
 
-import android.animation.ObjectAnimator
 import android.animation.TypeEvaluator
 import android.animation.ValueAnimator
 import android.content.Intent
@@ -38,14 +37,19 @@ class MainActivity : AppCompatActivity() {
         }
 
         binding.btnPropertyAnim.setOnClickListener {
-            startActivity(Intent(this@MainActivity,PropertyAnimActivity::class.java))
+            startActivity(Intent(this@MainActivity,ObjectAnimActivity::class.java))
         }
+
         binding.btnAnimSet.setOnClickListener {
             startActivity(Intent(this@MainActivity,AnimSetActivity::class.java))
         }
 
-        binding.btnPropertyHolder.setOnClickListener {
-//            startActivity(Intent(this@MainActivity,PropertyHolderActivity::class.java))
+        binding.btnPropertyValueAnim.setOnClickListener {
+            startActivity(Intent(this@MainActivity,PropertyValueAnimActivity::class.java))
+        }
+
+        binding.btnGroupAnim.setOnClickListener {
+            startActivity(Intent(this@MainActivity,GroupAnimActivity::class.java))
         }
 
         ofObjectIntroduce()
@@ -62,7 +66,7 @@ class MainActivity : AppCompatActivity() {
         }
         valueAnim.duration = 3000
         valueAnim.repeatMode = ValueAnimator.RESTART
-        valueAnim.repeatCount = ValueAnimator.INFINITE
+//        valueAnim.repeatCount = ValueAnimator.INFINITE
         valueAnim.interpolator = LinearInterpolator()
         valueAnim.start()
     }
@@ -121,7 +125,6 @@ class MainActivity : AppCompatActivity() {
         valueAnim.start()
     }
 
-
     private fun startColorAnim() {
         val anim = ValueAnimator.ofObject(object : TypeEvaluator<Char> {
             override fun evaluate(fraction: Float, startValue: Char, endValue: Char): Char {
@@ -137,8 +140,7 @@ class MainActivity : AppCompatActivity() {
         anim.start()
     }
 
-
-    private fun starScaleAnim() {
+    private fun startScaleAnim() {
         val scaleAnimation = ScaleAnimation(
             0f,
             1.4f,
@@ -157,8 +159,7 @@ class MainActivity : AppCompatActivity() {
         binding.imgDisplay.startAnimation(scaleAnimation)
     }
 
-
-    private fun starAlphaAnim() {
+    private fun startAlphaAnim() {
         /*
         * fromAlpha,toAlpha
         * */
@@ -171,8 +172,7 @@ class MainActivity : AppCompatActivity() {
         binding.imgDisplay.startAnimation(alphaAnimation)
     }
 
-
-    private fun starRotateAnim() {
+    private fun startRotateAnim() {
         /*
         * 旋转中心点
         * */
@@ -185,7 +185,7 @@ class MainActivity : AppCompatActivity() {
         binding.imgDisplay.startAnimation(rotateAnimation)
     }
 
-    private fun starTranslateAnim() {
+    private fun startTranslateAnim() {
         val transAnimation = TranslateAnimation(Animation.RELATIVE_TO_SELF,0.5f,Animation.RELATIVE_TO_SELF,1f,Animation.RELATIVE_TO_SELF,0.5f,Animation.RELATIVE_TO_SELF,1f)
         transAnimation.duration = 700
         transAnimation.fillAfter = true
@@ -195,7 +195,7 @@ class MainActivity : AppCompatActivity() {
         binding.imgDisplay.startAnimation(transAnimation)
     }
 
-    private fun starSetAnim() {
+    private fun startSetAnim() {
         val transAnimation = TranslateAnimation(Animation.RELATIVE_TO_SELF,0.5f,Animation.RELATIVE_TO_SELF,1f,Animation.RELATIVE_TO_SELF,0.5f,Animation.RELATIVE_TO_SELF,1f)
         val rotateAnimation = RotateAnimation(0f,45f,Animation.RELATIVE_TO_SELF,0.5f,Animation.RELATIVE_TO_SELF,0.5f)
         val alphaAnimation = AlphaAnimation(0f,1f)

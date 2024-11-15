@@ -31,17 +31,9 @@
         android:layout_height="wrap_content"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        android:text="属性动画"/>
+        android:text="组合动画"/>
 
 
-    <Button
-        android:id="@+id/btn_property_holder"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:visibility="invisible"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/btn_scale_one"
-        android:text="PropertyHolder"/>
 
 
     <ImageView
@@ -63,6 +55,23 @@
         app:layout_constraintStart_toEndOf="@id/btn_property_anim"
         app:layout_constraintTop_toTopOf="parent"
         android:text="A"/>
+
+
+    <Button
+        android:id="@+id/btn_property_value_anim"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/btn_char"
+        android:text="property_anim"/>
+
+    <Button
+        android:id="@+id/btn_group_anim"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintStart_toEndOf="@id/btn_property_anim"
+        app:layout_constraintTop_toTopOf="@id/btn_property_value_anim"
+        android:text="group_anim"/>
 
 
 

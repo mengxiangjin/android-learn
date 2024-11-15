@@ -16,10 +16,8 @@ class LoadingImageView @JvmOverloads constructor(
 ) :
     AppCompatImageView(context, attributeSet, def) {
 
-
     private var srcTop = 0
     private var currentIndex = 0
-
 
     init {
         val anim = ValueAnimator.ofInt(0, 100, 0)
@@ -62,11 +60,8 @@ class LoadingImageView @JvmOverloads constructor(
         anim.start()
     }
 
-
     override fun onLayout(changed: Boolean, left: Int, top: Int, right: Int, bottom: Int) {
         super.onLayout(changed, left, top, right, bottom)
         srcTop = top
     }
-
-
 }

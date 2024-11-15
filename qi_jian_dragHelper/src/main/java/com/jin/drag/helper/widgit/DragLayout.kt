@@ -64,6 +64,16 @@ class DragLayout @JvmOverloads constructor(
                 }
                 super.onViewReleased(releasedChild, xvel, yvel)
             }
+
+            override fun onViewPositionChanged(
+                changedView: View,
+                left: Int,
+                top: Int,
+                dx: Int,
+                dy: Int
+            ) {
+                super.onViewPositionChanged(changedView, left, top, dx, dy)
+            }
         })
 
         dragHelper.setEdgeTrackingEnabled(ViewDragHelper.EDGE_LEFT or ViewDragHelper.EDGE_TOP)

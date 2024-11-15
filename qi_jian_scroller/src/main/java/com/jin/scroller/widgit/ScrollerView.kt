@@ -2,7 +2,6 @@ package com.jin.scroller.widgit
 
 import android.content.Context
 import android.util.AttributeSet
-import android.util.Log
 import android.view.animation.LinearInterpolator
 import android.widget.LinearLayout
 import android.widget.Scroller
@@ -33,6 +32,5 @@ class ScrollerView @JvmOverloads constructor(
         scrollerView!!.startScroll(startX, 0, dx, 0, 3000)
         invalidate()
     }
-
 
 }
