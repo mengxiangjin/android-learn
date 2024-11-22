@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<paths>
+
+    <external-files-path
+        name="aaa"
+        path="."/>
+
+    <external-cache-path
+        name="eee"
+        path="."/>
+
+    <files-path
+        name="bbb"
+        path="."/>
+
+    <cache-path
+        name="ccc"
+        path="."/>
+
+    <external-path
+        name="ccc"
+        path="Music"/>
+
+    <external-path
+        name="pdf"
+        path="Download"/>
+
+    <external-path
+        name="picture"
+        path="DCIM"/>
+
+</paths>

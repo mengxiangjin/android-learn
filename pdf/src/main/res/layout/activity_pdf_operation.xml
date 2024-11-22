@@ -1,0 +1,179 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".MainActivity">
+
+    <ImageView
+        android:id="@+id/back"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/ic_back"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="36dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+
+    <View
+        android:id="@+id/back_view"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        app:layout_constraintStart_toStartOf="@id/back"
+        app:layout_constraintEnd_toEndOf="@id/back"
+        app:layout_constraintTop_toTopOf="@id/back"
+        app:layout_constraintBottom_toBottomOf="@id/back"/>
+
+    <TextView
+        android:id="@+id/tv_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="16sp"
+        android:textColor="#FF333333"
+        android:text="选择要转换的页面"
+        android:textStyle="bold"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="@id/back_view"
+        app:layout_constraintBottom_toBottomOf="@id/back_view"/>
+
+    <TextView
+        android:id="@+id/tv_select_all"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="16sp"
+        android:textColor="#FF666666"
+        android:text="全选"
+        android:textStyle="bold"
+        android:layout_marginEnd="15dp"
+        android:drawablePadding="6dp"
+        android:drawableStart="@drawable/selector_circle"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="@id/back_view"
+        app:layout_constraintBottom_toBottomOf="@id/back_view"/>
+
+    <TextView
+        android:id="@+id/tv_adjust"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="16sp"
+        android:textColor="#FF3191FF"
+        android:text="调整顺序"
+        android:visibility="gone"
+        tools:visibility="visible"
+        android:textStyle="bold"
+        android:layout_marginEnd="15dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="@id/back_view"
+        app:layout_constraintBottom_toBottomOf="@id/back_view"/>
+    
+    
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_marginTop="24dp"
+        android:paddingHorizontal="16dp"
+        android:orientation="vertical"
+        app:layout_constraintTop_toBottomOf="@id/back_view"
+        app:layout_constraintBottom_toBottomOf="parent">
+
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/cl_overview"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <TextView
+                android:id="@+id/tv_select_counts"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="14sp"
+                android:textColor="#FF333333"
+                tools:text="已选40页"
+                android:textStyle="bold"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                />
+
+            <TextView
+                android:id="@+id/tv_total_counts"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                tools:text="共40页"
+                android:layout_marginStart="8dp"
+                app:layout_constraintStart_toEndOf="@id/tv_select_counts"
+                app:layout_constraintTop_toTopOf="@id/tv_select_counts"
+                app:layout_constraintBottom_toBottomOf="@id/tv_select_counts"
+                android:textColor="#ffb4b4b6"
+                android:textSize="12sp"
+                />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="长按拖拽可调整顺序"
+                android:textColor="#ffb4b4b6"
+                android:textSize="12sp"
+                android:layout_marginEnd="15dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="@id/tv_select_counts"
+                app:layout_constraintBottom_toBottomOf="@id/tv_select_counts"
+                />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+        <androidx.core.widget.NestedScrollView
+            android:id="@+id/scroll_view"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:fillViewport="true"
+            android:visibility="gone"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toTopOf="@id/tv_confirm">
+
+            <LinearLayout
+                android:id="@+id/ll_preview"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="#f6f6f6"
+                android:orientation="vertical"/>
+
+
+
+        </androidx.core.widget.NestedScrollView>
+
+
+
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/rv_pdf_item"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_marginHorizontal="10dp"
+            android:layout_marginBottom="20dp"
+            android:layout_marginTop="8dp"
+            app:layout_constraintTop_toBottomOf="@id/cl_overview"
+            app:layout_constraintBottom_toTopOf="@id/tv_confirm"/>
+
+        <TextView
+            android:id="@+id/tv_confirm"
+            android:layout_width="match_parent"
+            android:layout_height="46dp"
+            android:layout_marginHorizontal="23dp"
+            tools:text="已选中40/99页"
+            android:textColor="@color/white"
+            android:layout_marginBottom="20dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            android:background="@drawable/shape_pdf_btn_selected"
+            android:gravity="center"/>
+
+
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

@@ -24,7 +24,6 @@ class BitmapCropView@JvmOverloads constructor(
 
         private var circleRadius = 8f
 
-
     private var controlPointF = mutableListOf<CropPoint>()
 
     private var cropRectF = RectF()
@@ -192,6 +191,10 @@ class BitmapCropView@JvmOverloads constructor(
         path.close()
     }
 
+    /*
+    * 获取按下的触摸点
+    * null:无效触摸
+    * */
     private fun getDownCropPoint(x: Float,y: Float): CropPoint? {
         controlPointF.forEachIndexed { index, cropPoint ->
             val distance = sqrt((cropPoint.x - x) * (cropPoint.x - x) + (cropPoint.y - y) * (cropPoint.y - y))
