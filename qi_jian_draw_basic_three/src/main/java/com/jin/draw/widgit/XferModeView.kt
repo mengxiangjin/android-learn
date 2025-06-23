@@ -148,7 +148,7 @@ class XferModeView @JvmOverloads constructor(
         paint.strokeWidth = 30f
 
         //绘制奖励图片（最底层）放开即为刮刮乐效果
-//        canvas.drawBitmap(bonusBitmap!!,bouncedMatrix,paint)
+        canvas.drawBitmap(bonusBitmap!!,bouncedMatrix,paint)
         val saveLayerID = canvas.saveLayer(0f, 0f, width.toFloat(), height.toFloat(), paint)
 
         val bitmapCanvas = Canvas(eraserDstBitmap!!)

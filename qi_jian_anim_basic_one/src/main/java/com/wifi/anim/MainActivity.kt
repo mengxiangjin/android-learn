@@ -2,10 +2,13 @@ package com.wifi.anim
 
 import android.animation.TypeEvaluator
 import android.animation.ValueAnimator
+import android.annotation.SuppressLint
 import android.content.Intent
+import android.graphics.Matrix
 import android.graphics.Point
 import android.os.Bundle
 import android.util.Log
+import android.view.MotionEvent
 import android.view.animation.AlphaAnimation
 import android.view.animation.Animation
 import android.view.animation.AnimationSet
@@ -15,13 +18,16 @@ import android.view.animation.LinearInterpolator
 import android.view.animation.RotateAnimation
 import android.view.animation.ScaleAnimation
 import android.view.animation.TranslateAnimation
+import android.widget.ImageView
 import androidx.appcompat.app.AppCompatActivity
 import com.wifi.anim.databinding.ActivityMainBinding
+import com.wifi.anim.widgit.ScaleImageView
 
 class MainActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityMainBinding
 
+    @SuppressLint("ClickableViewAccessibility")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
@@ -48,11 +54,104 @@ class MainActivity : AppCompatActivity() {
             startActivity(Intent(this@MainActivity,PropertyValueAnimActivity::class.java))
         }
 
+        var i = 0
         binding.btnGroupAnim.setOnClickListener {
-            startActivity(Intent(this@MainActivity,GroupAnimActivity::class.java))
+//            startActivity(Intent(this@MainActivity,GroupAnimActivity::class.java))
+
+            val scaleView = ScaleImageView(this@MainActivity)
+            val index = i % 3
+            scaleView.setResourceID(resources.getIdentifier("ic_book_${index}", "drawable", this@MainActivity.packageName))
+            i++
+            binding.flContainer.addView(scaleView)
         }
 
-        ofObjectIntroduce()
+//        ofObjectIntroduce()
+
+
+        var lastX = 0f
+        var lastY = 0f
+        binding.scene.setOnTouchListener { v, event ->
+            when(event.action){
+                MotionEvent.ACTION_DOWN -> {
+                    // 记录触摸开始时的坐标偏移
+                    lastX = event.x
+                    lastY = event.y
+                    Log.d("TAG", "onCreate:down ")
+                }
+                MotionEvent.ACTION_MOVE -> {
+                    // 计算新位置并更新视图的布局
+                    val newX = event.x - lastX
+                    val newY = event.y - lastY
+                    v.layout(v.left + newX.toInt(),v.top + newY.toInt(),v.right + newX.toInt(),newY.toInt() + v.bottom)
+                    binding.close.layout(binding.close.left + newX.toInt(),binding.close.top + newY.toInt(),binding.close.right + newX.toInt(),newY.toInt() +binding.close.bottom)
+                    binding.scale.layout(binding.scale.left + newX.toInt(),binding.scale.top + newY.toInt(),binding.scale.right + newX.toInt(),newY.toInt() + binding.scale.bottom)
+                    binding.bgView.layout(binding.bgView.left + newX.toInt(),binding.bgView.top + newY.toInt(),binding.bgView.right + newX.toInt(),newY.toInt() + binding.bgView.bottom)
+                    Log.d("TAG", "onCreate:move ")
+                }
+                MotionEvent.ACTION_UP -> {
+                    Log.d("TAG", "onCreate:up ")
+                }
+            }
+            true
+        }
+
+        var downX = 0f
+        var downY = 0f
+        var imgMatrix = Matrix()
+
+        binding.scene.scaleType = ImageView.ScaleType.MATRIX
+
+
+
+        var srcWidth = 0
+        var srcHeight = 0
+        binding.scene.post {
+            srcWidth = binding.scene.width
+            srcHeight = binding.scene.height
+
+            val layoutParams1 = binding.scene.layoutParams
+
+            Log.d("TAG", "onCreate:srcWidth " + srcWidth)
+            Log.d("TAG", "onCreate:srcHight " + srcHeight)
+        }
+
+
+
+
+        binding.scale.setOnTouchListener { v, event ->
+            when(event.action){
+                MotionEvent.ACTION_DOWN -> {
+                    // 记录触摸开始时的坐标偏移
+                    downX = event.x
+                    downY = event.y
+                    Log.d("TAG", "onCreate:down ")
+                }
+                MotionEvent.ACTION_MOVE -> {
+                    val newX = event.x - downX
+                    val newY = event.y - downY
+                    Log.d("TAG", "onCreate:ACTION_MOVE newX " + newX / downX)
+                    Log.d("TAG", "onCreate:ACTION_MOVE newY " + newY / downY)
+                    v.layout(v.left + newX.toInt(),v.top + newY.toInt(),v.right + newX.toInt(),newY.toInt() + v.bottom)
+                    binding.bgView.layout(binding.bgView.left + newX.toInt(),binding.bgView.top + newY.toInt(),binding.bgView.right + newX.toInt(),newY.toInt() + binding.bgView.bottom)
+                    binding.close.layout(binding.close.left + newX.toInt(),binding.close.top + newY.toInt(),binding.close.right + newX.toInt(),newY.toInt() +binding.close.bottom)
+                    binding.scene.layout(binding.scene.left + newX.toInt(),binding.scene.top + newY.toInt(),binding.scene.right + newX.toInt(),newY.toInt() + binding.scene.bottom)
+
+
+                    val layoutParams = binding.scene.layoutParams
+                    layoutParams.width = (srcWidth * 1.5).toInt()
+                    layoutParams.height = (srcHeight * 1.5).toInt()
+                    binding.scene.layoutParams = layoutParams
+
+                    imgMatrix.reset()
+                    imgMatrix.setScale(1.5f,1.5f)
+                    binding.scene.imageMatrix = imgMatrix
+                }
+                MotionEvent.ACTION_UP -> {
+                }
+            }
+            true
+        }
+
     }
 
     private fun startPropertyAnim() {
