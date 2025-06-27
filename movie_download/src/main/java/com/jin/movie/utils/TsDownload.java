@@ -41,7 +41,6 @@ public class TsDownload implements Runnable {
         URL url = null;
         try {
             url = new URL(this.downloadUrl);
-//            System.out.println(Thread.currentThread().getName() + " 正在下载 " + this.filename + " 总片段 " +  playBackItem.getTsFileTotalCounts() + " ---> " + playBackItem.getVideoTitle());
             URLConnection conn = url.openConnection();
             conn.setRequestProperty("Referer","http://MAfAIOo0E8EMOWPA.black");
 

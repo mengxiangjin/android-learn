@@ -8,10 +8,7 @@ import android.os.Build
 import android.os.Bundle
 import android.os.Environment
 import android.provider.Settings
-import android.util.Log
 import android.view.View
-import android.widget.Toast
-import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import com.google.gson.Gson
 import com.jin.movie.bean.PlayBackItem
@@ -28,11 +25,14 @@ import okhttp3.Request
 import java.io.File
 import java.io.IOException
 import java.io.RandomAccessFile
+import java.net.HttpURLConnection
+import java.net.MalformedURLException
 import java.net.URL
 import java.nio.file.FileVisitResult
 import java.nio.file.Files
 import java.nio.file.Path
 import java.nio.file.SimpleFileVisitor
+import java.nio.file.StandardCopyOption
 import java.nio.file.attribute.BasicFileAttributes
 import java.util.concurrent.Executors
 import java.util.concurrent.TimeUnit
@@ -52,7 +52,9 @@ class MainActivity : AppCompatActivity() {
     private var anchorUserId = ""
     private var currentRespPlayBack: RespPlayBack? = null
 
-    val m3u8Url = "http://video.playback.tencent.taolu2.cn/live/20250611/11749573351717210449/1825693369320470570-56_eof.m3u8"
+
+    private var responseHeaders = ""
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -172,9 +174,8 @@ class MainActivity : AppCompatActivity() {
             try {
                 if (playBackItem.videoUrl.endsWith("mp4")) {
                     showToast(playBackItem.videoTitle + " mp4文件 ")
-//                    String path = getDownloadTsPath(playBackItem).replaceAll("\\\\", "/");
-//                    downVideo(playBackItem.getVideoUrl(),path + playBackItem.getVideoTitle() + ".mp4");
-//                    moveAndDelDirFromTask(playBackItem);
+                    downloadVide(playBackItem)
+                    moveAndDelDirFromTask(playBackItem);
                     return@forEach
                 }
 
@@ -233,6 +234,66 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    private fun moveAndDelDirFromTask(playBackItem: PlayBackItem) {
+        val mp4File = File(Utils.getPathForMP4File(playBackItem))
+        if (!mp4File.exists() || mp4File.parentFile == null) return
+        Files.move(mp4File.toPath(),mp4File.parentFile!!.toPath(), StandardCopyOption.REPLACE_EXISTING)
+
+        val dirFile = File(Utils.getPathForMovieName(playBackItem))
+        dirFile.deleteRecursively()
+    }
+
+
+    private fun downloadVide(playBackItem: PlayBackItem) {
+        try {
+            val url = URL(playBackItem.videoUrl);
+            val connection = url.openConnection() as HttpURLConnection
+            connection.setRequestProperty("Range", "bytes=0-")
+            connection.setRequestProperty("Referer","http://MAfAIOo0E8EMOWPA.black")
+            connection.connect()
+            if (connection.getResponseCode() / 100 != 2) {
+                showToast("连接失败...:" + playBackItem.videoUrl + " " + playBackItem.videoTitle)
+                return
+            }
+            val inputStream = connection.inputStream;
+            var downloaded = 0L
+            val fileSize = connection.contentLength
+            val randomAccessFile = RandomAccessFile(Utils.getPathForMP4File(playBackItem), "rw");
+            while (downloaded < fileSize) {
+                val buffer = if (fileSize - downloaded >= 1000000) {
+                    ByteArray(1000000)
+                } else {
+                    ByteArray((fileSize - downloaded).toInt())
+                }
+                var read = -1
+                var currentDownload = 0
+                val startTime = System.currentTimeMillis()
+                while (currentDownload < buffer.size) {
+                    read = inputStream.read();
+                    buffer[currentDownload++] = read.toByte()
+                }
+                val endTime = System.currentTimeMillis()
+                var speed = 0.0
+                if (endTime - startTime > 0) {
+                    speed = currentDownload / 1024.0 / ((endTime - startTime) / 1000)
+                }
+                randomAccessFile.write(buffer)
+                downloaded += currentDownload
+                randomAccessFile.seek(downloaded)
+                System.out.printf(playBackItem.videoTitle+"下载了进度:%.2f%%,下载速度：%.1fkb/s(%.1fM/s)%n", downloaded * 1.0 / fileSize * 10000 / 100,
+                    speed, speed / 1000)
+                val progress = String.format("%.2f",downloaded * 1.0 / fileSize * 10000 / 100)
+                val msg = "${playBackItem.videoTitle}下载了进度:${progress}%,下载速度：${String.format("%.1f",speed)}kb/s(${String.format("%.1f",speed / 1000)}M/s%n"
+                showToast(msg)
+            }
+        } catch (e: MalformedURLException) {
+            e.printStackTrace()
+            showToast(e.toString())
+        } catch (e: IOException) {
+            e.printStackTrace()
+            showToast(e.toString())
+        }
+    }
     private fun downloadM3U8File(playBackItem: PlayBackItem):Boolean {
         try {
             val url = URL(playBackItem.videoUrl)
@@ -272,7 +333,7 @@ class MainActivity : AppCompatActivity() {
                 serialNumber++
                 val tsBean = TSBean()
                 tsBean.serialNumber = serialNumber
-                tsBean.downloadURl = getTSBeanDownloadPrefix() + content
+                tsBean.downloadURl = Utils.getTSBeanDownloadPrefix(playBackItem) + content
                 result.add(tsBean)
             }
             content = randomAccessFile.readLine()
@@ -291,13 +352,6 @@ class MainActivity : AppCompatActivity() {
         }
         randomAccessFile.close()
     }
-
-    private fun getTSBeanDownloadPrefix(): String {
-        val targetIndex = m3u8Url.lastIndexOf("/") + 1
-        return m3u8Url.substring(0,targetIndex)
-    }
-
-
 
     private fun setActivityBarStyle(activity: AppCompatActivity) {
         val decorView = activity.window.decorView

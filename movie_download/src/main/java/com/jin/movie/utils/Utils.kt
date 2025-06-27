@@ -32,7 +32,14 @@ object Utils {
         return getPathForMovieName(playBackItem) + File.separator + "ffmpeg.txt"
     }
 
+    fun getPathForMP4File(playBackItem: PlayBackItem): String {
+        return getPathForMovieName(playBackItem) + File.separator + playBackItem.videoTitle + ".mp4"
+    }
 
+    fun getTSBeanDownloadPrefix(playBackItem: PlayBackItem): String {
+        val targetIndex = playBackItem.videoUrl.lastIndexOf("/") + 1
+        return playBackItem.videoUrl.substring(0,targetIndex)
+    }
 
 
 }
