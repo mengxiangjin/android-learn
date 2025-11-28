@@ -5,12 +5,12 @@ plugins {
 
 android {
     namespace 'com.jin.movie'
-    compileSdk 33
+    compileSdk 35
 
     defaultConfig {
         applicationId "com.jin.movie"
-        minSdk 26
-        targetSdk 33
+        minSdk 21
+        targetSdk 35
         versionCode 1
         versionName "1.0"
 
@@ -38,6 +38,7 @@ android {
 
 dependencies {
 
+
     implementation 'androidx.core:core-ktx:1.9.0'
     implementation 'androidx.appcompat:appcompat:1.6.1'
     implementation 'com.google.android.material:material:1.9.0'
@@ -50,11 +51,25 @@ dependencies {
 //    implementation 'com.mrljdx:ffmpegkit-kmp-android:0.1.0'
 
 
-    //OkHttp
-    implementation 'com.squareup.okhttp3:okhttp:4.9.1'
-    implementation 'com.squareup.okhttp3:logging-interceptor:4.9.1'
-    implementation 'com.squareup.okio:okio:1.17.4'
 
     implementation 'com.google.code.gson:gson:2.2.4'
+    implementation 'com.github.bumptech.glide:glide:4.15.1' // 用于加载封面图
 
+    // 1. 下拉刷新/上拉加载核心库
+    implementation 'io.github.scwang90:refresh-layout-kernel:2.1.0'
+    implementation 'io.github.scwang90:refresh-header-classics:2.1.0'
+    implementation 'io.github.scwang90:refresh-footer-classics:2.1.0'
+
+    // OkHttp 核心库
+    implementation 'com.squareup.okhttp3:okhttp:4.12.0'
+    // 官方日志拦截器 (调试神器)
+    implementation 'com.squareup.okhttp3:logging-interceptor:4.12.0'
+    // GSON (处理 JSON)
+    implementation 'com.google.code.gson:gson:2.10.1'
+
+    implementation 'org.jsoup:jsoup:1.17.2'
+    // GSYVideoPlayer 核心库
+    implementation 'io.github.carguo:gsyvideoplayer:11.2.0'
+    // 【新增】ExoPlayer2 内核 (对 m3u8 支持最好)
+    implementation 'io.github.carguo:gsyvideoplayer-exo2:11.2.0'
 }

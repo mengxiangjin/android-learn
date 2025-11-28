@@ -1,394 +1,419 @@
 package com.jin.movie
 
-import android.Manifest
 import android.content.Intent
-import android.content.pm.PackageManager
-import android.graphics.Color
-import android.os.Build
 import android.os.Bundle
-import android.os.Environment
-import android.provider.Settings
+import android.util.Log
+import android.view.Gravity
 import android.view.View
+import android.widget.EditText
+import android.widget.TextView
+import android.widget.Toast
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
-import com.google.gson.Gson
-import com.jin.movie.bean.PlayBackItem
-import com.jin.movie.bean.RespPlayBack
-import com.jin.movie.bean.TSBean
-import com.jin.movie.databinding.ActivityMainBinding
-import com.jin.movie.utils.TsDownload
-import com.jin.movie.utils.TsDownload.DownloadCallback
-import com.jin.movie.utils.Utils
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.launch
-import okhttp3.OkHttpClient
-import okhttp3.Request
-import java.io.File
-import java.io.IOException
-import java.io.RandomAccessFile
-import java.net.HttpURLConnection
-import java.net.MalformedURLException
-import java.net.URL
-import java.nio.file.FileVisitResult
-import java.nio.file.Files
-import java.nio.file.Path
-import java.nio.file.SimpleFileVisitor
-import java.nio.file.StandardCopyOption
-import java.nio.file.attribute.BasicFileAttributes
-import java.util.concurrent.Executors
-import java.util.concurrent.TimeUnit
-import java.util.regex.Pattern
-
+import androidx.recyclerview.widget.GridLayoutManager
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
+import com.jin.movie.activity.PlayerActivity
+import com.jin.movie.activity.SearchActivity
+import com.jin.movie.adapter.BigCategoryAdapter
+import com.jin.movie.adapter.SortAdapter
+import com.jin.movie.adapter.SubCategoryAdapter
+import com.jin.movie.adapter.VideoAdapter
+import com.jin.movie.bean.BigCategory
+import com.jin.movie.utils.HtmlParseHelper
+import com.jin.movie.utils.NetManager
+import com.jin.movie.utils.UIUtils
+import com.scwang.smart.refresh.layout.SmartRefreshLayout
+import com.shuyu.gsyvideoplayer.cache.CacheFactory
+import com.shuyu.gsyvideoplayer.player.PlayerFactory
+import tv.danmaku.ijk.media.exo2.Exo2PlayerManager
+import tv.danmaku.ijk.media.exo2.ExoPlayerCacheManager
 
 class MainActivity : AppCompatActivity() {
 
-    private lateinit var binding: ActivityMainBinding
+    // --- UI 控件 ---
+    private lateinit var refreshLayout: SmartRefreshLayout
+    private lateinit var rvVideoList: RecyclerView
+    private lateinit var rvBigCat: RecyclerView
+    private lateinit var tvPageIndicator: TextView
+    private lateinit var rvSubCat: RecyclerView
+    private lateinit var ivSearch: View
+    private lateinit var rvSortTags: RecyclerView // 新增控件
 
-    private lateinit var okHttpClient: OkHttpClient
-    private lateinit var movieRootFile: File
+    // 这个变量用来暂存所有的大分类数据，方便切换时查找
+    private var allBigCategories: List<BigCategory> = emptyList()
 
-    private var msgStringBuilder = StringBuilder()
+    // --- 适配器 ---
+    private lateinit var bigCategoryAdapter: BigCategoryAdapter
+    private lateinit var subCategoryAdapter: SubCategoryAdapter
+    private lateinit var sortAdapter: SortAdapter
 
-    private var currentPages = 1
-    private var anchorUserId = ""
-    private var currentRespPlayBack: RespPlayBack? = null
+    private lateinit var videoAdapter: VideoAdapter
 
-
-    private var responseHeaders = ""
-
+    // --- 数据状态 ---
+    private var currentPage = 1
+    private var totalPage = 1
+    // 默认首页 URL (后续根据分类点击变化)
+    // 假设 ID=1 是默认分类
+    private var currentCategoryId = "1"
+    private val BASE_URL = "https://www.zimuquan23.uk"
+    // 【新增】当前排序参数 (空字符串代表默认/最新，或者 "time", "hits", "up")
+    private var currentSortType = "time"
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setActivityBarStyle(this)
-        binding = ActivityMainBinding.inflate(layoutInflater)
-        setContentView(binding.root)
+        PlayerFactory.setPlayManager(Exo2PlayerManager::class.java)
+        // 2. 【新增】切换缓存模式为 ExoPlayer 专用模式
+        // 这个模式对 m3u8 的分片缓存支持更好，拖动过的位置再次拖回去不会卡
+        CacheFactory.setCacheManager(ExoPlayerCacheManager::class.java)
 
-        initDatas()
+        setContentView(R.layout.activity_main)
+        UIUtils.setActivityBarStyle(this)
 
-        binding.btnDownload.setOnClickListener {
-            //下载m3u8文件到本地
-            if (checkSelfPermission(Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED
-                || checkSelfPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
-                requestPermissions(arrayOf(Manifest.permission.READ_EXTERNAL_STORAGE,Manifest.permission.WRITE_EXTERNAL_STORAGE),100)
-                return@setOnClickListener
-            }
-            if (Build.VERSION.SDK_INT >= 30 && !Environment.isExternalStorageManager()) {
-                val intent = Intent(Settings.ACTION_MANAGE_ALL_FILES_ACCESS_PERMISSION)
-                startActivity(intent)
-                return@setOnClickListener
-            }
-            if (!movieRootFile.exists()) {
-                movieRootFile.mkdir()
-            }
-            anchorUserId = binding.etId.text.toString()
+        initViews()
+        initAdapters()
+        // 首次进入自动刷新，请求数据
+        refreshLayout.autoRefresh()
+    }
 
-            GlobalScope.launch {
-                startGetDatasFromServer()
+    private fun initViews() {
+        refreshLayout = findViewById(R.id.refreshLayout)
+        rvVideoList = findViewById(R.id.rv_video_list)
+        rvBigCat = findViewById(R.id.rv_big_categories)
+        tvPageIndicator = findViewById(R.id.tv_page_indicator)
+        rvSubCat = findViewById(R.id.rv_sub_categories)
+        ivSearch = findViewById(R.id.iv_search)
+        rvSortTags = findViewById(R.id.rv_sort_tags)
+
+
+        ivSearch.setOnClickListener {
+            val intent = Intent(this, SearchActivity::class.java)
+            startActivity(intent)
+        }
+
+        // 1. 设置下拉刷新 & 上拉加载
+        refreshLayout.setOnRefreshListener {
+            if (currentPage > 1) {
+                // 如果当前不是第一页，页码减 1 (获取上一页)
+                currentPage--
+            } else {
+                // 如果已经是第一页，保持为 1 (刷新首页)
+                currentPage = 1
+            }
+
+            // 发起请求
+            // isRefresh = true 表示会调用 setNewData() 覆盖旧数据
+            // 这样页面内容就会变成上一页的数据
+
+            // 【重要】既然可能是往回翻，说明后面肯定还有数据
+            // 所以我们要重置“没有更多数据”的状态，否则上拉加载可能会失效
+            refreshLayout.resetNoMoreData()
+
+            fetchData(isRefresh = true)
+
+        }
+        refreshLayout.setOnLoadMoreListener {
+            if (currentPage < totalPage) {
+                currentPage++
+                fetchData(isRefresh = false)
+            } else {
+                refreshLayout.finishLoadMoreWithNoMoreData()
             }
         }
 
-
+        // 2. 页码点击跳转
+        tvPageIndicator.setOnClickListener {
+            showJumpDialog()
+        }
     }
 
-    private fun initDatas() {
-        okHttpClient = OkHttpClient()
-        movieRootFile = Utils.getRootFile()
-        TsDownload.setDownloadCallback(object : DownloadCallback {
+    private fun initAdapters() {
+        // --- 视频列表 (网格布局，一行2个) ---
+        videoAdapter = VideoAdapter(mutableListOf()) { video ->
+            // 点击视频回调
+            // 点击跳转播放
+            val playUrl = video.movieUrl // 自动推算的 .m3u8 链接
+
+            PlayerActivity.start(
+                context = this,
+                url = playUrl,
+                title = video.title,
+                coverUrl = video.coverUrl
+            )
+        }
+        rvVideoList.layoutManager = GridLayoutManager(this, 2)
+        rvVideoList.adapter = videoAdapter
+
+        // --- 大分类列表 ---
+        bigCategoryAdapter = BigCategoryAdapter(emptyList()) { category ->
+            Log.d("TAG", "initAdapters: " + category.toString())
+            // 1. 如果点击的是当前已经选中的，不做重复请求，但可以做滚动
+            if (currentCategoryId == category.id) {
+                // 即使是已选中，也可以点一下让它滚回到中间（可选）
+                val index = allBigCategories.indexOf(category)
+                if (index != -1) smoothScrollToCenter(rvBigCat, index)
+                return@BigCategoryAdapter
+            }
+
+            // 2. 【新增】找到当前点击的位置，并滚动居中
+            val index = allBigCategories.indexOf(category)
+            if (index != -1) {
+                smoothScrollToCenter(rvBigCat, index)
+            }
+
+
+            // 点击分类：更新ID -> 重置页码 -> 触发刷新
+            if (currentCategoryId != category.id) {
+                Toast.makeText(this, "切换分类: ${category.name}", Toast.LENGTH_SHORT).show()
+                handleBigCategoryClick(category)
+            }
+        }
+        rvBigCat.layoutManager = LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false)
+        rvBigCat.adapter = bigCategoryAdapter
+
+        // 初始化适配器
+        subCategoryAdapter = SubCategoryAdapter(emptyList()) { smallCat ->
+            // --- 点击二级分类的回调 ---
+            Toast.makeText(this, "点击了子分类: ${smallCat.name}", Toast.LENGTH_SHORT).show()
+            Log.d("TAG", "initAdapters: " + smallCat.toString())
+
+            // 点击分类：更新ID -> 重置页码 -> 触发刷新
+            if (currentCategoryId != smallCat.id) {
+                currentCategoryId = smallCat.id
+                // 如果需要从 category.url 里提取纯净的 ID，可以在这里做
+                Toast.makeText(this, "切换小分类: ${smallCat.name}", Toast.LENGTH_SHORT).show()
+                currentPage = 1
+                refreshLayout.autoRefresh() // 自动触发上面的 setOnRefreshListener
+            }
+        }
+
+        rvSubCat.layoutManager = LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false)
+        rvSubCat.adapter = subCategoryAdapter
+
+        // 【新增】监听滚动，实时更新页码显示
+        rvVideoList.addOnScrollListener(object : RecyclerView.OnScrollListener() {
+            override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
+                super.onScrolled(recyclerView, dx, dy)
+
+                // 1. 获取布局管理器
+                val layoutManager = recyclerView.layoutManager as GridLayoutManager
+
+                // 2. 找到屏幕上第一个完全可见的 Item 的位置
+                // (也可以用 findFirstVisibleItemPosition，看你喜欢哪种灵敏度)
+                val firstPosition = layoutManager.findFirstVisibleItemPosition()
+
+                if (firstPosition != RecyclerView.NO_POSITION) {
+                    // 3. 从 Adapter 拿到这个位置的 Video 数据
+                    val video = videoAdapter.getItem(firstPosition)
+
+                    // 4. 如果拿到了数据，且它的页码 > 0，就更新右下角的文字
+                    if (video != null && video.page > 0) {
+                        // 注意：这里只更新文字，不要去修改全局的 currentPage 变量
+                        // 因为全局 currentPage 是用来控制"下一次加载第几页"的
+                        tvPageIndicator.text = "${video.page} / $totalPage"
+                    }
+                }
+            }
+        })
+
+        // --- 【新增】三级分类 (排序) ---
+        sortAdapter = SortAdapter(emptyList()) { fixCat ->
+            // 点击排序标签的回调
+            Toast.makeText(this, "排序: ${fixCat.name}", Toast.LENGTH_SHORT).show()
+
+            // 1. 提取排序参数
+            // 假设 fixCat.url 是 "/index.php/vod/show/by/hits/id/1.html"
+            // 我们需要提取 "hits"
+            val clickSortType = if (fixCat.url.contains("time")) {
+                "time"
+            } else if (fixCat.url.contains("hits")) {
+                "hits"
+            } else {
+                "up"
+            }
+
+            if (currentSortType == clickSortType) {
+                //点击的相同的,不进行任何操作
+                return@SortAdapter
+            }
+            currentSortType = clickSortType
+
+            // 2. 重置页码并刷新
+            currentPage = 1
+            refreshLayout.autoRefresh()
+        }
+        rvSortTags.layoutManager = LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false)
+        rvSortTags.adapter = sortAdapter
+    }
+
+
+    private fun handleBigCategoryClick(category: BigCategory) {
+        // 1. 更新二级分类 UI
+        subCategoryAdapter.updateData(emptyList())
+        sortAdapter.updateData(emptyList())
+
+        // 3. 重置排序状态
+        currentSortType = "time"
+        sortAdapter.resetSelection() // 让 UI 回到第一个
+
+        // 4. 决定用哪个 ID 去请求数据
+        // 优先用第一个子分类的ID，如果没有子分类，用大分类自己的ID
+        currentCategoryId = category.id
+
+        // 5. 触发刷新
+        currentPage = 1
+        refreshLayout.autoRefresh()
+    }
+
+    /**
+     * 核心网络请求
+     */
+    private fun fetchData(isRefresh: Boolean) {
+        // 拼接 URL
+        // 格式参考：https://www.zimuquan23.uk/index.php/vod/show/id/1/page/1.html
+        val url = if (currentSortType == "time") {
+            "$BASE_URL/index.php/vod/show/id/$currentCategoryId/page/$currentPage.html"
+        } else {
+            "$BASE_URL/index.php/vod/show/by/${currentSortType}/id/$currentCategoryId/page/$currentPage.html"
+        }
+
+        Log.d("MainActivity", "Request URL: $url")
+
+        NetManager.get(url, object : NetManager.Callback {
+            override fun onSuccess(response: String) {
+                // 1. 解密 HTML
+                val html = HtmlParseHelper.decodeHtml(response)
+
+                // 2. 解析不同部分的数据
+                // 视频列表
+                val videos = HtmlParseHelper.parseVideoList(html)
+                // 总页数
+                val pageCount = HtmlParseHelper.parseTotalPage(html)
+
+                // 【新增】核心逻辑：给这批新数据的每一个视频，都标记上当前的页码
+                // 注意：这里使用的是当前请求的页码 (currentPage)
+                videos.forEach { it.page = currentPage }
+
+                // 分类列表 (通常只需要在第一页刷新时更新，或者每次刷新都更新)
+                val categories = if (isRefresh) {
+                    HtmlParseHelper.parseCategoryList(html)
+                } else {
+                    emptyList()
+                }
+
+                // 3. 回到主线程更新 UI
+                runOnUiThread {
+                    // 更新页码
+                    if (pageCount > 0) totalPage = pageCount
+//                    tvPageIndicator.text = "$currentPage / $totalPage"
+
+                    if (isRefresh) {
+                        tvPageIndicator.text = "$currentPage / $totalPage"
+
+                        // 如果是刷新，更新分类栏 + 覆盖视频列表
+                        if (categories.isNotEmpty()) {
+                            allBigCategories = categories // 存下来
+                            // 注意：这里可能需要逻辑判断，保留当前选中的分类高亮
+                            // 暂时直接更新数据
+                            bigCategoryAdapter.updateData(categories)
+                            // 2. 【关键】找到当前选中的大分类，把它的子分类给 SubAdapter
+                            // 逻辑：找到 ID 匹配的，如果没匹配到就用第一个
+                            // B. 找到当前选中的那个大分类
+                            // 逻辑：网页返回的 HTML 中，通常 active 的那个 tab 就是当前分类
+                            // 你的 HtmlParseHelper 里应该有 isSelected 的判断逻辑
+                            val currentActiveCategory = categories.find { it.isSelected }
+                                ?: categories.find { it.id == currentCategoryId }
+
+                            // C. 将它的子分类喂给二级适配器
+                            if (currentActiveCategory != null) {
+                                subCategoryAdapter.updateData(currentActiveCategory.subCategories)
+                                sortAdapter.updateData(currentActiveCategory.fixCategories)
+                            }
+                        }
+
+                        videoAdapter.setNewData(videos)
+                        refreshLayout.finishRefresh()
+                    } else {
+                        // 加载更多，只追加视频
+                        if (videos.isEmpty()) {
+                            refreshLayout.finishLoadMoreWithNoMoreData()
+                        } else {
+                            videoAdapter.addData(videos)
+                            refreshLayout.finishLoadMore()
+                        }
+                    }
+                }
+            }
+
             override fun onError(msg: String) {
-                showToast(msg)
+                runOnUiThread {
+                    Toast.makeText(this@MainActivity, "Err: $msg", Toast.LENGTH_SHORT).show()
+                    if (isRefresh) refreshLayout.finishRefresh(false)
+                    else refreshLayout.finishLoadMore(false)
+                }
             }
-
-            override fun onSuccess(msg: String) {
-                showToast(msg)
-            }
-
         })
     }
 
-    private fun startGetDatasFromServer() {
-        val url =
-            "http://live.taolu.black/live/live/video/anchor/$currentPages/10?anchorUserId=$anchorUserId&sign=1745578191-c17548280b8d489fa64da236eff4d53c-0-e6558ed709eee7b8e0976c5edef652db&uid=218904&systemModel=Pixel 2 XL&appType=1&appVer=3.7.6&phoneBrand=google&version=3.7.6&deviceId=63bd2e866c6ef324&systemVersion=11&versionCode=20250105"
-        val request = Request.Builder()
-            .url(url)
-            .addHeader("token", "aiya_1a3c0e62-37c7-4ebe-ae68-1ec0e18f056bgq")
-            .addHeader(
-                "appVersion",
-                "{\"uid\":\"218904\",\"systemModel\":\"Pixel 2 XL\",\"appType\":\"1\",\"appVer\":\"3.8.4\",\"phoneBrand\":\"google\",\"version\":\"3.8.4\",\"deviceId\":\"63bd2e866c6ef324\",\"systemVersion\":\"11\",\"versionCode\":\"20250528\"}"
-            )
-            .build()
-        try {
-            val response = okHttpClient.newCall(request).execute()
-            val responseBodyStr = response.body!!.string()
-            currentRespPlayBack = Gson().fromJson(responseBodyStr,RespPlayBack::class.java)
-            if (currentRespPlayBack!!.isSuccess) {
-                startDownloadDatas()
+    /**
+     * 将 RecyclerView 的指定 position 滚动到屏幕中间
+     */
+    private fun smoothScrollToCenter(recyclerView: RecyclerView, position: Int) {
+        val layoutManager = recyclerView.layoutManager as? LinearLayoutManager ?: return
+        val context = recyclerView.context
 
-                if (currentRespPlayBack!!.data
-                        .total > currentPages * currentRespPlayBack!!.data.size
-                ) {
-                    currentPages++
-                    startGetDatasFromServer()
-                }
-            } else {
-                showToast(currentRespPlayBack!!.message)
+        // 创建一个自定义的平滑滚动器
+        val smoothScroller = object : androidx.recyclerview.widget.LinearSmoothScroller(context) {
+            // 核心算法：计算滚动距离，使 Item 居中
+            override fun calculateDtToFit(viewStart: Int, viewEnd: Int, boxStart: Int, boxEnd: Int, snapPreference: Int): Int {
+                return (boxStart + (boxEnd - boxStart) / 2) - (viewStart + (viewEnd - viewStart) / 2)
             }
-        } catch (e: Exception) {
-            showToast(e.toString())
+
+            // 可选：如果你觉得滚动太慢或太快，可以调整这里 (数值越大越慢)
+            // override fun calculateSpeedPerPixel(displayMetrics: DisplayMetrics): Float {
+            //     return 100f / displayMetrics.densityDpi
+            // }
         }
+
+        smoothScroller.targetPosition = position
+        layoutManager.startSmoothScroll(smoothScroller)
     }
 
-    private fun startDownloadDatas() {
-        val startTime = System.currentTimeMillis()
-        //创建每个视频的小文件夹
-        createParentDirs()
+    // --- 辅助方法：页面跳转弹窗 ---
+    private fun showJumpDialog() {
+        val input = EditText(this)
+        input.inputType = android.text.InputType.TYPE_CLASS_NUMBER
+        input.hint = "1 - $totalPage"
+        input.gravity = Gravity.CENTER
 
-        currentRespPlayBack!!.data.records.forEach {playBackItem ->
+        AlertDialog.Builder(this)
+            .setTitle("跳转到页码")
+            .setView(input)
+            .setPositiveButton("Go") { _, _ ->
+                val pageStr = input.text.toString()
+                if (pageStr.isNotEmpty()) {
+                    val page = pageStr.toInt()
+                    if (page in 1..totalPage) {
+                        currentPage = page
 
-            //判断是否已经下载过
-            if (hasDownload(playBackItem)) {
-                showToast(playBackItem.videoTitle + " 已下载过，跳过 ")
-                //删除已创建的文件夹
-                Files.walkFileTree(File(Utils.getPathForMovieName(playBackItem)).toPath(), object : SimpleFileVisitor<Path>() {
-                    override fun visitFile(
-                        file: Path?,
-                        attrs: BasicFileAttributes?
-                    ): FileVisitResult {
-                        Files.delete(file)
-                        return FileVisitResult.CONTINUE
+                        rvVideoList.scrollToPosition(0) // 滚回顶部
+
+                        // 如果之前显示了"没有更多数据"，需要重置状态
+                        refreshLayout.resetNoMoreData()
+
+                        // 为了有加载动画，我们可以手动把刷新头拉下来（只展示动画，不触发监听）
+                        // 或者简单点，直接请求，用户体验差别不大
+                        fetchData(isRefresh = true)
+                    } else {
+                        Toast.makeText(this, "页码超出范围", Toast.LENGTH_SHORT).show()
                     }
-
-                    override fun postVisitDirectory(
-                        dir: Path?,
-                        exc: IOException?
-                    ): FileVisitResult {
-                        Files.delete(dir)
-                        return FileVisitResult.CONTINUE
-                    }
-                })
-                return@forEach
-            } else {
-                showToast(playBackItem.videoTitle + " 未下载")
-            }
-
-            val executorService = Executors.newFixedThreadPool(1);
-
-            try {
-                if (playBackItem.videoUrl.endsWith("mp4")) {
-                    showToast(playBackItem.videoTitle + " mp4文件 ")
-                    downloadVide(playBackItem)
-                    moveAndDelDirFromTask(playBackItem);
-                    return@forEach
                 }
-
-                downloadM3U8File(playBackItem)
-                val tsBeans = generateTSBeans(playBackItem)
-                if (tsBeans.isEmpty()) return@forEach
-                playBackItem.tsFileTotalCounts = tsBeans.size
-                playBackItem.tsBeanList = tsBeans
-                Utils.TASK_COUNTS_ITEM.set(tsBeans.size)
-
-                generateFFMpegArgumentFile(playBackItem)
-
-                //多线程下载tsBeans任务
-                tsBeans.forEach {
-                    executorService.execute(TsDownload(it.serialNumber,it.downloadURl,playBackItem))
-                }
-                // 关闭线程池，等待任务结束。
-                executorService.shutdown()
-                while (!executorService.isTerminated && Utils.TASK_COUNTS_ITEM.get() > 0) {
-                    showToast("任务下载中: " + Utils.TASK_COUNTS_ITEM.get())
-                    TimeUnit.SECONDS.sleep(2)
-                }
-
-            } catch (e: Exception) {
-                showToast(e.toString())
             }
-        }
-        val endTime = System.currentTimeMillis()
-        showToast("当前已下载完成，耗时：${endTime - startTime}")
-    }
-
-    private fun createParentDirs() {
-        val records = currentRespPlayBack!!.data.records
-        records.forEach { playBackItem->
-            //文件名+id号
-            playBackItem.videoTitle = playBackItem.videoTitle + "_" + playBackItem.id
-
-            //去除空格
-            playBackItem.videoTitle =
-                playBackItem.videoTitle
-                    .replace(" ", "")
-                    .replace("?", "")
-                    .replace(":", "")
-                    .replace("/", "")
-                    .replace("|","")
-
-            val regex = "[\uD83C-\uDBFF\uDC00-\uDFFF\u2B50\u2600-\u26FF\u2700-\u27BF]"
-            // 创建正则表达式模式
-            val pattern = Pattern.compile(regex)
-            // 使用正则表达式替换掉所有匹配的表情符号
-            val matcher = pattern.matcher(playBackItem.videoTitle)
-            playBackItem.videoTitle = matcher.replaceAll("")
-
-            val itemFile = File(Utils.getPathForMovieName(playBackItem))
-            itemFile.mkdirs()
-        }
-    }
-
-    private fun moveAndDelDirFromTask(playBackItem: PlayBackItem) {
-        val mp4File = File(Utils.getPathForMP4File(playBackItem))
-        if (!mp4File.exists() || mp4File.parentFile == null) return
-        Files.move(mp4File.toPath(),mp4File.parentFile!!.toPath(), StandardCopyOption.REPLACE_EXISTING)
-
-        val dirFile = File(Utils.getPathForMovieName(playBackItem))
-        dirFile.deleteRecursively()
-    }
-
-
-    private fun downloadVide(playBackItem: PlayBackItem) {
-        try {
-            val url = URL(playBackItem.videoUrl);
-            val connection = url.openConnection() as HttpURLConnection
-            connection.setRequestProperty("Range", "bytes=0-")
-            connection.setRequestProperty("Referer","http://MAfAIOo0E8EMOWPA.black")
-            connection.connect()
-            if (connection.getResponseCode() / 100 != 2) {
-                showToast("连接失败...:" + playBackItem.videoUrl + " " + playBackItem.videoTitle)
-                return
-            }
-            val inputStream = connection.inputStream;
-            var downloaded = 0L
-            val fileSize = connection.contentLength
-            val randomAccessFile = RandomAccessFile(Utils.getPathForMP4File(playBackItem), "rw");
-            while (downloaded < fileSize) {
-                val buffer = if (fileSize - downloaded >= 1000000) {
-                    ByteArray(1000000)
-                } else {
-                    ByteArray((fileSize - downloaded).toInt())
-                }
-                var read = -1
-                var currentDownload = 0
-                val startTime = System.currentTimeMillis()
-                while (currentDownload < buffer.size) {
-                    read = inputStream.read();
-                    buffer[currentDownload++] = read.toByte()
-                }
-                val endTime = System.currentTimeMillis()
-                var speed = 0.0
-                if (endTime - startTime > 0) {
-                    speed = currentDownload / 1024.0 / ((endTime - startTime) / 1000)
-                }
-                randomAccessFile.write(buffer)
-                downloaded += currentDownload
-                randomAccessFile.seek(downloaded)
-                System.out.printf(playBackItem.videoTitle+"下载了进度:%.2f%%,下载速度：%.1fkb/s(%.1fM/s)%n", downloaded * 1.0 / fileSize * 10000 / 100,
-                    speed, speed / 1000)
-                val progress = String.format("%.2f",downloaded * 1.0 / fileSize * 10000 / 100)
-                val msg = "${playBackItem.videoTitle}下载了进度:${progress}%,下载速度：${String.format("%.1f",speed)}kb/s(${String.format("%.1f",speed / 1000)}M/s%n"
-                showToast(msg)
-            }
-        } catch (e: MalformedURLException) {
-            e.printStackTrace()
-            showToast(e.toString())
-        } catch (e: IOException) {
-            e.printStackTrace()
-            showToast(e.toString())
-        }
-    }
-    private fun downloadM3U8File(playBackItem: PlayBackItem):Boolean {
-        try {
-            val url = URL(playBackItem.videoUrl)
-            val conn = url.openConnection()
-            conn.setRequestProperty("Referer","http://MAfAIOo0E8EMOWPA.black")
-
-
-            val m3u8File = File(Utils.getPathForM3U8File(playBackItem))
-            m3u8File.deleteOnExit()
-            val randomAccessFile = RandomAccessFile(m3u8File,"rw")
-            val inputStream = conn.getInputStream()
-            val buffer = ByteArray(1024)
-            var hasRead = inputStream.read(buffer)
-            while (hasRead != -1) {
-                randomAccessFile.write(buffer,0,hasRead)
-                hasRead = inputStream.read(buffer)
-            }
-            randomAccessFile.close()
-            inputStream.close()
-            return true
-        }catch (e: Exception) {
-            showToast("downloadM3U8FileError: $e")
-            return false
-        }
-
-    }
-
-    private fun generateTSBeans(playBackItem: PlayBackItem): List<TSBean> {
-        val m3u8File = File(Utils.getPathForM3U8File(playBackItem))
-        if (!m3u8File.exists()) return emptyList()
-        var serialNumber = 0;
-        val randomAccessFile = RandomAccessFile(m3u8File,"r")
-        val result = mutableListOf<TSBean>()
-        var content = randomAccessFile.readLine()
-        while (content != null) {
-            if (!content.startsWith("#")) {
-                serialNumber++
-                val tsBean = TSBean()
-                tsBean.serialNumber = serialNumber
-                tsBean.downloadURl = Utils.getTSBeanDownloadPrefix(playBackItem) + content
-                result.add(tsBean)
-            }
-            content = randomAccessFile.readLine()
-        }
-        randomAccessFile.close()
-        return result
-    }
-
-    private fun generateFFMpegArgumentFile(playBackItem: PlayBackItem) {
-        val mergeFile = File(Utils.getPathForFFMpegFile(playBackItem))
-        mergeFile.deleteOnExit()
-        val randomAccessFile = RandomAccessFile(mergeFile,"rw")
-        playBackItem.tsBeanList.forEach {
-            val writeBytes = "file '" + it.serialNumber + ".ts" + "'\n"
-            randomAccessFile.write(writeBytes.toByteArray())
-        }
-        randomAccessFile.close()
-    }
-
-    private fun setActivityBarStyle(activity: AppCompatActivity) {
-        val decorView = activity.window.decorView
-        val option = (View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN //注释掉这行代码
-                //View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
-                or View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR)
-        decorView.systemUiVisibility = option
-        //设置导航栏（顶部和底部）颜色为透明，注释掉这行代码
-        //getWindow().setNavigationBarColor(Color.TRANSPARENT);
-        //设置通知栏颜色为透明
-        activity.window.statusBarColor = Color.TRANSPARENT
-        val actionBar = activity.supportActionBar
-        actionBar?.hide()
-    }
-
-    private fun showToast(msg: String) {
-        runOnUiThread {
-            msgStringBuilder.append(msg)
-            msgStringBuilder.append("\n")
-            binding.tvContent.text = msgStringBuilder.toString()
-            binding.scrollView.post {
-                binding.scrollView.fullScroll(View.FOCUS_DOWN)
-            }
-//            Toast.makeText(this,msg,Toast.LENGTH_SHORT).show()
-        }
-    }
-
-    private fun hasDownload(playBackItem: PlayBackItem): Boolean {
-        val file = File(Utils.getPathForUserRoot(playBackItem))
-        if (!file.exists() || !file.isDirectory || file.listFiles() == null) {
-            return false
-        }
-        file.listFiles()!!.forEach {item->
-            if (item.isFile && item.nameWithoutExtension == playBackItem.videoTitle) {
-                return true
-            }
-        }
-        return false
+            .setNegativeButton("取消", null)
+            .show()
     }
 }
+
+
+
+

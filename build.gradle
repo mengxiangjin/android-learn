@@ -17,7 +17,13 @@ buildscript {
 }
 
 plugins {
-    id 'com.android.application' version '7.3.1' apply false
-    id 'com.android.library' version '7.3.1' apply false
-    id 'org.jetbrains.kotlin.android' version '1.9.20-RC' apply false
+//    id 'com.android.application' version '7.3.1' apply false
+//    id 'com.android.library' version '7.3.1' apply false
+//    id 'org.jetbrains.kotlin.android' version '1.9.20-RC' apply false
+
+    // 建议升级到 8.x 版本以支持 compileSdk 35
+    // 如果你不敢动这个，先保持 7.3.1 试试，如果报错再说
+    id 'com.android.application' version '8.1.0' apply false
+    id 'com.android.library' version '8.1.0' apply false
+    id 'org.jetbrains.kotlin.android' version '1.9.0' apply false
 }

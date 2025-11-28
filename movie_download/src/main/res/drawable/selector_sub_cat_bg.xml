@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+    <!-- 选中状态 -->
+    <item android:state_selected="true">
+        <shape>
+            <solid android:color="#AA66CC" /> <!-- 紫色 -->
+            <corners android:radius="16dp" />
+        </shape>
+    </item>
+    <!-- 默认状态 -->
+    <item>
+        <shape>
+            <solid android:color="#33FFFFFF" /> <!-- 半透明白 -->
+            <corners android:radius="16dp" />
+        </shape>
+    </item>
+</selector>

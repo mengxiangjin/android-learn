@@ -3,14 +3,23 @@ pluginManagement {
         gradlePluginPortal()
         google()
         mavenCentral()
+        maven { url 'https://maven.aliyun.com/repository/gradle-plugin' }
     }
 }
 dependencyResolutionManagement {
+    // 强制使用这里的仓库配置
     repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
     repositories {
-        google()
+        // 1. 阿里云镜像 (放在最前，下载快)
+        maven { url "https://maven.aliyun.com/repository/public" }
+        maven { url "https://maven.aliyun.com/repository/google" }
+
+        // 2. 官方仓库 (MavenCentral 是必须的，因为新版 GSY 在这里)
         mavenCentral()
-        jcenter()
+        google()
+
+        // 3. JitPack (保留它，以防其他旧库需要)
+        maven { url 'https://jitpack.io' }
     }
 }
 rootProject.name = "learn"
