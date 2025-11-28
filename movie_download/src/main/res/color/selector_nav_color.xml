@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+    <!-- 选中状态：亮青色 (跟你之前的搜索按钮颜色一致，或者你可以改成 #FFFFFF 白色) -->
+    <item android:color="#00CCFF" android:state_checked="true" />
+
+    <!-- 默认状态：深灰色 -->
+    <item android:color="#888888" />
+</selector>
