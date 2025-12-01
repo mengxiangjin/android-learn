@@ -4,7 +4,9 @@ import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import com.google.android.material.bottomnavigation.BottomNavigationView
+import com.jin.movie.fragment.ActorFragment
 import com.jin.movie.fragment.HomeFragment
+import com.jin.movie.fragment.RankFragment
 import com.jin.movie.utils.UIUtils
 import com.shuyu.gsyvideoplayer.cache.CacheFactory
 import com.shuyu.gsyvideoplayer.player.PlayerFactory
@@ -18,8 +20,8 @@ class MainActivity : AppCompatActivity() {
     // 预先创建 Fragment 实例
     private val homeFragment = HomeFragment()
     // 暂时用 HomeFragment 占位，你可以新建 ProfileFragment, FavoritesFragment
-    private val favoritesFragment = HomeFragment() // 占位，以后替换
-    private val profileFragment = HomeFragment()   // 占位，以后替换
+    private val rankFragment = RankFragment()
+    private val actorFragment = ActorFragment()
 
     // 记录当前显示的 Fragment
     private var activeFragment: Fragment = homeFragment
@@ -30,6 +32,11 @@ class MainActivity : AppCompatActivity() {
         // 全局配置 (只需一次)
         PlayerFactory.setPlayManager(Exo2PlayerManager::class.java)
         CacheFactory.setCacheManager(ExoPlayerCacheManager::class.java)
+
+        // 3. 【核心解决卡顿】开启硬解码！
+        // ExoPlayer 默认软解，看高清 m3u8 会卡。开启这个利用 GPU 解码，非常流畅。
+        com.shuyu.gsyvideoplayer.utils.GSYVideoType.enableMediaCodec()
+        com.shuyu.gsyvideoplayer.utils.GSYVideoType.enableMediaCodecTexture()
 
         setContentView(R.layout.activity_main)
         UIUtils.setActivityBarStyle(this)
@@ -47,8 +54,8 @@ class MainActivity : AppCompatActivity() {
         bottomNav.setOnItemSelectedListener { item ->
             when (item.itemId) {
                 R.id.nav_home -> switchFragment(homeFragment)
-                R.id.nav_favorites -> switchFragment(favoritesFragment)
-                R.id.nav_profile -> switchFragment(profileFragment)
+                R.id.nav_favorites -> switchFragment(rankFragment)
+                R.id.nav_profile -> switchFragment(actorFragment)
             }
             true
         }

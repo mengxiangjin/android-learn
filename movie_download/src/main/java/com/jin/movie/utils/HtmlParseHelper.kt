@@ -2,6 +2,7 @@ package com.jin.movie.utils
 
 import android.util.Base64
 import android.util.Log
+import com.jin.movie.bean.Actor
 import com.jin.movie.bean.BigCategory
 import com.jin.movie.bean.FixedCategory
 import com.jin.movie.bean.SmallCategory
@@ -15,6 +16,14 @@ import java.util.regex.Pattern
  * 负责解密反爬虫数据，并使用 Jsoup 提取内容
  */
 object HtmlParseHelper {
+
+    // 定义解析类型
+    enum class ParseType {
+        HOME,   // 首页 / 频道页
+        RANK,   // 排行榜
+        SEARCH,  // 搜索页
+        ACTOR,  //演员详情页
+    }
 
     private const val TAG = "HtmlParseHelper"
 
@@ -136,32 +145,74 @@ object HtmlParseHelper {
         return bigCategoryList
     }
 
-    fun parseVideoList(html: String,isSearch: Boolean = false): List<Video> {
+    fun parseVideoList(html: String,parseType: ParseType = ParseType.HOME): List<Video> {
         val videoList = mutableListOf<Video>()
         if (html.isEmpty()) return videoList
         try {
             // 1. 将字符串转为 Jsoup 文档对象
             val doc = Jsoup.parse(html)
-            val elements = doc.select("div#content a")
-            for (element in elements) {
-                val href = element.attr("href")
-                val imgTag = element.selectFirst("img.van-image__img.md-lazy[data-src]")
-                val imgSrc = imgTag?.attr("data-src")
-                val playCounts = if (isSearch) {
-                    element.selectFirst("div.list_play")?.text()?.trim()
-                } else {
-                    element.selectFirst("div.list_read_number")?.text()?.trim()
+            when(parseType) {
+                ParseType.HOME -> {
+                    val elements = doc.select("div#content a")
+                    for (element in elements) {
+                        val href = element.attr("href")
+                        val imgTag = element.selectFirst("img.van-image__img.md-lazy[data-src]")
+                        val imgSrc = imgTag?.attr("data-src")
+                        val playCounts = element.selectFirst("div.list_read_number")?.text()?.trim()
+                        val duration = element.selectFirst("div.list_duration")?.text()?.trim()?:""
+                        //免费区可能没有时长
+                        val title = element.selectFirst("div.list_title.title_line_1.van-ellipsis")?.text()?.trim()
+                        if (imgSrc == null || title == null || playCounts == null) continue
+                        videoList.add(Video(href,title,imgSrc,duration,playCounts))
+                    }
                 }
-                val duration = element.selectFirst("div.list_duration")?.text()?.trim()?:""
-                //免费区可能没有时长
-                val title = if (isSearch) {
-                    element.selectFirst("div.list_title.van-multi-ellipsis--l2")?.text()?.trim()
-                } else {
-                    element.selectFirst("div.list_title.title_line_1.van-ellipsis")?.text()?.trim()
+                ParseType.SEARCH -> {
+                    val elements = doc.select("div#content a")
+                    for (element in elements) {
+                        val href = element.attr("href")
+                        val imgTag = element.selectFirst("img.van-image__img.md-lazy[data-src]")
+                        val imgSrc = imgTag?.attr("data-src")
+                        val playCounts =
+                            element.selectFirst("div.list_play")?.text()?.trim()
+                        val duration = element.selectFirst("div.list_duration")?.text()?.trim()?:""
+                        //免费区可能没有时长
+                        val title =
+                            element.selectFirst("div.list_title.van-multi-ellipsis--l2")?.text()?.trim()
+                        if (imgSrc == null || title == null || playCounts == null) continue
+                        videoList.add(Video(href,title,imgSrc,duration,playCounts))
+                    }
                 }
-                if (imgSrc == null || title == null || playCounts == null) continue
-                videoList.add(Video(href,title,imgSrc,duration,playCounts))
+                ParseType.RANK -> {
+                    val elements = doc.select("div.swiper-wrapper a")
+                    for (element in elements) {
+                        val href = element.attr("href")
+                        val imgTag = element.selectFirst("img.swipImg.md-lazy[data-src]")
+                        val imgSrc = imgTag?.attr("data-src")
+                        val playCounts =
+                            element.selectFirst("div.swipItemNum")?.text()?.trim()
+                        val duration = element.selectFirst("div.swipItemTime")?.text()?.trim()?:""
+                        val title =
+                            element.selectFirst("div.swipTitle")?.text()?.trim()
+                        if (imgSrc == null || title == null || playCounts == null) continue
+                        videoList.add(Video(href,title,imgSrc,duration,playCounts))
+                    }
+                }
+                ParseType.ACTOR -> {
+                    val elements = doc.select("div#content a")
+                    for (element in elements) {
+                        val href = element.attr("href")
+                        val imgTag = element.selectFirst("img.van-image__img.md-lazy[data-src]")
+                        val imgSrc = imgTag?.attr("data-src")
+                        val playCounts = element.selectFirst("div.list_read_number")?.text()?.trim()
+                        val duration = element.selectFirst("div.list_duration")?.text()?.trim()?:""
+                        //免费区可能没有时长
+                        val title = element.selectFirst("div.list_title.title_line_2.van-multi-ellipsis--l2")?.text()?.trim()
+                        if (imgSrc == null || title == null || playCounts == null) continue
+                        videoList.add(Video(href,title,imgSrc,duration,playCounts))
+                    }
+                }
             }
+
 
         }catch (e: Exception) {
             Log.e(TAG, "Jsoup 解析出错: ${e.message}")
@@ -185,6 +236,29 @@ object HtmlParseHelper {
             e.printStackTrace()
         }
         return 1
+    }
+
+    /**
+     * 【新增】解析演员详情页的视频总数
+     * 针对结构：<p class="count">67部</p>
+     */
+    fun parseActorVideoCount(html: String): Int {
+        try {
+            val doc = Jsoup.parse(html)
+            // 提取 <p class="count"> 的文本
+            val text = doc.select("div.introduce_top p.count").text() // "67部"
+
+            // 使用正则只提取数字
+            val regex = Pattern.compile("(\\d+)")
+            val matcher = regex.matcher(text)
+            if (matcher.find()) {
+                val countStr = matcher.group(1)
+                return countStr?.toInt() ?: 0
+            }
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
+        return 0
     }
 
     /**
@@ -213,6 +287,49 @@ object HtmlParseHelper {
             }
         } catch (e: Exception) {
             Log.e(TAG, "解析排序标签失败: ${e.message}")
+        }
+        return list
+    }
+
+    /**
+     * 解析演员列表
+     */
+    fun parseActorList(html: String): List<Actor> {
+        val list = mutableListOf<Actor>()
+        try {
+            val doc = Jsoup.parse(html)
+
+            // 1. 定位到网格容器下的所有 item
+            // 选择器含义：寻找 class 为 van-grid 下的所有 class 为 van-grid-item 的 a 标签
+            val elements = doc.select("div.van-grid a.van-grid-item")
+
+            for (element in elements) {
+                // 详情页链接
+                val href = element.attr("href")
+
+                // 2. 解析名字
+                val name = element.selectFirst("p.name")?.text()?.trim() ?: "未知演员"
+
+                // 3. 解析图片
+                val imgTag = element.selectFirst("img.van-image__img")
+                // 优先取 data-src (懒加载属性)，取不到再取 src
+                var avatar = imgTag?.attr("data-src")
+                if (avatar.isNullOrEmpty()) {
+                    avatar = imgTag?.attr("src")
+                }
+
+                // 4. 处理相对路径 (非常重要！)
+                // 如果抓下来是 /upload/... 需要拼上 https://www.zimuquan23.uk
+                if (!avatar.isNullOrEmpty() && avatar.startsWith("/")) {
+                    avatar = "https://www.zimuquan23.uk$avatar"
+                }
+
+                if (name.isNotEmpty()) {
+                    list.add(Actor(name, avatar ?: "", href))
+                }
+            }
+        } catch (e: Exception) {
+            Log.e(TAG, "解析演员表失败: ${e.message}")
         }
         return list
     }

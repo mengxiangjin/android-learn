@@ -8,10 +8,10 @@
     <item
         android:id="@+id/nav_favorites"
         android:icon="@android:drawable/btn_star"
-        android:title="收藏" />
+        android:title="排行榜" />
 
     <item
         android:id="@+id/nav_profile"
         android:icon="@android:drawable/ic_menu_my_calendar"
-        android:title="我的" />
+        android:title="演员" />
 </menu>

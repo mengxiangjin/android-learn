@@ -234,7 +234,7 @@ class SearchActivity : AppCompatActivity() {
             override fun onSuccess(response: String) {
                 val html = HtmlParseHelper.decodeHtml(response)
 
-                val videos = HtmlParseHelper.parseVideoList(html,true)
+                val videos = HtmlParseHelper.parseVideoList(html,HtmlParseHelper.ParseType.SEARCH)
                 val pageCount = HtmlParseHelper.parseTotalPage(html)
 
                 // 【关键】尝试解析排序标签
