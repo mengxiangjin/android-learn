@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginBottom="12dp"
+    android:layout_marginHorizontal="12dp"
+    android:background="@drawable/bg_item_card"
+    android:padding="10dp">
+
+    <!-- 注意：如果没有 bg_item_card，可以直接用 android:background="#1F1F2B" 并加圆角 -->
+
+    <!-- 视频封面 -->
+    <ImageView
+        android:id="@+id/iv_cover"
+        android:layout_width="100dp"
+        android:layout_height="60dp"
+        android:scaleType="centerCrop"
+        android:background="#333333"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        tools:src="@android:color/darker_gray"/>
+
+    <!-- 视频标题 -->
+    <TextView
+        android:id="@+id/tv_task_title"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="12dp"
+        android:layout_marginEnd="8dp"
+        android:textColor="#FFFFFF"
+        android:textSize="15sp"
+        android:maxLines="1"
+        android:ellipsize="end"
+        app:layout_constraintStart_toEndOf="@id/iv_cover"
+        app:layout_constraintTop_toTopOf="@id/iv_cover"
+        app:layout_constraintEnd_toStartOf="@id/btn_action"
+        tools:text="复仇者联盟4.mp4"/>
+
+    <!-- 进度条 -->
+    <ProgressBar
+        android:id="@+id/pb_progress"
+        style="?android:attr/progressBarStyleHorizontal"
+        android:layout_width="0dp"
+        android:layout_height="4dp"
+        android:layout_marginTop="8dp"
+        android:max="100"
+        android:progressDrawable="@drawable/layer_progress_bar"
+        app:layout_constraintEnd_toEndOf="@id/tv_task_title"
+        app:layout_constraintStart_toStartOf="@id/tv_task_title"
+        app:layout_constraintTop_toBottomOf="@id/tv_task_title"
+        tools:progress="50"/>
+
+    <!-- 状态与网速 -->
+    <TextView
+        android:id="@+id/tv_status"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textColor="#AAAAAA"
+        android:textSize="12sp"
+        android:layout_marginTop="6dp"
+        app:layout_constraintStart_toStartOf="@id/tv_task_title"
+        app:layout_constraintTop_toBottomOf="@id/pb_progress"
+        tools:text="50% • 2.5MB/s"/>
+
+    <!-- 操作按钮 (暂停/开始) -->
+    <ImageView
+        android:id="@+id/btn_action"
+        android:layout_width="32dp"
+        android:layout_height="32dp"
+        android:src="@drawable/ic_pause_circle"
+        app:tint="#FF5722"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"/>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

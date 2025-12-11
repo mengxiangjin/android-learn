@@ -6,4 +6,21 @@
     </style>
 
     <style name="Theme.Learn" parent="Base.Theme.Learn" />
+
+    <style name="CircleStyle">
+        <item name="cornerFamily">rounded</item>
+        <item name="cornerSize">50%</item>
+    </style>
+
+    <!-- 一级 Tab 字体：大，加粗 -->
+    <style name="MainTabTextStyle">
+        <item name="android:textSize">18sp</item>
+        <item name="android:textStyle">bold</item>
+    </style>
+
+    <!-- 二级 Tab 字体：小，普通 -->
+    <style name="SubTabTextStyle">
+        <item name="android:textSize">14sp</item>
+        <item name="android:textStyle">normal</item>
+    </style>
 </resources>

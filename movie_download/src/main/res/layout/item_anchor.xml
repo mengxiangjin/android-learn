@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="#12121A"
+    android:paddingHorizontal="16dp"
+    android:paddingVertical="12dp">
+
+    <!-- 头像 -->
+    <com.google.android.material.imageview.ShapeableImageView
+        android:id="@+id/iv_anchor_avatar"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:scaleType="centerCrop"
+        android:padding="1dp"
+        app:strokeWidth="0dp"
+        app:shapeAppearanceOverlay="@style/CircleStyle"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        tools:src="@tools:sample/avatars"/>
+
+    <!-- 昵称 -->
+    <TextView
+        android:id="@+id/tv_anchor_name"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="12dp"
+        android:textColor="#EFEFEF"
+        android:textSize="15sp"
+        android:textStyle="bold"
+        tools:text="梦蝶女王S"
+        app:layout_constraintStart_toEndOf="@id/iv_anchor_avatar"
+        app:layout_constraintTop_toTopOf="@id/iv_anchor_avatar"
+        app:layout_constraintBottom_toTopOf="@id/tv_anchor_slogan"/>
+
+    <!-- 签名 -->
+    <TextView
+        android:id="@+id/tv_anchor_slogan"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="12dp"
+        android:layout_marginEnd="16dp"
+        android:textColor="#999999"
+        android:textSize="12sp"
+        android:ellipsize="end"
+        android:singleLine="true"
+        tools:text="私信有福利，一天十个名额。"
+        app:layout_constraintStart_toEndOf="@id/iv_anchor_avatar"
+        app:layout_constraintEnd_toStartOf="@id/btn_follow"
+        app:layout_constraintTop_toBottomOf="@id/tv_anchor_name"
+        app:layout_constraintBottom_toBottomOf="@id/iv_anchor_avatar"/>
+
+    <!-- 关注按钮 -->
+    <TextView
+        android:id="@+id/btn_follow"
+        android:layout_width="60dp"
+        android:layout_height="26dp"
+        android:background="@drawable/shape_btn_follow_bg"
+        android:gravity="center"
+        android:text="关注"
+        android:textColor="#FFFFFF"
+        android:textSize="12sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"/>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

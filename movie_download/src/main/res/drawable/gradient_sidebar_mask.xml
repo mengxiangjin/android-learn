@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<shape xmlns:android="http://schemas.android.com/apk/res/android">
+    <!-- 从透明渐变到背景色(#12121A) angle=0 代表从左到右 -->
+    <gradient
+        android:startColor="#0012121A"
+        android:endColor="#FF12121A"
+        android:angle="0"/>
+</shape>

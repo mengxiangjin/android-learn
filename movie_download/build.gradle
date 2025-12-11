@@ -1,6 +1,7 @@
 plugins {
     id 'com.android.application'
     id 'org.jetbrains.kotlin.android'
+    id 'kotlin-kapt' // 必须添加这个插件
 }
 
 android {
@@ -67,9 +68,40 @@ dependencies {
     // GSON (处理 JSON)
     implementation 'com.google.code.gson:gson:2.10.1'
 
+    // 【新增】OkHttp 集成库 (版本号最好与 glide 保持一致或兼容)
+    implementation "com.github.bumptech.glide:okhttp3-integration:4.15.1"
+
     implementation 'org.jsoup:jsoup:1.17.2'
     // GSYVideoPlayer 核心库
     implementation 'io.github.carguo:gsyvideoplayer:11.2.0'
     // 【新增】ExoPlayer2 内核 (对 m3u8 支持最好)
     implementation 'io.github.carguo:gsyvideoplayer-exo2:11.2.0'
+
+    // Aria 下载框架核心
+//    implementation 'com.arialyy.aria:core:3.8.5'
+//    kapt 'com.arialyy.aria:compiler:3.8.5'
+//     【新增】M3U8 组件
+//    implementation 'com.arialyy.aria:m3u8Component:3.8.5'
+
+
+    implementation 'me.laoyuyu.aria:core:3.8.16'
+    kapt 'me.laoyuyu.aria:compiler:3.8.16'
+//    implementation 'me.laoyuyu.aria:ftp:3.8.16' # 如果需要使用ftp，请增加该组件
+//    implementation 'me.laoyuyu.aria:sftp:3.8.16' # 如果需要使用ftp，请增加该组件
+    implementation 'me.laoyuyu.aria:m3u8:3.8.16'
+
+    // Room (数据库)
+    implementation "androidx.room:room-runtime:2.6.1"
+    implementation "androidx.room:room-ktx:2.6.1"
+    kapt "androidx.room:room-compiler:2.6.1"
+
+    // LiveData/ViewModel (用于更新UI)
+    implementation "androidx.lifecycle:lifecycle-viewmodel-ktx:2.6.2"
+    implementation "androidx.lifecycle:lifecycle-livedata-ktx:2.6.2"
+
+    // 网络请求
+    implementation 'com.squareup.retrofit2:retrofit:2.9.0'
+    implementation 'com.squareup.retrofit2:converter-gson:2.9.0'
+
+    implementation 'jp.wasabeef:glide-transformations:4.3.0'
 }

@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.scwang.smart.refresh.layout.SmartRefreshLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/refresh_layout"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#12121A">
+
+    <!-- 1. 顶部 Header (可选，为了体验好建议加上) -->
+    <com.scwang.smart.refresh.header.ClassicsHeader
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"/>
+
+    <!-- 2. 内容列表 -->
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recycler_view"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:padding="2dp"
+        android:clipToPadding="false"
+        android:overScrollMode="never"/>
+
+    <!-- 3. 【关键】底部 Footer (必须加这个，否则调 finishLoadMoreWithNoMoreData 会崩) -->
+    <com.scwang.smart.refresh.footer.ClassicsFooter
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:srlTextSizeTitle="12sp"
+        app:srlAccentColor="#666666"
+        app:srlPrimaryColor="#12121A"/>
+
+</com.scwang.smart.refresh.layout.SmartRefreshLayout>

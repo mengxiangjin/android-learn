@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+    <!-- 选中状态：显示粉色圆角背景 (模仿截图中的“推荐”背景) -->
+    <item android:state_selected="true">
+        <shape android:shape="rectangle">
+            <!-- 这里可以改成纯色 #FF6699 或者白色半透明，看你需要 -->
+            <!-- 截图中看起来像是一个浅粉色或者白色渐变 -->
+            <solid android:color="#FFB6C1" />
+            <corners android:radius="18dp" />
+            <!-- 如果需要边框可以加 -->
+            <!-- <stroke android:width="1dp" android:color="#FF6699"/> -->
+        </shape>
+    </item>
+
+    <!-- 默认状态：透明 -->
+    <item>
+        <shape android:shape="rectangle">
+            <solid android:color="@android:color/transparent" />
+        </shape>
+    </item>
+</selector>

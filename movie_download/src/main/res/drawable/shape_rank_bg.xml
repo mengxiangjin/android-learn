@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<shape xmlns:android="http://schemas.android.com/apk/res/android">
+    <!-- 左右渐变粉色 -->
+    <gradient
+        android:startColor="#FFAABB"
+        android:endColor="#FF6699"
+        android:angle="0" />
+    <!-- 圆角 (胶囊形状) -->
+    <corners android:radius="14dp"/>
+</shape>

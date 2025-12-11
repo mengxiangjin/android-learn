@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="24dp"
+    android:height="24dp"
+    android:viewportWidth="24"
+    android:viewportHeight="24">
+
+    <!-- 默认白色，方便在布局中用 app:tint 染色 -->
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M19,3L5,3L2,9L12,21L22,9L19,3ZM9.62,10L12,18L14.38,10L19.2,10L12.92,17.55L16.27,10L9.62,10ZM11.5,4.5L11.5,8.5L6.35,8.5L8.25,4.5L11.5,4.5ZM12.5,4.5L15.75,4.5L17.65,8.5L12.5,8.5L12.5,4.5Z"/>
+</vector>

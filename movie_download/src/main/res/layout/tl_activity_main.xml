@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#12121A">
+
+    <!-- Fragment 容器 -->
+    <androidx.fragment.app.FragmentContainerView
+        android:id="@+id/fragment_container"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        app:layout_constraintBottom_toTopOf="@id/bottom_navigation"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <!-- 底部导航栏 -->
+    <com.google.android.material.bottomnavigation.BottomNavigationView
+        android:id="@+id/bottom_navigation"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="#1F1F2B"
+        app:itemIconTint="@color/selector_nav_color"
+        app:itemTextColor="@color/selector_nav_color"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:menu="@menu/tl_bottom_nav_menu" />
+
+    <!--
+       注意：selector_nav_color 需要在 res/color/ 下创建
+       如果没有，可以直接写死颜色或者用 selector
+       简单起见可以用 app:itemIconTint="#FFFFFF"
+    -->
+
+</androidx.constraintlayout.widget.ConstraintLayout>

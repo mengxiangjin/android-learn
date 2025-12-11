@@ -5,7 +5,6 @@
     android:layout_height="match_parent"
     android:background="#000000">
 
-    <!-- 标准播放器控件 -->
     <com.shuyu.gsyvideoplayer.video.StandardGSYVideoPlayer
         android:id="@+id/video_player"
         android:layout_width="match_parent"
@@ -14,5 +13,24 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
+
+    <!--
+      注意：移除了 layout_marginEnd 等约束定位，
+      因为我们要用代码(x,y)来控制位置。
+      只保留初始位置（比如右上角），后续由 OnTouchListener 接管
+    -->
+    <ImageView
+        android:id="@+id/iv_download_side"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:src="@drawable/ic_download_icon"
+        android:background="@drawable/bg_download_btn"
+        android:padding="12dp"
+        android:elevation="10dp"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="50dp"
+        android:layout_marginEnd="10dp"
+        app:tint="#FF5722" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

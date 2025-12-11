@@ -1,0 +1,176 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#12121A">
+
+    <!-- 1. 顶部搜索栏区域 -->
+    <LinearLayout
+        android:id="@+id/layout_top_bar"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        android:paddingHorizontal="12dp"
+        android:paddingTop="8dp"
+        android:layout_marginTop="40dp"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <!-- 搜索框 -->
+        <FrameLayout
+            android:id="@+id/fl_search_entry"
+            android:layout_width="0dp"
+            android:layout_height="32dp"
+            android:layout_weight="1"
+            android:background="@drawable/shape_search_bg">
+
+            <ImageView
+                android:layout_width="16dp"
+                android:layout_height="16dp"
+                android:layout_gravity="center_vertical|end"
+                android:layout_marginEnd="12dp"
+                android:src="@android:drawable/ic_menu_search"
+                app:tint="#999999" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:layout_marginStart="12dp"
+                android:text="搜索喜欢的回放"
+                android:textColor="#999999"
+                android:textSize="13sp" />
+        </FrameLayout>
+
+        <!-- 排行榜按钮 -->
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="28dp"
+            android:layout_marginStart="12dp"
+            android:background="@drawable/shape_rank_bg"
+            android:gravity="center"
+            android:paddingHorizontal="8dp">
+
+            <ImageView
+                android:layout_width="14dp"
+                android:layout_height="14dp"
+                android:src="@drawable/ic_trophy_placeholder"
+                app:tint="#FFFFFF"/> <!-- 需要放一个奖杯icon -->
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="4dp"
+                android:text="排行榜"
+                android:textColor="#FFFFFF"
+                android:textSize="12sp"
+                android:textStyle="bold" />
+        </LinearLayout>
+
+        <!-- 右侧视频图标 -->
+        <ImageView
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:layout_marginStart="12dp"
+            android:src="@drawable/ic_video_cam_placeholder"
+            app:tint="#FF6699" /> <!-- 需要放一个摄像机icon -->
+    </LinearLayout>
+
+    <!-- 2. 一级导航 (回放 / 短剧) -->
+    <!-- 字体大，选中颜色鲜艳 -->
+    <com.google.android.material.tabs.TabLayout
+        android:id="@+id/tab_main_category"
+        android:layout_width="match_parent"
+        android:layout_height="44dp"
+        android:background="#12121A"
+        app:layout_constraintTop_toBottomOf="@id/layout_top_bar"
+        app:tabIndicatorColor="#FF6699"
+        app:tabIndicatorFullWidth="false"
+        app:tabIndicatorHeight="3dp"
+        app:tabMode="fixed"
+        app:tabRippleColor="@android:color/transparent"
+        app:tabSelectedTextColor="#FFFFFF"
+        app:tabTextAppearance="@style/MainTabTextStyle"
+        app:tabTextColor="#88FFFFFF">
+        <!-- TabItem 将在代码中动态添加，或者写死在这里 -->
+    </com.google.android.material.tabs.TabLayout>
+
+    <!-- 3. 二级导航 (推荐, 最新, 关注...) + 筛选按钮 -->
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/layout_sub_tabs"
+        android:layout_width="match_parent"
+        android:layout_height="36dp"
+        android:background="#12121A"
+        app:layout_constraintTop_toBottomOf="@id/tab_main_category">
+
+        <!-- 左侧滑动 Tabs -->
+        <com.google.android.material.tabs.TabLayout
+            android:id="@+id/tab_sub_category"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_marginEnd="40dp"
+            android:background="#12121A"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:tabIndicatorHeight="0dp"
+            app:tabMode="scrollable"
+            app:tabPaddingEnd="12dp"
+            app:tabPaddingStart="12dp"
+            app:tabRippleColor="@android:color/transparent"
+            app:tabSelectedTextColor="#FF6699"
+            app:tabBackground="@drawable/selector_sub_tab_bg"
+            app:tabTextAppearance="@style/SubTabTextStyle"
+            app:tabTextColor="#999999" />
+
+        <!-- 右侧筛选漏斗图标 -->
+        <ImageView
+            android:id="@+id/iv_filter"
+            android:layout_width="40dp"
+            android:layout_height="match_parent"
+            android:background="#12121A"
+            android:padding="10dp"
+            android:src="@drawable/ic_filter_placeholder"
+            app:tint="#FFFFFF"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <!-- 遮罩渐变，让滑动看起来更自然 (可选) -->
+        <View
+            android:layout_width="16dp"
+            android:layout_height="match_parent"
+            android:background="@drawable/gradient_sidebar_mask"
+            app:layout_constraintEnd_toStartOf="@id/iv_filter" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <!-- 4. 内容列表 (SmartRefreshLayout) -->
+    <com.scwang.smart.refresh.layout.SmartRefreshLayout
+        android:id="@+id/refresh_layout"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/layout_sub_tabs"
+        app:srlAccentColor="#999999"
+        app:srlPrimaryColor="#12121A">
+
+        <com.scwang.smart.refresh.header.ClassicsHeader
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/rv_video_list"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:clipToPadding="false"
+            android:paddingHorizontal="4dp"
+            android:paddingTop="8dp" />
+
+        <com.scwang.smart.refresh.footer.ClassicsFooter
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+
+    </com.scwang.smart.refresh.layout.SmartRefreshLayout>
+
+</androidx.constraintlayout.widget.ConstraintLayout>
