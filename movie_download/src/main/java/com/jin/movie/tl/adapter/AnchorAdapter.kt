@@ -11,7 +11,7 @@ import com.bumptech.glide.Glide
 import com.jin.movie.R
 import com.jin.movie.tl.bean.AnchorBean
 
-class AnchorAdapter(private var list: MutableList<AnchorBean> = mutableListOf()) :
+class AnchorAdapter(private var list: MutableList<AnchorBean> = mutableListOf(),var isFromMine: Boolean = false) :
     RecyclerView.Adapter<AnchorAdapter.AnchorViewHolder>() {
 
     fun setNewData(newList: List<AnchorBean>) {
@@ -20,10 +20,18 @@ class AnchorAdapter(private var list: MutableList<AnchorBean> = mutableListOf())
         notifyDataSetChanged()
     }
 
+    // 在 AnchorAdapter 类内部添加这个方法
+    fun addData(newList: List<AnchorBean>) {
+        val startPos = list.size
+        list.addAll(newList)
+        notifyItemRangeInserted(startPos, newList.size)
+    }
+
+
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): AnchorViewHolder {
         val view = LayoutInflater.from(parent.context)
             .inflate(R.layout.item_anchor, parent, false)
-        return AnchorViewHolder(view)
+        return AnchorViewHolder(view,isFromMine)
     }
 
     override fun onBindViewHolder(holder: AnchorViewHolder, position: Int) {
@@ -38,7 +46,7 @@ class AnchorAdapter(private var list: MutableList<AnchorBean> = mutableListOf())
 
     override fun getItemCount(): Int = list.size
 
-    class AnchorViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+    class AnchorViewHolder(itemView: View,var isFromMine: Boolean) : RecyclerView.ViewHolder(itemView) {
         private val ivAvatar: ImageView = itemView.findViewById(R.id.iv_anchor_avatar)
         private val tvName: TextView = itemView.findViewById(R.id.tv_anchor_name)
         private val tvSlogan: TextView = itemView.findViewById(R.id.tv_anchor_slogan)
@@ -55,13 +63,24 @@ class AnchorAdapter(private var list: MutableList<AnchorBean> = mutableListOf())
                 .error(R.drawable.ic_default_avatar)
                 .into(ivAvatar)
 
-            // 关注状态处理
-            if (item.followStatus == 1) {
-                btnFollow.text = "已关注"
-                btnFollow.setBackgroundResource(R.drawable.shape_btn_followed_bg) // 灰色背景
+            if (isFromMine) {
+                // 关注状态处理
+                if (item.followStatus == 0) {
+                    btnFollow.text = "已关注"
+                    btnFollow.setBackgroundResource(R.drawable.shape_btn_followed_bg) // 灰色背景
+                } else {
+                    btnFollow.text = "关注"
+                    btnFollow.setBackgroundResource(R.drawable.shape_btn_follow_bg) // 粉色背景
+                }
             } else {
-                btnFollow.text = "关注"
-                btnFollow.setBackgroundResource(R.drawable.shape_btn_follow_bg) // 粉色背景
+                // 关注状态处理
+                if (item.followStatus == 1) {
+                    btnFollow.text = "已关注"
+                    btnFollow.setBackgroundResource(R.drawable.shape_btn_followed_bg) // 灰色背景
+                } else {
+                    btnFollow.text = "关注"
+                    btnFollow.setBackgroundResource(R.drawable.shape_btn_follow_bg) // 粉色背景
+                }
             }
         }
     }

@@ -7,8 +7,8 @@ import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.jin.movie.R
 import com.jin.movie.fragment.ActorFragment
 import com.jin.movie.fragment.DownloadFragment
-import com.jin.movie.fragment.MineFragment
 import com.jin.movie.fragment.RankFragment
+import com.jin.movie.tl.fragment.MineFragment
 import com.jin.movie.tl.fragment.PlayBackFragment
 import com.jin.movie.utils.UIUtils
 

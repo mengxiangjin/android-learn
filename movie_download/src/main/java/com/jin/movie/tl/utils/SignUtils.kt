@@ -21,12 +21,12 @@ object SignUtils {
         params["uid"] = "218904"
         params["systemModel"] = "Pixel 2 XL"
         params["appType"] = "1"
-        params["appVer"] = "3.9.3"
+        params["appVer"] = "3.9.4.9"
         params["phoneBrand"] = "google"
-        params["version"] = "3.9.3"
+        params["version"] = "3.9.4.9"
         params["deviceId"] = "63bd2e866c6ef324"
         params["systemVersion"] = "11"
-        params["versionCode"] = "20250729"
+        params["versionCode"] = "20251204"
 
         // 2. 根据路径和页码生成动态 Sign
         val sign = generateSign(path, page, pageSize)

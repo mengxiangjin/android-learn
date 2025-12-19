@@ -41,7 +41,7 @@ object RetrofitClient {
                 .header("token", "aiya_d4ed9fff-9bb0-41ac-a654-e6945559a3cbxn")
 
                 // 复杂的 JSON 字符串，使用 Kotlin 的原始字符串(三引号)或者转义
-                .header("appversion", "{\"uid\":\"218904\",\"systemModel\":\"Pixel 2 XL\",\"appType\":\"1\",\"appVer\":\"3.9.3\",\"phoneBrand\":\"google\",\"version\":\"3.9.3\",\"deviceId\":\"63bd2e866c6ef324\",\"systemVersion\":\"11\",\"versionCode\":\"20250729\"}")
+                .header("appversion", "{\"uid\":\"218904\",\"systemModel\":\"Pixel 2 XL\",\"appType\":\"1\",\"appVer\":\"3.9.4.9\",\"phoneBrand\":\"google\",\"version\":\"3.9.4.9\",\"deviceId\":\"63bd2e866c6ef324\",\"systemVersion\":\"11\",\"versionCode\":\"20251204\"}")
 
                 .header("versionname", "3.9.3")
                 .header("versioncode", "20250729")

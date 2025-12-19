@@ -46,6 +46,8 @@
             android:screenOrientation="portrait"/>
         <activity android:name=".tl.activity.AnchorProfileActivity"
             android:screenOrientation="portrait"/>
+        <activity android:name=".tl.activity.FollowListActivity"
+            android:screenOrientation="portrait"/>
     </application>
 
 </manifest>

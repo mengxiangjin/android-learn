@@ -1,4 +1,5 @@
 package com.jin.movie.tl.net
+import com.jin.movie.tl.bean.AnchorPageResponse
 import com.jin.movie.tl.bean.AnchorResponse
 import com.jin.movie.tl.bean.ApiResponse
 import com.jin.movie.tl.bean.UserInfoResponse
@@ -75,4 +76,25 @@ interface VideoApi {
         @Path("size") size: Int,
         @QueryMap queryParams: Map<String, String>
     ): Call<ApiResponse>
+
+
+    // 在 VideoApi.kt 中添加以下内容
+
+    // 1. 获取我的关注列表
+    // 参数放在 path 中: page, size
+    // 同时也需要 sign (queryParams) 和可能的 userId (body)
+    @GET("/user/follow/followList/{page}/{size}")
+    fun getFollowList(
+        @Path("page") page: Int,
+        @Path("size") size: Int,
+        @QueryMap queryParams: Map<String, String>,
+    ): Call<AnchorPageResponse> // 这里假设返回结构和 SearchVideos 类似，是 ApiResponse<Page<AnchorBean>>
+
+    // 2. 获取我的粉丝列表 (请核对 URL)
+    @POST("/user/follow/fansList/{page}/{size}")
+    fun getFansList(
+        @Path("page") page: Int,
+        @Path("size") size: Int,
+        @QueryMap queryParams: Map<String, String>,
+    ): Call<AnchorPageResponse>
 }
