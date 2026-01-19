@@ -14,6 +14,35 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
+    <!-- 【新增】透明触摸层：专门负责拦截手势 -->
+    <!-- 必须放在 video_player 下面(代码顺序上)，这样层级才是在播放器之上 -->
+    <View
+        android:id="@+id/v_touch_layer"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:clickable="true"
+        android:focusable="true"
+        android:background="#00000000" />
+
+
+    <!-- 新增：倍速/快退 状态提示 -->
+    <TextView
+        android:id="@+id/tv_speed_hint"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="#80000000"
+        android:padding="10dp"
+        android:textColor="#FFFFFF"
+        android:textSize="18sp"
+        android:textStyle="bold"
+        android:visibility="gone"
+        android:drawablePadding="8dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        android:text="2.0x 倍速播放中" />
+
     <!--
       注意：移除了 layout_marginEnd 等约束定位，
       因为我们要用代码(x,y)来控制位置。

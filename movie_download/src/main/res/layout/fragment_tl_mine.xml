@@ -235,12 +235,13 @@
         app:layout_constraintTop_toBottomOf="@id/layout_big_banners">
 
         <!-- 这里可以继续加更多条目 -->
-        <TextView
+        <Button
+            android:id="@+id/btn_generate_token"
             android:layout_width="match_parent"
             android:layout_height="50dp"
-            android:gravity="center_vertical"
-            android:text="更多功能开发中..."
-            android:textColor="#666666"/>
+            android:gravity="center"
+            android:text="生成Token并保存"
+            android:textColor="@color/white"/>
 
     </LinearLayout>
 

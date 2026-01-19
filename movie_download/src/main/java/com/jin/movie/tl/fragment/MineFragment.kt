@@ -12,6 +12,7 @@ import androidx.fragment.app.Fragment
 import com.jin.movie.R
 import com.jin.movie.tl.activity.FollowListActivity
 import com.jin.movie.tl.activity.FollowListActivity.Companion.TYPE_FOLLOW
+import com.jin.movie.tl.utils.LoginHelper
 
 class MineFragment : Fragment() {
 
@@ -28,6 +29,7 @@ class MineFragment : Fragment() {
     private lateinit var cardBanner1: View
     private lateinit var cardBanner2: View
     private lateinit var ivSettings: ImageView
+    private lateinit var generateTokenView: View
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -56,6 +58,8 @@ class MineFragment : Fragment() {
         cardBanner1 = view.findViewById(R.id.card_banner_1)
         cardBanner2 = view.findViewById(R.id.card_banner_2)
         ivSettings = view.findViewById(R.id.iv_settings)
+
+        generateTokenView = view.findViewById(R.id.btn_generate_token)
     }
 
     private fun initListeners() {
@@ -90,6 +94,14 @@ class MineFragment : Fragment() {
         // 6. 点击头像/个人信息
         view?.findViewById<View>(R.id.layout_user_info)?.setOnClickListener {
             Toast.makeText(context, "点击编辑资料", Toast.LENGTH_SHORT).show()
+        }
+
+        generateTokenView.setOnClickListener {
+            LoginHelper.login("15655549539","zj1435145737") {
+                requireActivity().runOnUiThread {
+                    Toast.makeText(requireContext(),it,Toast.LENGTH_SHORT).show()
+                }
+            }
         }
     }
 

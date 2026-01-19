@@ -11,9 +11,11 @@ import android.content.res.Configuration
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
+import android.view.GestureDetector
 import android.view.MotionEvent
 import android.view.View
 import android.widget.ImageView
+import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
@@ -33,6 +35,39 @@ class PlayerActivity : AppCompatActivity() {
 
 
     private val PERMISSION_REQUEST_CODE = 1001
+
+
+    // --- 新增：长按倍速/快退相关变量 ---
+    private lateinit var tvSpeedHint: TextView // 提示文字 View
+    // 新增变量
+    private lateinit var touchLayer: View // 触摸层
+    private lateinit var gestureDetector: GestureDetector
+    private var isLongPressing = false
+
+    // 快退专用 Handler
+    private val rewindHandler = Handler(Looper.getMainLooper())
+    private val rewindRunnable = object : Runnable {
+        override fun run() {
+            if (!isLongPressing) return
+            try {
+                // 获取当前位置
+                val currentPosition = videoPlayer.currentPositionWhenPlaying
+                // 每次回退 2000毫秒 (2秒)，间隔 200毫秒执行一次，产生“快速倒带”的视觉效果
+                val targetPosition = currentPosition - 2000
+
+                if (targetPosition > 0) {
+                    videoPlayer.seekTo(targetPosition.toLong())
+                    // 继续下一次回退
+                    rewindHandler.postDelayed(this, 200)
+                } else {
+                    // 到头了，停止
+                    videoPlayer.seekTo(0)
+                }
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
+        }
+    }
 
 
 
@@ -93,10 +128,15 @@ class PlayerActivity : AppCompatActivity() {
 
         initView()
         initDownloadButton()
+        initGesture() // <--- 记得调用这个
     }
 
     private fun initView() {
         videoPlayer = findViewById(R.id.video_player)
+        tvSpeedHint = findViewById(R.id.tv_speed_hint) // <--- 初始化提示View
+        touchLayer = findViewById(R.id.v_touch_layer) // 【获取触摸层】
+
+
         val url = intent.getStringExtra("url") ?: ""
         val title = intent.getStringExtra("title") ?: "未知视频"
         val coverUrl = intent.getStringExtra("cover") ?: ""
@@ -245,6 +285,75 @@ class PlayerActivity : AppCompatActivity() {
             // 如果已经是展开状态，再次点击则是下载
             checkPermissionAndDownload()
         }
+    }
+
+
+    private fun initGesture() {
+        // 1. 配置手势识别器
+        gestureDetector = GestureDetector(this, object : GestureDetector.SimpleOnGestureListener() {
+            override fun onLongPress(e: MotionEvent) {
+                if (!isPlay) return // 未播放时不处理
+
+                isLongPressing = true
+
+                // 根据按压位置判断逻辑
+                if (e.rawX < screenWidth / 2) {
+                    // --- 左侧：快退 ---
+                    showSpeedHint("<< 正在快退")
+                    rewindHandler.post(rewindRunnable)
+                } else {
+                    // --- 右侧：2.0 倍速 ---
+                    showSpeedHint(">> 2.0x 倍速播放中")
+                    videoPlayer.setSpeedPlaying(2.0f, true)
+                }
+            }
+            // 我们不需要在这里处理 onSingleTapConfirmed，交给 GSY 自己处理
+        })
+
+        // 2. 将触摸事件绑定到【透明触摸层】上
+        touchLayer.setOnTouchListener { _, event ->
+
+            // A. 先让手势识别器检测（检测长按）
+            gestureDetector.onTouchEvent(event)
+
+            // B. 处理手势抬起 (ACTION_UP)
+            if (event.action == MotionEvent.ACTION_UP || event.action == MotionEvent.ACTION_CANCEL) {
+                if (isLongPressing) {
+                    // 如果刚才是在长按，现在松手了 -> 恢复原状
+                    stopLongPressLogic()
+
+                    // 【关键点】：既然是长按结束，我们消耗掉这个 UP 事件，
+                    // 不要传给 videoPlayer，否则 videoPlayer 会以为是点击，导致视频暂停。
+                    return@setOnTouchListener true
+                }
+            }
+
+            // C. 事件穿透逻辑
+            // 如果当前正在长按，就不要把事件给 videoPlayer 了（防止干扰）
+            // 如果没有长按，就把事件手动分发给 videoPlayer，让它处理它的点击暂停、滑动调节音量/亮度
+            if (!isLongPressing) {
+                videoPlayer.dispatchTouchEvent(event)
+            }
+
+            // 返回 true，确保 touchLayer 能持续接收到后续的 MOVE/UP 事件
+            true
+        }
+    }
+
+    private fun stopLongPressLogic() {
+        isLongPressing = false
+        tvSpeedHint.visibility = View.GONE
+
+        // 停止快退
+        rewindHandler.removeCallbacks(rewindRunnable)
+
+        // 恢复正常速度
+        videoPlayer.setSpeedPlaying(1.0f, true)
+    }
+
+    private fun showSpeedHint(text: String) {
+        tvSpeedHint.text = text
+        tvSpeedHint.visibility = View.VISIBLE
     }
 
     private fun checkPermissionAndDownload() {
@@ -404,6 +513,7 @@ class PlayerActivity : AppCompatActivity() {
 
     override fun onDestroy() {
         super.onDestroy()
+        rewindHandler.removeCallbacksAndMessages(null)
         if (isPlay) videoPlayer.currentPlayer.release()
         if (orientationUtils != null) orientationUtils.releaseListener()
         hideHandler.removeCallbacksAndMessages(null)

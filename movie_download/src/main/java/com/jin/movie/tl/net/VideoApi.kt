@@ -2,6 +2,8 @@ package com.jin.movie.tl.net
 import com.jin.movie.tl.bean.AnchorPageResponse
 import com.jin.movie.tl.bean.AnchorResponse
 import com.jin.movie.tl.bean.ApiResponse
+import com.jin.movie.tl.bean.LoginRequest
+import com.jin.movie.tl.bean.LoginResponse
 import com.jin.movie.tl.bean.UserInfoResponse
 import com.jin.movie.tl.bean.VideoListResponse
 import retrofit2.Call
@@ -97,4 +99,11 @@ interface VideoApi {
         @Path("size") size: Int,
         @QueryMap queryParams: Map<String, String>,
     ): Call<AnchorPageResponse>
+
+
+    @POST("oauth/oauth/login")
+    fun login(
+        @QueryMap params: Map<String, String>, // 对应 Python 的 params
+        @Body request: LoginRequest            // 对应 Python 的 json_data
+    ): Call<LoginResponse>                     // 返回类型改为刚才定义的 LoginResponse
 }
