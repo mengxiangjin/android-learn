@@ -1,0 +1,134 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#12121A">
+
+    <!-- 1. 顶部：动态大分类 (横向滚动) -->
+    <!-- 模仿你原本的 rv_big_categories -->
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/rv_dynamic_tabs"
+        android:layout_width="0dp"
+        android:layout_height="50dp"
+        android:layout_marginTop="20dp"
+        android:clipToPadding="false"
+        android:orientation="horizontal"
+        android:paddingHorizontal="12dp"
+        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+        app:layout_constraintEnd_toStartOf="@id/iv_search"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:listitem="@layout/item_big_category" />
+
+    <!-- 搜索按钮 -->
+    <ImageView
+        android:id="@+id/iv_search"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:layout_marginEnd="8dp"
+        android:padding="8dp"
+        android:src="@android:drawable/ic_menu_search"
+        app:layout_constraintBottom_toBottomOf="@id/rv_dynamic_tabs"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="@id/rv_dynamic_tabs"
+        app:tint="#FFFFFF" />
+
+    <!-- 2. 中间：3个固定子分类 (最新上架 / 最多观看 / 最多收藏) -->
+    <!-- 这里可以用 RecyclerView 也可以用 LinearLayout，为了方便点击状态管理，这里用 LinearLayout 模拟 Tab -->
+    <LinearLayout
+        android:id="@+id/layout_fixed_tabs"
+        android:layout_width="match_parent"
+        android:layout_height="40dp"
+        android:background="#1F1F2B"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        app:layout_constraintTop_toBottomOf="@id/rv_dynamic_tabs">
+
+        <!-- Tab 1: 最新上架 -->
+        <TextView
+            android:id="@+id/tv_tab_new"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:text="最新上架"
+            android:textColor="#FF6699"
+            android:textSize="14sp"
+            android:textStyle="bold" />
+
+        <!-- Tab 2: 最多观看 -->
+        <TextView
+            android:id="@+id/tv_tab_views"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:text="最多观看"
+            android:textColor="#999999"
+            android:textSize="14sp" />
+
+        <!-- Tab 3: 最多收藏 -->
+        <TextView
+            android:id="@+id/tv_tab_collect"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:text="最多收藏"
+            android:textColor="#999999"
+            android:textSize="14sp" />
+    </LinearLayout>
+
+    <!-- 3. 底部：视频列表 (带刷新和分页) -->
+    <com.scwang.smart.refresh.layout.SmartRefreshLayout
+        android:id="@+id/refreshLayout"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_marginTop="8dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/layout_fixed_tabs"
+        app:srlAccentColor="#999999"
+        app:srlPrimaryColor="#12121A">
+
+        <!-- Header -->
+        <com.scwang.smart.refresh.header.ClassicsHeader
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+
+        <!-- List -->
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/rv_video_list"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:paddingHorizontal="6dp"
+            android:clipToPadding="false"
+            android:overScrollMode="never" />
+
+        <!-- Footer -->
+        <com.scwang.smart.refresh.footer.ClassicsFooter
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+
+    </com.scwang.smart.refresh.layout.SmartRefreshLayout>
+
+    <!-- 4. 页码指示器 -->
+    <TextView
+        android:id="@+id/tv_page_indicator"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="20dp"
+        android:layout_marginBottom="30dp"
+        android:background="@drawable/shape_rank_bg"
+        android:gravity="center"
+        android:paddingHorizontal="12dp"
+        android:paddingVertical="6dp"
+        android:text="1 / 1"
+        android:textColor="#FFFFFF"
+        android:textSize="12sp"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

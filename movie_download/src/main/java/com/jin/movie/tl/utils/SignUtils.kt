@@ -5,8 +5,8 @@ import java.security.MessageDigest
 
 object SignUtils {
 
-    private const val BRAND_ID = "ab0b98137b57439fbdeee594e386079c"
-    private const val SIGN_KEY = "jGZH2Yf77YHpcyeZ"
+    private const val BRAND_ID = "43600c095fa84f059f2c02725f4c0b0d"
+    private const val SIGN_KEY = "3vtWp15zCm"
 
     /**
      * 获取带有签名的完整参数 Map
@@ -21,12 +21,12 @@ object SignUtils {
         params["uid"] = "218904"
         params["systemModel"] = "Pixel 2 XL"
         params["appType"] = "1"
-        params["appVer"] = "3.9.4.9"
+        params["appVer"] = "3.9.5.9"
         params["phoneBrand"] = "google"
-        params["version"] = "3.9.4.9"
+        params["version"] = "3.9.5.9"
         params["deviceId"] = "63bd2e866c6ef324"
         params["systemVersion"] = "11"
-        params["versionCode"] = "20251204"
+        params["versionCode"] = "20260203"
 
         // 2. 根据路径和页码生成动态 Sign
         val sign = generateSign(path, page, pageSize)
@@ -35,7 +35,7 @@ object SignUtils {
         return params
     }
 
-    private fun generateSign(basePath: String, page: Int, pageSize: Int): String {
+    fun generateSign(basePath: String, page: Int, pageSize: Int): String {
         val nowTime = System.currentTimeMillis() / 1000
 
         // 模拟 Java 中的 getAiYaRand()。

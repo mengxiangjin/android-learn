@@ -10,6 +10,7 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import com.jin.movie.R
+import com.jin.movie.dog.DogMainActivity
 import com.jin.movie.tl.TaoLuMainActivity
 
 class MineFragment : Fragment() {
@@ -51,7 +52,11 @@ class MineFragment : Fragment() {
 
         // 设置点击事件
         menuView.setOnClickListener {
-            startActivity(Intent(requireContext(),TaoLuMainActivity::class.java))
+            if ("观看历史".equals(title)) {
+                startActivity(Intent(requireContext(),TaoLuMainActivity::class.java))
+            } else if ("我的收藏".equals(title)) {
+                startActivity(Intent(requireContext(),DogMainActivity::class.java))
+            }
             Toast.makeText(context, "点击了: $title", Toast.LENGTH_SHORT).show()
         }
     }

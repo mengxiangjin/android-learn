@@ -51,6 +51,7 @@ class VideoAdapter(
             tvDuration.isVisible = video.duration.isNotEmpty()
             tvPlayCount.text = video.playCount
 
+            tvPlayCount.isVisible = video.playCount != "0"
             // 隐藏旧布局中可能还存在的控件
             tvPrice?.visibility = View.GONE
             tvTimeAgo?.visibility = View.GONE

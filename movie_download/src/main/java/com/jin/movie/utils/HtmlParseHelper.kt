@@ -350,4 +350,114 @@ object HtmlParseHelper {
     fun getPageTitle(html: String): String {
         return Jsoup.parse(html).title()
     }
+
+
+    //以下是 TaoLuDog页面相关解析
+    fun parseDogCategoryList(html: String): List<BigCategory> {
+        val bigCategoryList = mutableListOf<BigCategory>()
+
+        if (html.isEmpty()) return bigCategoryList
+
+        try {
+            // 1. 将字符串转为 Jsoup 文档对象
+            val doc = Jsoup.parse(html)
+
+            // --- 下面是模拟解析逻辑，你需要根据真实的 HTML 结构修改 CSS 选择器 ---
+
+            // 假设视频都在 class="video-item" 的 div 里
+            // CSS 选择器语法：div.video-item
+            val allNavs = doc.select("div[class='sm:container mx-auto mb-5 px-4']")
+            if (allNavs.size < 6) return bigCategoryList
+            //先拿第一个对应大分类 start
+            val navs = allNavs.subList(allNavs.size - 6,allNavs.size)
+
+            navs.forEachIndexed { index, element ->
+                val id = index.toString()
+                val url = element.selectFirst("a").attr("href")
+                val name = element.selectFirst("a").text()
+                val bigCategory = BigCategory(id,url,name,index == 0)
+                bigCategoryList.add(bigCategory)
+            }
+        } catch (e: Exception) {
+            Log.e(TAG, "Jsoup 解析出错: ${e.message}")
+        }
+        return bigCategoryList
+    }
+
+
+    fun parseDogVideoList(html: String): List<Video> {
+        val videoList = mutableListOf<Video>()
+        if (html.isEmpty()) return videoList
+        try {
+            // 1. 将字符串转为 Jsoup 文档对象
+            val doc = Jsoup.parse(html)
+            val videos = doc.selectFirst("div[x-data='videoList']")?:return videoList
+            val aList = videos.select("div > a")?:return emptyList()
+            aList.forEach {
+                val title = it.attr("title").trim()
+                val detailUrl = "https://taolu.dog/download/" + it.attr("data-id")
+                val coverUrl = it.selectFirst("img").attr("data-src")
+                val durationDivs = it.selectFirst("div").select("div")
+                val duration = durationDivs[durationDivs.size - 1].text()
+                val video = Video(detailUrl,title,coverUrl,duration,"0")
+                videoList.add(video)
+            }
+            return videoList
+        }catch (e: Exception) {
+            Log.e(TAG, "Jsoup 解析出错: ${e.message}")
+        }
+        return videoList
+    }
+
+    fun parseDogTotalPage(html: String):Int {
+        try {
+            val document = Jsoup.parse(html)
+            val countStr = document.selectFirst("span#price-currency").text().replace(" ", "").replace("/","")
+            return countStr.toInt()
+        }catch (e: Exception) {
+            return -1
+        }
+
+    }
+
+    /**
+     * 解析演员列表
+     */
+    fun parseDogActorList(html: String): List<Actor> {
+        val list = mutableListOf<Actor>()
+        try {
+            val doc = Jsoup.parse(html)
+
+            // 1. 定位到网格容器下的所有 item
+            // 选择器含义：寻找 class 为 van-grid 下的所有 class 为 van-grid-item 的 a 标签
+            val elements = doc.select("a[title]")
+
+            for (element in elements) {
+                // 详情页链接
+                val href = element.attr("href")
+
+                // 2. 解析名字
+                val name = element.attr("title")
+
+                // 3. 解析图片
+                val avatar = element.selectFirst("img").attr("src")
+                val count = element.selectFirst("span").text()
+
+                if (name.isNotEmpty()) {
+                    list.add(Actor(name, avatar, href,count))
+                }
+            }
+        } catch (e: Exception) {
+            Log.e(TAG, "解析演员表失败: ${e.message}")
+        }
+        return list
+    }
+
+    fun parseActorTotalPage(html: String):Int {
+        val document = Jsoup.parse(html)
+        val countStr = document.selectFirst("span#price-currency").text().replace(" ", "").replace("/","")
+        return countStr.toInt()
+    }
+
+
 }

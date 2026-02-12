@@ -1,6 +1,7 @@
 package com.jin.movie.tl.fragment
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -13,6 +14,16 @@ import com.jin.movie.R
 import com.jin.movie.tl.activity.FollowListActivity
 import com.jin.movie.tl.activity.FollowListActivity.Companion.TYPE_FOLLOW
 import com.jin.movie.tl.utils.LoginHelper
+import com.jin.movie.tl.utils.SignUtils
+import okhttp3.Call
+import okhttp3.Callback
+import okhttp3.HttpUrl
+import okhttp3.HttpUrl.Companion.toHttpUrlOrNull
+import okhttp3.OkHttpClient
+import okhttp3.Request
+import okhttp3.Response
+import java.io.IOException
+import java.lang.Exception
 
 class MineFragment : Fragment() {
 
@@ -62,12 +73,72 @@ class MineFragment : Fragment() {
         generateTokenView = view.findViewById(R.id.btn_generate_token)
     }
 
+
+    fun testFansListRequest() {
+        val client = OkHttpClient()
+
+
+
+        // 1. 构建 URL 参数 (注意：要完全匹配你抓包看到的顺序和编码)
+        // 这里使用 HttpUrl.Builder 确保路径和参数正确
+        val urlBuilder = "https://pro.api.taolu6.cc/user/follow/followList/1/20".toHttpUrlOrNull()!!.newBuilder()
+            .addQueryParameter("uid", "218904")
+            .addEncodedQueryParameter("systemModel", "Pixel%202%20XL") // 使用 Encoded 保持百分号编码
+            .addQueryParameter("appType", "1")
+            .addQueryParameter("appVer", "3.9.5.9")
+            .addQueryParameter("phoneBrand", "google")
+            .addQueryParameter("sign", SignUtils.generateSign("/user/follow/followList",1,20))
+            .addQueryParameter("version", "3.9.5.9")
+            .addQueryParameter("deviceId", "63bd2e866c6ef324")
+            .addQueryParameter("systemVersion", "11")
+            .addQueryParameter("versionCode", "20260203")
+
+        // 2. 准备请求头中的 JSON 字符串 (appversion)
+        // 注意：这里的 systemModel 是带空格的，不是 %20
+        val appVersionJson = """{"uid":"218904","systemModel":"Pixel 2 XL","appType":"1","appVer":"3.9.5.9","phoneBrand":"google","version":"3.9.5.9","deviceId":"63bd2e866c6ef324","systemVersion":"11","versionCode":"20260203"}"""
+
+        // 3. 构建 Request
+        val request = Request.Builder()
+            .url(urlBuilder.build())
+            .addHeader("Connection", "keep-alive")
+            .addHeader("Accept", "*/*")
+            .addHeader("token", "aiya_41e9d628-aa7a-4eb9-b449-a941e71d26c5ov")
+            .addHeader("appversion", appVersionJson)
+            .addHeader("versionname", "3.9.5.9")
+            .addHeader("versioncode", "20260203")
+            .addHeader("clienttype", "Android")
+            .addHeader("referer", "https://pro.api.taolu6.cc")
+            .addHeader("Accept-Encoding","gzip, deflate, br")
+            .addHeader("Accept","*/*")
+            .addHeader("User-Agent","")
+            .get()
+            .build()
+
+        // 4. 发起异步请求
+        client.newCall(request).enqueue(object : Callback {
+            override fun onFailure(call: Call, e: IOException) {
+                Log.e("OkHttp_Test", "请求失败: ${e.message}")
+            }
+
+            override fun onResponse(call: Call, response: Response) {
+                val resBody = response.body?.string()
+                if (response.isSuccessful) {
+                    Log.d("OkHttp_Test", "成功获取数据: $resBody")
+                } else {
+                    Log.e("OkHttp_Test", "错误代码: ${response.code}, 消息: $resBody")
+                }
+            }
+        })
+    }
+
+
     private fun initListeners() {
         // 1. 点击关注
         llFollowing.setOnClickListener {
             // TODO: 跳转到“我的关注”列表 Activity
             Toast.makeText(context, "点击了关注列表", Toast.LENGTH_SHORT).show()
             FollowListActivity.start(requireContext(),TYPE_FOLLOW)
+//            testFansListRequest()
         }
 
         // 2. 点击粉丝

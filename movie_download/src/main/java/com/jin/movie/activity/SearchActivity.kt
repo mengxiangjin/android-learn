@@ -237,6 +237,7 @@ class SearchActivity : AppCompatActivity() {
                 val videos = HtmlParseHelper.parseVideoList(html,HtmlParseHelper.ParseType.SEARCH)
                 val pageCount = HtmlParseHelper.parseTotalPage(html)
 
+                Log.d("videoList", "VideoList onSuccess: " + videos.toString())
                 // 【关键】尝试解析排序标签
                 // 因为搜索页结构和分类页类似，我们尝试用 parseCategoryList 解析
                 // 结果通常会返回一个包含了 fixCategories 的 BigCategory 对象 (虽然它没有 SubCategories)

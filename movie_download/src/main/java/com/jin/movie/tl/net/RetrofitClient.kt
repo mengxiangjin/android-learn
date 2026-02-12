@@ -13,7 +13,7 @@ import java.util.concurrent.TimeUnit
 object RetrofitClient {
 
     // 基础 URL
-    private const val BASE_URL = "https://proapi.taolu.cloud/"
+    private const val BASE_URL = "https://pro.api.taolu6.cc/"
 
 
     private const val SP_NAME = "my_app_sp" // 你的 SP 文件名
@@ -50,16 +50,16 @@ object RetrofitClient {
                 .header("Content-Type", "application/json; charset=UTF-8")
 
                 // 核心 Token
-//                .header("token", "aiya_276ce8e8-536c-4865-bd4c-3712d4c63cd1h8")
-                .header("token", "aiya_$token")
+                .header("token", "aiya_41e9d628-aa7a-4eb9-b449-a941e71d26c5ov")
+//                .header("token", "aiya_$token")
 
                 // 复杂的 JSON 字符串，使用 Kotlin 的原始字符串(三引号)或者转义
-                .header("appversion", "{\"uid\":\"218904\",\"systemModel\":\"Pixel 2 XL\",\"appType\":\"1\",\"appVer\":\"3.9.4.9\",\"phoneBrand\":\"google\",\"version\":\"3.9.4.9\",\"deviceId\":\"63bd2e866c6ef324\",\"systemVersion\":\"11\",\"versionCode\":\"20251204\"}")
+                .header("appversion", "{\"uid\":\"218904\",\"systemModel\":\"Pixel 2 XL\",\"appType\":\"1\",\"appVer\":\"3.9.5.9\",\"phoneBrand\":\"google\",\"version\":\"3.9.5.9\",\"deviceId\":\"63bd2e866c6ef324\",\"systemVersion\":\"11\",\"versionCode\":\"20260203\"}")
 
-                .header("versionname", "3.9.3")
-                .header("versioncode", "20250729")
+                .header("versionname", "3.9.5.9")
+                .header("versioncode", "20260203")
                 .header("clienttype", "Android")
-                .header("referer", "https://proapi.taolu.cloud")
+                .header("referer", "https://pro.api.taolu6.cc")
                 // --- 结束注入请求头 ---
                 .build()
 

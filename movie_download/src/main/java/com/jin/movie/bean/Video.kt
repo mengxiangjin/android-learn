@@ -13,11 +13,17 @@ data class Video(
     // 扩展属性：通过封面图地址推算 m3u8 地址
     // 逻辑：去掉最后一个 "/" 后的内容，替换为 "index.m3u8"
     val movieUrl: String
-        get() = if (coverUrl.contains("/")) {
+        get() = if (detailUrl.startsWith("https://taolu.dog/download/")) {
+            detailUrl
+        }else if(coverUrl.contains("/")) {
             coverUrl.substringBeforeLast("/") + "/index.m3u8"
         } else {
             ""
         }
+
+    override fun toString(): String {
+        return "Video(detailUrl='$detailUrl', title='$title', coverUrl='$coverUrl', duration='$duration', playCount='$playCount', page=$page, movieUrl='$movieUrl')"
+    }
 
 
 }

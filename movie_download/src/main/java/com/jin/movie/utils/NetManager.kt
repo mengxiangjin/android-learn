@@ -17,6 +17,8 @@ object NetManager {
 
     private const val TAG = "NetManager"
 
+    private var dog_cookie = ""
+
 
     // 1. 配置 OkHttpClient
     private val client: OkHttpClient by lazy {
@@ -53,6 +55,7 @@ object NetManager {
         val request = Request.Builder()
             .url(url)
             .header("User-Agent", "Mozilla/5.0 (Android) VideoApp/1.0") // 伪装成浏览器或App
+            .header("Cookie", dog_cookie)
             .get()
             .build()
 
@@ -130,11 +133,16 @@ object NetManager {
                 return
             }
 
+            val cookie = response.headers["set-cookie"]
+            if (cookie != null && cookie.startsWith("taolusmcom")) {
+                dog_cookie = cookie.substringAfter("=")
+            }
             val bodyString = response.body?.string()
             if (bodyString == null) {
                 postError(callback, "返回数据为空")
                 return
             }
+
 
             // 切换回主线程返回成功结果
             mainHandler.post {
