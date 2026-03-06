@@ -14,11 +14,14 @@ import androidx.recyclerview.widget.RecyclerView
 import com.jin.movie.R
 import com.jin.movie.tl.adapter.AnchorAdapter
 import com.jin.movie.tl.bean.AnchorPageResponse
+import com.jin.movie.tl.bean.ApiResponse
 import com.jin.movie.tl.net.RetrofitClient
+import com.jin.movie.tl.utils.ApiDecryptor
 import com.jin.movie.tl.utils.SignUtils
 import com.jin.movie.utils.UIUtils
 import com.scwang.smart.refresh.layout.SmartRefreshLayout
 import com.scwang.smart.refresh.layout.api.RefreshLayout
+import okhttp3.ResponseBody
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -106,12 +109,12 @@ class FollowListActivity : AppCompatActivity() {
         val queryParams = SignUtils.getSignedParams(apiPath, currentPage, pageSize).toMutableMap()
 
         RetrofitClient.apiService.getFollowList(currentPage, pageSize, queryParams)
-            .enqueue(object : Callback<AnchorPageResponse> {
-                override fun onResponse(call: Call<AnchorPageResponse>, response: Response<AnchorPageResponse>) {
+            .enqueue(object : Callback<ResponseBody> {
+                override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
                     handleResponse(response, isRefresh, layout)
                 }
 
-                override fun onFailure(call: Call<AnchorPageResponse>, t: Throwable) {
+                override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
                     fail(isRefresh, layout, "网络错误: ${t.message}")
                 }
             })
@@ -124,12 +127,12 @@ class FollowListActivity : AppCompatActivity() {
         val queryParams = SignUtils.getSignedParams(apiPath, currentPage, pageSize).toMutableMap()
 
         RetrofitClient.apiService.getFansList(currentPage, pageSize, queryParams)
-            .enqueue(object : Callback<AnchorPageResponse> {
-                override fun onResponse(call: Call<AnchorPageResponse>, response: Response<AnchorPageResponse>) {
+            .enqueue(object : Callback<ResponseBody> {
+                override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
                     handleResponse(response, isRefresh, layout)
                 }
 
-                override fun onFailure(call: Call<AnchorPageResponse>, t: Throwable) {
+                override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
                     fail(isRefresh, layout, "网络错误: ${t.message}")
                 }
             })
@@ -138,9 +141,17 @@ class FollowListActivity : AppCompatActivity() {
     /**
      * 统一处理返回结果 (避免代码重复)
      */
-    private fun handleResponse(response: Response<AnchorPageResponse>, isRefresh: Boolean, layout: RefreshLayout) {
+    private fun handleResponse(response: Response<ResponseBody>, isRefresh: Boolean, layout: RefreshLayout) {
         val result = response.body()
-        if (response.isSuccessful && result != null && result.success) {
+        if (response.isSuccessful && result != null) {
+            // 2. 获取加密字符串
+            val encryptedBase64 = response.body()!!.string()
+            // 3. 调用解密
+            val result =
+                ApiDecryptor.decryptAndParse<AnchorPageResponse>(encryptedBase64) ?: return
+            // 4. 解析 JSON
+            Log.d(ApiDecryptor.TAG, "onResponse: " + result.toString())
+
             // 注意：这里假设 ApiResponse.data.records 也是 AnchorBean 列表
             val records = result.data?.records
             val hasData = !records.isNullOrEmpty()
@@ -173,7 +184,7 @@ class FollowListActivity : AppCompatActivity() {
                 currentPage++
             }
         } else {
-            fail(isRefresh, layout, result?.message ?: "请求失败")
+            fail(isRefresh, layout,  "请求失败")
         }
     }
 

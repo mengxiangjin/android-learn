@@ -2,6 +2,7 @@ package com.jin.movie.tl.fragment
 
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -10,14 +11,17 @@ import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.tabs.TabLayout
+import com.google.gson.Gson
 import com.jin.movie.R
 import com.jin.movie.tl.activity.SearchActivity
 import com.jin.movie.tl.adapter.VideoAdapter
 import com.jin.movie.tl.bean.ApiResponse
 import com.jin.movie.tl.net.RetrofitClient
+import com.jin.movie.tl.utils.ApiDecryptor
 import com.jin.movie.tl.utils.SignUtils
 import com.scwang.smart.refresh.layout.SmartRefreshLayout
 import com.scwang.smart.refresh.layout.api.RefreshLayout
+import okhttp3.ResponseBody
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -227,7 +231,7 @@ class PlayBackFragment : Fragment() {
         // 注意：由于 path 不同，通常 Retrofit 接口也不同。
         // 如果你的 apiService 有两个不同的方法，请在这里进行判断调用。
 
-        val call: Call<ApiResponse> = if (isPlayback) {
+        val call: Call<ResponseBody> = if (isPlayback) {
             // 回放接口
             RetrofitClient.apiService.getRecommendVideos(currentPage, pageSize, queryParams, bodyMap)
         } else {
@@ -237,10 +241,16 @@ class PlayBackFragment : Fragment() {
             RetrofitClient.apiService.getPlotVideos(currentPage, pageSize, queryParams, bodyMap)
         }
 
-        call.enqueue(object : Callback<ApiResponse> {
-            override fun onResponse(call: Call<ApiResponse>, response: Response<ApiResponse>) {
+        call.enqueue(object : Callback<ResponseBody> {
+            override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
                 if (response.isSuccessful && response.body() != null) {
-                    val result = response.body()!!
+                    // 2. 获取加密字符串
+                    val encryptedBase64 = response.body()!!.string()
+                    // 3. 调用解密
+                    val result =
+                        ApiDecryptor.decryptAndParse<ApiResponse>(encryptedBase64) ?: return
+                    // 4. 解析 JSON
+                    Log.d(ApiDecryptor.TAG, "onResponse: " + result.toString())
                     if (result.success) {
                         val records = result.data.records
                         val hasData = records.isNotEmpty()
@@ -269,7 +279,7 @@ class PlayBackFragment : Fragment() {
                 }
             }
 
-            override fun onFailure(call: Call<ApiResponse>, t: Throwable) {
+            override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
                 fail(isRefresh, layout, "网络错误: ${t.message}")
             }
         })

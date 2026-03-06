@@ -8,7 +8,9 @@ import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.RequestBody.Companion.toRequestBody
 import okhttp3.logging.HttpLoggingInterceptor
 import java.io.IOException
+import java.net.InetAddress
 import java.util.concurrent.TimeUnit
+
 
 /**
  * 网络请求工具类 (单例模式)
@@ -29,6 +31,7 @@ object NetManager {
         logging.level = HttpLoggingInterceptor.Level.BODY
 
         OkHttpClient.Builder()
+            .dns(ResolvedDns())
             .connectTimeout(15, TimeUnit.SECONDS) // 连接超时
             .readTimeout(20, TimeUnit.SECONDS)    // 读取超时
             .writeTimeout(20, TimeUnit.SECONDS)   // 写入超时

@@ -10,6 +10,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.jin.movie.R
 import com.jin.movie.tl.bean.AnchorBean
+import com.jin.movie.tl.bean.EncryptedImage
 
 class AnchorAdapter(private var list: MutableList<AnchorBean> = mutableListOf(),var isFromMine: Boolean = false) :
     RecyclerView.Adapter<AnchorAdapter.AnchorViewHolder>() {
@@ -56,9 +57,18 @@ class AnchorAdapter(private var list: MutableList<AnchorBean> = mutableListOf(),
             tvName.text = item.nickName ?: "未知用户"
             tvSlogan.text = item.userSlogan ?: "这家伙很懒，什么都没留下"
 
+
+            // 现在的加载方式
+            val imageModel = if (item.userLogo!!.endsWith(".tlenc")) {
+                EncryptedImage(item.userLogo) // 触发自定义解密流程
+            } else {
+                item.userLogo // 走普通加载
+            }
+
+
             // 头像加载
             Glide.with(itemView.context)
-                .load(item.userLogo)
+                .load(imageModel)
                 .placeholder(R.drawable.ic_default_avatar) // 请确保有占位图
                 .error(R.drawable.ic_default_avatar)
                 .into(ivAvatar)

@@ -12,7 +12,11 @@ data class ApiResponse(
     val code: Int,
     val message: String,
     val data: DataBean
-) : Serializable
+) : Serializable {
+    override fun toString(): String {
+        return "ApiResponse(success=$success, code=$code, message='$message', data=$data)"
+    }
+}
 
 /**
  * 数据载荷类
@@ -28,7 +32,11 @@ data class DataBean(
     val hitCount: Boolean,
     val searchCount: Boolean
     // val orders: List<Any>? // JSON中为空数组，暂时忽略或用 List<Any>
-) : Serializable
+) : Serializable {
+    override fun toString(): String {
+        return "DataBean(records=$records, total=$total, size=$size, current=$current, pages=$pages, optimizeCountSql=$optimizeCountSql, hitCount=$hitCount, searchCount=$searchCount)"
+    }
+}
 
 /**
  * 视频记录实体类
@@ -118,7 +126,11 @@ data class VideoRecord(
     // 即使 JSON 是 []，Gson 也能正确解析为空列表
     val videoTags: List<VideoTag>?
 
-) : Serializable
+) : Serializable {
+    override fun toString(): String {
+        return "VideoRecord(id=$id, anchorUserId=$anchorUserId, liveId=$liveId, fileId=$fileId, nickName=$nickName, userLogo=$userLogo, userSlogan=$userSlogan, buyStatus=$buyStatus, videoStatus=$videoStatus, s3Status=$s3Status, videoSort=$videoSort, globalRecommendSort=$globalRecommendSort, globalRecommend=$globalRecommend, isRecommend=$isRecommend, recommend=$recommend, isRecommended=$isRecommended, videoTitle=$videoTitle, title=$title, descs=$descs, coverImage=$coverImage, videoUrl=$videoUrl, s3VideoUrl=$s3VideoUrl, preview=$preview, previewVideoUrl=$previewVideoUrl, previewVideoCoverImage=$previewVideoCoverImage, startTime=$startTime, endTime=$endTime, addTime=$addTime, updatedTime=$updatedTime, durationTime=$durationTime, heat=$heat, videoViews=$videoViews, videoSize=$videoSize, praise=$praise, collect=$collect, comment=$comment, share=$share, download=$download, buy=$buy, videoCoin=$videoCoin, downloadCoin=$downloadCoin, whetherDownload=$whetherDownload, isPraise=$isPraise, isCollect=$isCollect, isDownLoad=$isDownLoad, isFollow=$isFollow, isProduct=$isProduct, videoTags=$videoTags)"
+    }
+}
 
 /**
  * 视频标签实体类
@@ -132,4 +144,8 @@ data class VideoTag(
     val status: Int,
     val addTime: String?,
     val updatedTime: String?
-) : Serializable
+) : Serializable {
+    override fun toString(): String {
+        return "VideoTag(id=$id, name=$name, type=$type, sort=$sort, status=$status, addTime=$addTime, updatedTime=$updatedTime)"
+    }
+}

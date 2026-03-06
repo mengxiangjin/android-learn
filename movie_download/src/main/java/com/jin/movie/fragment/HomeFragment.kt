@@ -52,6 +52,7 @@ class HomeFragment : Fragment() {
     private val BASE_URL = "https://www.zimuquan23.uk"
     private var currentSortType = "time"
 
+
     // 1. 加载布局
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -185,6 +186,8 @@ class HomeFragment : Fragment() {
     }
 
     private fun fetchData(isRefresh: Boolean) {
+        //https://www.zimuquan23.uk/index.php/vod/show/id/1/page/1.html
+
         val url = if (currentSortType == "time") {
             "$BASE_URL/index.php/vod/show/id/$currentCategoryId/page/$currentPage.html"
         } else {

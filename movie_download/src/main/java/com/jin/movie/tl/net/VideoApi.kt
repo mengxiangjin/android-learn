@@ -6,6 +6,7 @@ import com.jin.movie.tl.bean.LoginRequest
 import com.jin.movie.tl.bean.LoginResponse
 import com.jin.movie.tl.bean.UserInfoResponse
 import com.jin.movie.tl.bean.VideoListResponse
+import okhttp3.ResponseBody
 import retrofit2.Call
 import retrofit2.http.Body
 import retrofit2.http.GET
@@ -21,7 +22,7 @@ interface VideoApi {
         @Path("size") size: Int,
         @QueryMap params: Map<String, String>,
         @Body requestBody: Map<String,  @JvmSuppressWildcards Any>
-    ): Call<ApiResponse>
+    ): Call<ResponseBody>
 
 
     @POST("/live/live/video/list/{page}/{size}")
@@ -40,7 +41,7 @@ interface VideoApi {
         @Path("size") pageSize: Int,
         @QueryMap queryParams: Map<String, String>,
         @Body body: Map<String, @JvmSuppressWildcards Any>
-    ): Call<ApiResponse>
+    ): Call<ResponseBody>
 
     @POST("/user/user/list") // 确保这里的路径是对的
     fun searchAnchors(
@@ -90,7 +91,7 @@ interface VideoApi {
         @Path("page") page: Int,
         @Path("size") size: Int,
         @QueryMap queryParams: Map<String, String>,
-    ): Call<AnchorPageResponse> // 这里假设返回结构和 SearchVideos 类似，是 ApiResponse<Page<AnchorBean>>
+    ): Call<ResponseBody> // 这里假设返回结构和 SearchVideos 类似，是 ApiResponse<Page<AnchorBean>>
 
     // 2. 获取我的粉丝列表 (请核对 URL)
     @POST("/user/follow/fansList/{page}/{size}")
@@ -98,7 +99,7 @@ interface VideoApi {
         @Path("page") page: Int,
         @Path("size") size: Int,
         @QueryMap queryParams: Map<String, String>,
-    ): Call<AnchorPageResponse>
+    ): Call<ResponseBody>
 
 
     @POST("oauth/oauth/login")
