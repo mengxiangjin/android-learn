@@ -34,4 +34,8 @@ data class VideoBean(
     val videoViews: Int,         // 浏览数
     val durationsTime: Int,      // 时长(秒)
     val addTime: String?
-) : Serializable
+) : Serializable {
+    override fun toString(): String {
+        return "VideoBean(id=$id, userId=$userId, nickName=$nickName, userLogo=$userLogo, videoTitle=$videoTitle, converImage=$converImage, videoUrl=$videoUrl, videoPraises=$videoPraises, videoViews=$videoViews, durationsTime=$durationsTime, addTime=$addTime)"
+    }
+}

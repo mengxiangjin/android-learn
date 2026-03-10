@@ -1,18 +1,22 @@
 package com.jin.movie.tl.adapter
 
+import android.content.Context
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
+import android.widget.Toast
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.engine.DiskCacheStrategy
+import com.jin.movie.MyApp
 import com.jin.movie.R
 import com.jin.movie.tl.bean.EncryptedImage
 import com.jin.movie.tl.bean.VideoBean
+import com.jin.movie.tl.utils.SignUtils
 
-class VideoStaggeredAdapter(private val videos: MutableList<VideoBean>) :
+class VideoStaggeredAdapter(val context:Context,private val videos: MutableList<VideoBean>) :
     RecyclerView.Adapter<VideoStaggeredAdapter.VideoViewHolder>() {
 
     /**
@@ -37,7 +41,7 @@ class VideoStaggeredAdapter(private val videos: MutableList<VideoBean>) :
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): VideoViewHolder {
         val view = LayoutInflater.from(parent.context)
             .inflate(R.layout.item_video_staggered, parent, false)
-        return VideoViewHolder(view)
+        return VideoViewHolder(context,view)
     }
 
     override fun onBindViewHolder(holder: VideoViewHolder, position: Int) {
@@ -46,7 +50,7 @@ class VideoStaggeredAdapter(private val videos: MutableList<VideoBean>) :
 
     override fun getItemCount(): Int = videos.size
 
-    inner class VideoViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+    inner class VideoViewHolder(val context: Context,itemView: View) : RecyclerView.ViewHolder(itemView) {
         private val ivCover: ImageView = itemView.findViewById(R.id.iv_cover)
         private val tvTitle: TextView = itemView.findViewById(R.id.tv_title)
         private val tvLikes: TextView = itemView.findViewById(R.id.tv_likes)
@@ -60,6 +64,21 @@ class VideoStaggeredAdapter(private val videos: MutableList<VideoBean>) :
             // 点击事件
             itemView.setOnClickListener {
                 // TODO: 这里写点击跳转播放视频的逻辑
+                println(item.toString())
+                // 优先使用 S3 线路
+
+
+                val title = item.videoTitle ?: item.videoTitle ?: "未知视频"
+                val cover = item.converImage ?: ""
+
+                val finalVideoUrl = item.videoUrl
+                if (!finalVideoUrl.isNullOrEmpty()) {
+                    val decr_url = "${finalVideoUrl}?sign=${SignUtils.calculateSignature(finalVideoUrl)}"
+                    com.jin.movie.activity.PlayerActivityNew.start(context, decr_url, title, cover)
+                } else {
+                    Toast.makeText(context, "视频链接无效", Toast.LENGTH_SHORT).show()
+                }
+
             }
 
             if (item.converImage == null) return

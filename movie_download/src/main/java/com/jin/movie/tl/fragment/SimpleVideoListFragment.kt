@@ -84,7 +84,7 @@ class SimpleVideoListFragment : Fragment() {
         val layoutManager = GridLayoutManager(requireContext(),2)
         recyclerView.layoutManager = layoutManager
 
-        adapter = VideoStaggeredAdapter(videoList)
+        adapter = VideoStaggeredAdapter(requireContext(),videoList)
         recyclerView.adapter = adapter
 
         // 2. 设置刷新逻辑
