@@ -92,7 +92,8 @@ class PlayBackFragment : Fragment() {
             val cover = item.coverImage ?: ""
 
             if (!finalVideoUrl.isNullOrEmpty()) {
-                com.jin.movie.activity.PlayerActivity.start(requireContext(), finalVideoUrl, title, cover)
+                val decr_url = "${finalVideoUrl}?sign=${SignUtils.calculateSignature(finalVideoUrl)}"
+                com.jin.movie.activity.PlayerActivityNew.start(requireContext(), decr_url, title, cover)
             } else {
                 Toast.makeText(context, "视频链接无效", Toast.LENGTH_SHORT).show()
             }

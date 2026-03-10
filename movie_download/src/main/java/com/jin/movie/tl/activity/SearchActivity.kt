@@ -3,6 +3,7 @@ package com.jin.movie.tl.activity
 import android.content.Context
 import android.os.Bundle
 import android.text.TextUtils
+import android.util.Log
 import android.view.View
 import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.InputMethodManager
@@ -17,10 +18,12 @@ import com.jin.movie.tl.adapter.VideoAdapter
 import com.jin.movie.tl.bean.AnchorResponse
 import com.jin.movie.tl.bean.ApiResponse
 import com.jin.movie.tl.net.RetrofitClient
+import com.jin.movie.tl.utils.ApiDecryptor
 import com.jin.movie.tl.utils.SignUtils
 import com.jin.movie.utils.UIUtils
 import com.scwang.smart.refresh.layout.SmartRefreshLayout
 import com.scwang.smart.refresh.layout.api.RefreshLayout
+import okhttp3.ResponseBody
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -77,7 +80,8 @@ class SearchActivity : AppCompatActivity() {
             val title = item.videoTitle ?: item.descs ?: "未知视频"
             val cover = item.coverImage ?: ""
             if (!finalVideoUrl.isNullOrEmpty()) {
-                com.jin.movie.activity.PlayerActivity.start(this, finalVideoUrl, title, cover)
+                val decr_url = "${finalVideoUrl}?sign=${SignUtils.calculateSignature(finalVideoUrl)}"
+                com.jin.movie.activity.PlayerActivityNew.start(this, decr_url, title, cover)
             }
         }
     }
@@ -181,10 +185,18 @@ class SearchActivity : AppCompatActivity() {
         val bodyMap = mapOf("videoTitle" to currentKeyword)
 
         RetrofitClient.apiService.searchVideos(currentPage, pageSize, queryParams, bodyMap)
-            .enqueue(object : Callback<ApiResponse> {
-                override fun onResponse(call: Call<ApiResponse>, response: Response<ApiResponse>) {
-                    val result = response.body()
-                    if (response.isSuccessful && result != null && result.success) {
+            .enqueue(object : Callback<ResponseBody> {
+                override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
+                    val body = response.body()
+                    if (response.isSuccessful && body != null) {
+                        // 2. 获取加密字符串
+                        val encryptedBase64 = body.string()
+                        // 3. 调用解密
+                        val result =
+                            ApiDecryptor.decryptAndParse<ApiResponse>(encryptedBase64) ?: return
+                        // 4. 解析 JSON
+                        Log.d(ApiDecryptor.TAG, "onResponse: " + result.toString())
+
                         val records = result.data.records
                         val hasData = records.isNotEmpty()
 
@@ -202,10 +214,10 @@ class SearchActivity : AppCompatActivity() {
                         }
                         if (hasData) currentPage++
                     } else {
-                        fail(isRefresh, layout, result?.message ?: "请求失败")
+                        fail(isRefresh, layout, "请求失败")
                     }
                 }
-                override fun onFailure(call: Call<ApiResponse>, t: Throwable) {
+                override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
                     fail(isRefresh, layout, "网络错误: ${t.message}")
                 }
             })
@@ -228,23 +240,31 @@ class SearchActivity : AppCompatActivity() {
 
         // 注意：你需要去 ApiService 加一个 searchAnchors 方法
         RetrofitClient.apiService.searchAnchors(queryParams, bodyMap)
-            .enqueue(object : Callback<AnchorResponse> {
-                override fun onResponse(call: Call<AnchorResponse>, response: Response<AnchorResponse>) {
-                    val result = response.body()
-                    if (response.isSuccessful && result != null && result.success) {
-                        val list = result.data ?: emptyList()
+            .enqueue(object : Callback<ResponseBody> {
+                override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
+                    val body = response.body()
+                    if (response.isSuccessful && body != null) {
 
+                        // 2. 获取加密字符串
+                        val encryptedBase64 = body.string()
+                        // 3. 调用解密
+                        val result =
+                            ApiDecryptor.decryptAndParse<AnchorResponse>(encryptedBase64) ?: return
+                        // 4. 解析 JSON
+                        Log.d(ApiDecryptor.TAG, "onResponse: " + result.toString())
+
+                        val list = result.data ?: emptyList()
                         anchorAdapter.setNewData(list)
                         layout.finishRefresh(true)
                         layout.finishLoadMoreWithNoMoreData() // 主播接口一次性返回，没有更多了
 
                         updateEmptyView(list.isNotEmpty())
                     } else {
-                        fail(isRefresh, layout, result?.message ?: "请求失败")
+                        fail(isRefresh, layout, "请求失败")
                     }
                 }
 
-                override fun onFailure(call: Call<AnchorResponse>, t: Throwable) {
+                override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
                     fail(isRefresh, layout, "网络错误: ${t.message}")
                 }
             })

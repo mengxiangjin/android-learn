@@ -70,7 +70,7 @@ class AnchorAdapter(private var list: MutableList<AnchorBean> = mutableListOf(),
             Glide.with(itemView.context)
                 .load(imageModel)
                 .placeholder(R.drawable.ic_default_avatar) // 请确保有占位图
-                .error(R.drawable.ic_default_avatar)
+                .error(R.drawable.ic_heart_filled)
                 .into(ivAvatar)
 
             if (isFromMine) {

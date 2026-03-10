@@ -50,7 +50,7 @@ object RetrofitClient {
                 .header("Content-Type", "application/json; charset=UTF-8")
 
                 // 核心 Token
-                .header("token", "aiya_41e9d628-aa7a-4eb9-b449-a941e71d26c5ov")
+                .header("token", "aiya_e39337b3-2ffd-41f1-9863-c987854bae9evq")
 //                .header("token", "aiya_$token")
 
                 // 复杂的 JSON 字符串，使用 Kotlin 的原始字符串(三引号)或者转义

@@ -13,10 +13,13 @@ import androidx.recyclerview.widget.RecyclerView
 import com.jin.movie.R
 import com.jin.movie.tl.adapter.VideoAdapter
 import com.jin.movie.tl.bean.ApiResponse
+import com.jin.movie.tl.bean.UserInfoResponse
 import com.jin.movie.tl.bean.VideoRecord
 import com.jin.movie.tl.net.RetrofitClient
+import com.jin.movie.tl.utils.ApiDecryptor
 import com.jin.movie.tl.utils.SignUtils
 import com.scwang.smart.refresh.layout.SmartRefreshLayout
+import okhttp3.ResponseBody
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -82,7 +85,8 @@ class ReplayVideoListFragment : Fragment() {
             val cover = item.coverImage ?: ""
 
             if (!finalVideoUrl.isNullOrEmpty()) {
-                com.jin.movie.activity.PlayerActivity.start(requireContext(), finalVideoUrl, title, cover)
+                val decr_url = "${finalVideoUrl}?sign=${SignUtils.calculateSignature(finalVideoUrl)}"
+                com.jin.movie.activity.PlayerActivityNew.start(requireContext(), decr_url, title, cover)
             } else {
                 Toast.makeText(context, "视频链接无效", Toast.LENGTH_SHORT).show()
             }
@@ -115,11 +119,19 @@ class ReplayVideoListFragment : Fragment() {
         // 如果服务器签名校验严格，请确保 sign 生成逻辑覆盖了 anchorUserId。
         // 暂时假设目前的 sign 逻辑能通过。
 
-        RetrofitClient.apiService.getAnchorReplayList(requestPage,pageSize,params).enqueue(object : Callback<ApiResponse> {
-            override fun onResponse(call: Call<ApiResponse>, response: Response<ApiResponse>) {
-                if (response.isSuccessful) {
-                    val body = response.body()
-                    val list = body?.data?.records ?: emptyList()
+        RetrofitClient.apiService.getAnchorReplayList(requestPage,pageSize,params).enqueue(object : Callback<ResponseBody> {
+            override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
+                val body = response.body()
+                if (response.isSuccessful && body != null) {
+                    // 2. 获取加密字符串
+                    val encryptedBase64 = body.string()
+                    // 3. 调用解密
+                    val result =
+                        ApiDecryptor.decryptAndParse<ApiResponse>(encryptedBase64) ?: return
+                    // 4. 解析 JSON
+                    Log.d(ApiDecryptor.TAG, "onResponse: " + result.toString())
+
+                    val list = result?.data?.records ?: emptyList()
 
                     if (isRefresh) {
                         adapter.setNewData(list)
@@ -145,7 +157,7 @@ class ReplayVideoListFragment : Fragment() {
                 }
             }
 
-            override fun onFailure(call: Call<ApiResponse>, t: Throwable) {
+            override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
                 closeLoading(isRefresh, false)
                 Log.e("API", "Fail: ${t.message}")
             }

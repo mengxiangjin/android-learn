@@ -8,15 +8,15 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import androidx.recyclerview.widget.StaggeredGridLayoutManager
 import com.jin.movie.R
 import com.jin.movie.tl.adapter.VideoStaggeredAdapter
 import com.jin.movie.tl.bean.VideoBean
 import com.jin.movie.tl.bean.VideoListResponse
 import com.jin.movie.tl.net.RetrofitClient
+import com.jin.movie.tl.utils.ApiDecryptor
 import com.jin.movie.tl.utils.SignUtils
 import com.scwang.smart.refresh.layout.SmartRefreshLayout
-import com.scwang.smart.refresh.layout.api.RefreshLayout
+import okhttp3.ResponseBody
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -114,11 +114,21 @@ class SimpleVideoListFragment : Fragment() {
         val bodyParams = mapOf("userId" to anchorId.toString())
 
         RetrofitClient.apiService.getUserVideoList(requestPage, pageSize, queryParams, bodyParams)
-            .enqueue(object : Callback<VideoListResponse> {
-                override fun onResponse(call: Call<VideoListResponse>, response: Response<VideoListResponse>) {
-                    if (response.isSuccessful) {
-                        val body = response.body()
-                        val list = body?.data?.records ?: emptyList()
+            .enqueue(object : Callback<ResponseBody> {
+                override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
+                    val body = response.body()
+                    if (response.isSuccessful && body != null) {
+
+                        // 2. 获取加密字符串
+                        val encryptedBase64 = body.string()
+                        // 3. 调用解密
+                        val result =
+                            ApiDecryptor.decryptAndParse<VideoListResponse>(encryptedBase64) ?: return
+                        // 4. 解析 JSON
+                        Log.d(ApiDecryptor.TAG, "onResponse: " + result.toString())
+
+
+                        val list = result?.data?.records ?: emptyList()
 
                         if (isRefresh) {
                             // 下拉刷新：覆盖数据，允许再次上拉加载
@@ -150,7 +160,7 @@ class SimpleVideoListFragment : Fragment() {
                     }
                 }
 
-                override fun onFailure(call: Call<VideoListResponse>, t: Throwable) {
+                override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
                     // 网络失败
                     closeLoadingState(isRefresh, false)
                     Log.e("API", "Failure: ${t.message}")

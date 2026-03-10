@@ -7,7 +7,9 @@ import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
+import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.jin.movie.R
+import com.jin.movie.tl.bean.EncryptedImage
 import com.jin.movie.tl.bean.VideoBean
 
 class VideoStaggeredAdapter(private val videos: MutableList<VideoBean>) :
@@ -53,16 +55,29 @@ class VideoStaggeredAdapter(private val videos: MutableList<VideoBean>) :
             tvTitle.text = item.videoTitle ?: ""
             tvLikes.text = item.videoPraises.toString()
 
-            // 加载封面
-            Glide.with(itemView.context)
-                .load(item.converImage)
-                .placeholder(R.color.black)
-                .into(ivCover)
+
 
             // 点击事件
             itemView.setOnClickListener {
                 // TODO: 这里写点击跳转播放视频的逻辑
             }
+
+            if (item.converImage == null) return
+            // 现在的加载方式
+            val imageModel = if (item.converImage.endsWith(".tlenc")) {
+                EncryptedImage(item.converImage) // 触发自定义解密流程
+            } else {
+                item.converImage // 走普通加载
+            }
+
+
+            // 加载封面
+            Glide.with(itemView.context)
+                .load(imageModel)
+                .diskCacheStrategy(DiskCacheStrategy.RESOURCE)
+                .placeholder(R.color.black)
+                .into(ivCover)
+
         }
     }
 }

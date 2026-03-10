@@ -1,6 +1,7 @@
 package com.jin.movie.tl.utils
 
 
+import java.net.URL
 import java.security.MessageDigest
 
 object SignUtils {
@@ -80,5 +81,56 @@ object SignUtils {
             e.printStackTrace()
             return ""
         }
+    }
+
+    fun calculateSignature(fullUrl: String):String {
+        return this.calculateSignature(fullUrl,"218904")
+    }
+
+    /*
+    * 生成sign值（最新版）
+    * */
+    /**
+     * 模拟 Android Native sub_6CB98 的签名生成逻辑
+     * @param fullUrl 完整的请求 URL
+     * @param uid 用户 ID
+     * @param signKey 逆向提取的 Key
+     */
+    fun calculateSignature(fullUrl: String, uid: String = "218904", signKey: String ="4t3z434vVedm6IYz5gXri"): String {
+        // 1. 提取 Path 部分
+        val path = try {
+            URL(fullUrl).path
+        } catch (e: Exception) {
+            fullUrl // 如果解析失败，回退到原字符串
+        }
+
+        // 2. 准备基础参数
+        val timestamp = System.currentTimeMillis() / 1000
+        val nonce = generateNonce(32)
+
+        // ---------------------------------------------------------
+        // 步骤 1 & 2: 构造待哈希字符串并计算 MD5
+        // 格式: Path-Timestamp-Nonce-UID-SignKey
+        // ---------------------------------------------------------
+        val textToHash = "$path-$timestamp-$nonce-$uid-$signKey"
+        val bytes = MessageDigest.getInstance("MD5").digest(textToHash.toByteArray())
+        val hashResult =  bytes.joinToString("") { "%02x".format(it) }
+
+        // ---------------------------------------------------------
+        // 步骤 3: 构造最终 sign 参数
+        // 格式: Timestamp-Nonce-UID-Hash
+        // ---------------------------------------------------------
+        return "$timestamp-$nonce-$uid-$hashResult"
+    }
+
+
+    /**
+     * 生成指定长度的随机字符串 (Nonce)
+     */
+    private fun generateNonce(length: Int): String {
+        val allowedChars = ('A'..'Z') + ('a'..'z') + ('0'..'9')
+        return (1..length)
+            .map { allowedChars.random() }
+            .joinToString("")
     }
 }

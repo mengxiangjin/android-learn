@@ -152,9 +152,9 @@ class PlayerActivity : AppCompatActivity() {
 
         // 1. 定义请求头 Map
         val headerMap = HashMap<String, String>()
-        headerMap["User-Agent"] = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.0.0 Safari/537.36"
-        headerMap["Referer"] = "http://MAfAIOo0E8EMOWPA.black"
-
+        headerMap["token"] = "aiya_41e9d628-aa7a-4eb9-b449-a941e71d26c5ov"
+        headerMap["Referer"] = "https://video.taolu.app"
+        headerMap["User-Agent"] ="AiYa/3.9.5.9 (Android)"
 
         val gsyVideoOption = GSYVideoOptionBuilder()
         gsyVideoOption

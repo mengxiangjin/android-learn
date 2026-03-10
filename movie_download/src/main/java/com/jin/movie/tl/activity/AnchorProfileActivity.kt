@@ -15,19 +15,24 @@ import androidx.fragment.app.Fragment
 import androidx.viewpager2.adapter.FragmentStateAdapter
 import androidx.viewpager2.widget.ViewPager2
 import com.bumptech.glide.Glide
+import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.bumptech.glide.request.RequestOptions
 import com.google.android.material.tabs.TabLayout
 import com.google.android.material.tabs.TabLayoutMediator
 import com.jin.movie.R
 import com.jin.movie.tl.bean.AnchorBean
+import com.jin.movie.tl.bean.AnchorPageResponse
+import com.jin.movie.tl.bean.EncryptedImage
 import com.jin.movie.tl.bean.UserInfoData
 import com.jin.movie.tl.bean.UserInfoResponse
 import com.jin.movie.tl.fragment.ReplayVideoListFragment
 import com.jin.movie.tl.fragment.SimpleVideoListFragment
 import com.jin.movie.tl.net.RetrofitClient
+import com.jin.movie.tl.utils.ApiDecryptor
 import com.jin.movie.tl.utils.SignUtils
 import com.jin.movie.utils.UIUtils
 import jp.wasabeef.glide.transformations.BlurTransformation
+import okhttp3.ResponseBody
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -83,16 +88,30 @@ class AnchorProfileActivity : AppCompatActivity() {
         anchorData?.let { anchor ->
             anchorId = anchor.id
 
+
+            // 现在的加载方式
+            val imageModel = if (anchor.userLogo!!.endsWith(".tlenc")) {
+                EncryptedImage(anchor.userLogo) // 触发自定义解密流程
+            } else {
+                anchor.userLogo // 走普通加载
+            }
+
+
             // 1. 先显示 Intent 里带过来的头像
             Glide.with(this)
-                .load(anchor.userLogo)
+                .load(imageModel)
                 .placeholder(R.drawable.ic_default_avatar)
+                // ⚠️ 极其关键的一句：只缓存解密且解码后的最终图像 (Bitmap)
+                .diskCacheStrategy(DiskCacheStrategy.RESOURCE)
+                .error(R.drawable.ic_heart_outline)
                 .into(ivAvatar)
 
             // 2. 先显示 Intent 里带过来的背景 (高斯模糊)
             // 既然刚才这里能显示，说明 anchor.userLogo 是好的
             Glide.with(this)
-                .load(anchor.userLogo)
+                .load(imageModel)
+                // ⚠️ 极其关键的一句：只缓存解密且解码后的最终图像 (Bitmap)
+                .diskCacheStrategy(DiskCacheStrategy.RESOURCE)
                 .apply(RequestOptions.bitmapTransform(BlurTransformation(25, 3)))
                 .into(ivBg)
 
@@ -140,22 +159,30 @@ class AnchorProfileActivity : AppCompatActivity() {
         queryParams["id"] = userId
 
         // 3. 发起 GET 请求
-        RetrofitClient.apiService.getUserInfo(queryParams).enqueue(object : Callback<UserInfoResponse> {
-            override fun onResponse(call: Call<UserInfoResponse>, response: Response<UserInfoResponse>) {
-                if (response.isSuccessful) {
-                    val body = response.body()
-                    if (body != null && body.success && body.data != null) {
+        RetrofitClient.apiService.getUserInfo(queryParams).enqueue(object : Callback<ResponseBody> {
+            override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
+                val body = response.body()
+                if (response.isSuccessful && body != null) {
+                    // 2. 获取加密字符串
+                    val encryptedBase64 = response.body()!!.string()
+                    // 3. 调用解密
+                    val result =
+                        ApiDecryptor.decryptAndParse<UserInfoResponse>(encryptedBase64) ?: return
+                    // 4. 解析 JSON
+                    Log.d(ApiDecryptor.TAG, "onResponse: " + result.toString())
+
+                    if (result.success && result.data != null) {
                         // 请求成功，一次性更新所有 UI
-                        updateUI(body.data)
+                        updateUI(result.data)
                     } else {
-                        Log.e("API", "业务报错: ${body?.message}")
+                        Log.e("API", "业务报错: ${result?.message}")
                     }
                 } else {
                     Log.e("API", "HTTP 失败: ${response.code()}")
                 }
             }
 
-            override fun onFailure(call: Call<UserInfoResponse>, t: Throwable) {
+            override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
                 Log.e("API", "网络异常: ${t.message}")
                 Toast.makeText(this@AnchorProfileActivity, "加载失败，请检查网络", Toast.LENGTH_SHORT).show()
             }

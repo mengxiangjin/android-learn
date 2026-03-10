@@ -31,7 +31,7 @@ interface VideoApi {
         @Path("size") size: Int,
         @QueryMap queryParams: Map<String, String>, // 签名参数
         @Body requestBody: Map<String,  @JvmSuppressWildcards Any>
-    ): Call<ApiResponse>
+    ): Call<ResponseBody>
 
 
     // 【新增】短剧接口
@@ -47,14 +47,14 @@ interface VideoApi {
     fun searchAnchors(
         @QueryMap signParams: Map<String, String>,
         @Body body: Map<String, String>
-    ): Call<AnchorResponse>
+    ): Call<ResponseBody>
 
 
     // 【新增】获取主播个人主页详情
     @GET("user/userInfo/getUserInfo")
     fun getUserInfo(
         @QueryMap queryParams: Map<String, String>
-    ): Call<UserInfoResponse>
+    ): Call<ResponseBody>
 
     // VideoApi.kt
 
@@ -66,7 +66,7 @@ interface VideoApi {
         @Path("size") size: Int,
         @QueryMap queryParams: Map<String, String>, // 签名放在 URL 参数里
         @Body requestBody: Map<String, String>      // userId 放在 Body 里
-    ): Call<VideoListResponse>
+    ): Call<ResponseBody>
 
     // VideoApi.kt 中添加
 
@@ -78,7 +78,7 @@ interface VideoApi {
         @Path("page") page: Int,
         @Path("size") size: Int,
         @QueryMap queryParams: Map<String, String>
-    ): Call<ApiResponse>
+    ): Call<ResponseBody>
 
 
     // 在 VideoApi.kt 中添加以下内容

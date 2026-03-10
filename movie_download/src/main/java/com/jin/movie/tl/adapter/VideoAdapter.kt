@@ -10,12 +10,14 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.DataSource
+import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.bumptech.glide.load.engine.GlideException
 import com.bumptech.glide.load.resource.bitmap.CenterCrop
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.bumptech.glide.request.RequestListener
 import com.bumptech.glide.request.target.Target
 import com.jin.movie.R
+import com.jin.movie.tl.bean.EncryptedImage
 import com.jin.movie.tl.bean.VideoRecord
 
 class VideoAdapter(private var list: MutableList<VideoRecord> = mutableListOf()) :
@@ -90,14 +92,21 @@ class VideoAdapter(private var list: MutableList<VideoRecord> = mutableListOf())
             }
             tvHeat.text = heatText
 
-            val fixUrl = item.coverImage?.replace("[", "%5B")?.replace("]", "%5D")
+            val fixUrl = item.coverImage?.replace("[", "%5B")?.replace("]", "%5D")?:return
 
-
+            // 现在的加载方式
+            val imageModel = if (fixUrl.endsWith(".tlenc")) {
+                EncryptedImage(fixUrl) // 触发自定义解密流程
+            } else {
+                fixUrl
+            }
             Log.d("TAG", "bind: " + item.coverImage)
             // 加载封面图
             Glide.with(itemView.context)
-                .load(fixUrl) // 注意字段名
+                .load(imageModel) // 注意字段名
                 .placeholder(android.R.color.darker_gray)
+                // ⚠️ 极其关键的一句：只缓存解密且解码后的最终图像 (Bitmap)
+                .diskCacheStrategy(DiskCacheStrategy.RESOURCE)
                 .listener(object : RequestListener<Drawable> {
                     override fun onLoadFailed(
                         e: GlideException?,
@@ -123,9 +132,19 @@ class VideoAdapter(private var list: MutableList<VideoRecord> = mutableListOf())
                 })
                 .into(ivCover)
 
+            if (item.userLogo == null) return
+            // 现在的加载方式
+            val imageLogoModel = if (item.userLogo.endsWith(".tlenc")) {
+                EncryptedImage(item.userLogo) // 触发自定义解密流程
+            } else {
+                item.userLogo
+            }
+
             // 加载头像
             Glide.with(itemView.context)
-                .load(item.userLogo)
+                .load(imageLogoModel)
+                // ⚠️ 极其关键的一句：只缓存解密且解码后的最终图像 (Bitmap)
+                .diskCacheStrategy(DiskCacheStrategy.RESOURCE)
                 .into(ivAvatar)
         }
     }
