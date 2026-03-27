@@ -46,9 +46,9 @@ class EncryptedImageLoader(private val client: OkHttpClient) : ModelLoader<Encry
             try {
                 val request = Request.Builder()
                     .url(model.url)
-                    .addHeader("Referer", "https://video.taolu.app")
+                    .addHeader("Referer", ConstPools.referer)
                     // 注意：这里 Token 是写死的。如果逆向的 Token 会过期，请改成动态获取
-                    .addHeader("token", "aiya_41e9d628-aa7a-4eb9-b449-a941e71d26c5ov")
+                    .addHeader("token", ConstPools.token)
                     .build()
 
                 call = client.newCall(request)

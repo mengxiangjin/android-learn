@@ -13,6 +13,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.tabs.TabLayout
 import com.google.gson.Gson
 import com.jin.movie.R
+import com.jin.movie.tl.activity.RankActivity
 import com.jin.movie.tl.activity.SearchActivity
 import com.jin.movie.tl.adapter.VideoAdapter
 import com.jin.movie.tl.bean.ApiResponse
@@ -72,6 +73,11 @@ class PlayBackFragment : Fragment() {
         // 筛选入口
         view.findViewById<View>(R.id.iv_filter).setOnClickListener {
             Toast.makeText(context, "点击了筛选", Toast.LENGTH_SHORT).show()
+        }
+
+        // 排行榜入口
+        view.findViewById<View>(R.id.layout_rank_entry).setOnClickListener {
+            startActivity(Intent(requireContext(), RankActivity::class.java))
         }
 
         // 1. RecyclerView 初始化

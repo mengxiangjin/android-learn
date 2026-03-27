@@ -18,6 +18,14 @@ data class ApiResponse(
     }
 }
 
+data class RankApiResponse(val success: Boolean,
+                           val code: Int,
+                           val message: String,
+                           val data: RankVideoData):Serializable
+
+
+data class RankVideoData(val todayRank: List<VideoRecord>,val thisWeekRank: List<VideoRecord>,val thisMonthRank: List<VideoRecord>): Serializable
+
 /**
  * 数据载荷类
  * 包含分页信息和记录列表

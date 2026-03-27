@@ -37,7 +37,7 @@ import java.net.URL
  * 仿照 HomeFragment 风格重写的页面
  * 结构：顶部动态大Tab -> 中间固定3Tab -> 底部视频列表
  */
-class DogHomeFragment : Fragment() {
+class DogLocalFragment : Fragment() {
 
     // --- UI 控件 ---
     private lateinit var refreshLayout: SmartRefreshLayout
@@ -67,7 +67,7 @@ class DogHomeFragment : Fragment() {
     private var currentSortType = "new"
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        return inflater.inflate(R.layout.fragment_dog_home, container, false)
+        return inflater.inflate(R.layout.fragment_dog_local, container, false)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -231,7 +231,7 @@ class DogHomeFragment : Fragment() {
 
 
     private fun fetchBigCategory() {
-        NetManager.get(DogMainActivity.BASE_URL, object : NetManager.Callback {
+        NetManager.get(DogMainActivity.URL_LOCAL, object : NetManager.Callback {
             override fun onSuccess(response: String) {
                 // 异步解析
                 Thread {

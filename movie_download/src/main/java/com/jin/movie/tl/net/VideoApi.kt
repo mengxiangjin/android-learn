@@ -102,6 +102,13 @@ interface VideoApi {
     ): Call<ResponseBody>
 
 
+    // 【新增】排行榜接口
+    @GET("/live/video/rank/topics/{rankType}")
+    fun getRankVideos(
+        @Path("rankType") rankType: Int,
+        @QueryMap queryParams: Map<String, String>
+    ): Call<ResponseBody>
+
     @POST("oauth/oauth/login")
     fun login(
         @QueryMap params: Map<String, String>, // 对应 Python 的 params

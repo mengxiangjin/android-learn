@@ -57,7 +57,6 @@ class MineFragment : Fragment() {
             } else if ("我的收藏".equals(title)) {
                 startActivity(Intent(requireContext(),DogMainActivity::class.java))
             }
-            Toast.makeText(context, "点击了: $title", Toast.LENGTH_SHORT).show()
         }
     }
 }

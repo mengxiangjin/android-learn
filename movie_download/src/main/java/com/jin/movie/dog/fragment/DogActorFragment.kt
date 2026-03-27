@@ -14,6 +14,7 @@ import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.jin.movie.R
 import com.jin.movie.adapter.ActorAdapter
+import com.jin.movie.dog.DogMainActivity
 import com.jin.movie.dog.activity.DogActorDetailActivity
 import com.jin.movie.utils.HtmlParseHelper
 import com.jin.movie.utils.NetManager
@@ -32,7 +33,7 @@ class DogActorFragment : Fragment() {
     private var totalPage = 1
 
     // ⚠️ 请修改为实际的演员列表基础 URL
-    private val BASE_ACTOR_URL = "https://taolu.dog/mistress"
+    private val BASE_ACTOR_URL = "${DogMainActivity.BASE_URL}/mistress"
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         return inflater.inflate(R.layout.fragment_dog_actor, container, false)
@@ -86,7 +87,7 @@ class DogActorFragment : Fragment() {
     }
 
     private fun fetchData(isRefresh: Boolean) {
-        val url = "$BASE_ACTOR_URL?page=$currentPage"
+        val url = "${DogMainActivity.BASE_URL}/mistress?page=$currentPage"
 
         NetManager.get(url, object : NetManager.Callback {
             override fun onSuccess(response: String) {

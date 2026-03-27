@@ -1,5 +1,7 @@
 package com.jin.movie.bean
 
+import com.jin.movie.dog.DogMainActivity
+
 data class Video(
     val detailUrl: String,  //详情页
     val title: String,       // 标题
@@ -13,7 +15,7 @@ data class Video(
     // 扩展属性：通过封面图地址推算 m3u8 地址
     // 逻辑：去掉最后一个 "/" 后的内容，替换为 "index.m3u8"
     val movieUrl: String
-        get() = if (detailUrl.startsWith("https://taolu.dog/download/")) {
+        get() = if (detailUrl.startsWith("${DogMainActivity.BASE_URL}/download/")) {
             detailUrl
         }else if(coverUrl.contains("/")) {
             coverUrl.substringBeforeLast("/") + "/index.m3u8"

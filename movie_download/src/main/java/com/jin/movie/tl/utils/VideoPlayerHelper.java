@@ -19,8 +19,8 @@ public class VideoPlayerHelper {
     public static DataSource.Factory createDataSourceFactory(Context context) {
         SignedHttpDataSourceFactory allowCrossProtocolRedirects = new SignedHttpDataSourceFactory("AiYa/3.9.5.9 (Android)", new TsSignGenerator()).setConnectTimeoutMs(10000).setReadTimeoutMs(10000).setAllowCrossProtocolRedirects(true);
         HashMap hashMap = new HashMap();
-        hashMap.put(HttpHeaders.REFERER, "https://video.taolu.app");
-        hashMap.put("token", "aiya_e39337b3-2ffd-41f1-9863-c987854bae9evq");
+        hashMap.put(HttpHeaders.REFERER, ConstPools.referer);
+        hashMap.put("token", ConstPools.token);
         allowCrossProtocolRedirects.setDefaultRequestProperties(hashMap);
         return new DefaultDataSource.Factory(context, allowCrossProtocolRedirects);
     }
@@ -31,9 +31,4 @@ public class VideoPlayerHelper {
         }
         return new ProgressiveMediaSource.Factory(factory).createMediaSource(mediaItem);
     }
-
-
-
-
-
 }

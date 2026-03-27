@@ -58,7 +58,6 @@ object NetManager {
         val request = Request.Builder()
             .url(url)
             .header("User-Agent", "Mozilla/5.0 (Android) VideoApp/1.0") // 伪装成浏览器或App
-            .header("Cookie", dog_cookie)
             .get()
             .build()
 

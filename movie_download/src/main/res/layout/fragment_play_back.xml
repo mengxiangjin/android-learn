@@ -46,6 +46,7 @@
 
         <!-- 排行榜按钮 -->
         <LinearLayout
+            android:id="@+id/layout_rank_entry"
             android:layout_width="wrap_content"
             android:layout_height="28dp"
             android:layout_marginStart="12dp"

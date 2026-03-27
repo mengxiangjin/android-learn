@@ -49,6 +49,8 @@
             android:screenOrientation="portrait"/>
         <activity android:name=".tl.activity.FollowListActivity"
             android:screenOrientation="portrait"/>
+        <activity android:name=".tl.activity.RankActivity"
+            android:screenOrientation="portrait"/>
 
         <activity android:name=".dog.DogMainActivity"
             android:screenOrientation="portrait"/>

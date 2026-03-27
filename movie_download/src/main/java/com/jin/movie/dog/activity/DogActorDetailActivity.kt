@@ -14,6 +14,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.jin.movie.R
 import com.jin.movie.activity.PlayerActivity
 import com.jin.movie.adapter.VideoAdapter
+import com.jin.movie.dog.DogMainActivity
 import com.jin.movie.utils.HtmlParseHelper
 import com.jin.movie.utils.NetManager
 import com.jin.movie.utils.UIUtils
@@ -63,7 +64,7 @@ class DogActorDetailActivity : AppCompatActivity() {
         baseUrl = if (rawUrl.startsWith("http")) {
             rawUrl
         } else {
-            "https://taolu.dog$rawUrl" // 补全域名
+            "${DogMainActivity.BASE_URL}$rawUrl" // 补全域名
         }
 
         initViews()

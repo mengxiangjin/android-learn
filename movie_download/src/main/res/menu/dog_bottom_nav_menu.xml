@@ -6,6 +6,11 @@
         android:title="片库" />
 
     <item
+        android:id="@+id/nav_local"
+        android:icon="@android:drawable/ic_menu_agenda"
+        android:title="片库" />
+
+    <item
         android:id="@+id/nav_profile"
         android:icon="@android:drawable/ic_menu_my_calendar"
         android:title="演员" />

@@ -20,6 +20,7 @@ import com.bumptech.glide.util.Util
 import com.jin.movie.R
 import com.jin.movie.activity.PlayerActivity
 import com.jin.movie.adapter.VideoAdapter
+import com.jin.movie.dog.DogMainActivity
 import com.jin.movie.utils.HtmlParseHelper
 import com.jin.movie.utils.NetManager
 import com.jin.movie.utils.UIUtils
@@ -49,7 +50,6 @@ class DogSearchActivity : AppCompatActivity() {
 
     // --- 数据变量 ---
     private lateinit var videoAdapter: VideoAdapter
-    private val BASE_URL = "https://taolu.dog" // 你的域名
 
     // 状态
     private var currentKeyword = ""
@@ -242,7 +242,7 @@ class DogSearchActivity : AppCompatActivity() {
         // 假设格式为： /search?wd=关键词&order=排序&page=页码
         // 有些网站搜索可能是： /vodsearch/关键词----------页码---.html
         // 下面是通用参数拼法，如果不通，请检查抓包结果
-        val url = "$BASE_URL/search/$encodedKeyword?sort=$currentSortType&page=$currentPage"
+        val url = "${DogMainActivity.BASE_URL}/search/$encodedKeyword?sort=$currentSortType&page=$currentPage"
 
         // 或者如果是伪静态，可能是这样，你需要根据实际情况二选一：
         // val url = "$BASE_URL/vodsearch/$encodedKeyword----------$currentPage---.html"

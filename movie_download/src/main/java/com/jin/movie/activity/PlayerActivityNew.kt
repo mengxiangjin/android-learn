@@ -5,9 +5,12 @@ import android.content.Intent
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
+import android.util.Log
 import androidx.annotation.OptIn
 import androidx.appcompat.app.AppCompatActivity
 import androidx.media3.common.MediaItem
+import androidx.media3.common.PlaybackException
+import androidx.media3.common.Player
 import androidx.media3.common.util.UnstableApi
 import androidx.media3.exoplayer.ExoPlayer
 import androidx.media3.ui.PlayerView
@@ -96,6 +99,39 @@ class PlayerActivityNew : AppCompatActivity() {
 
         // 3. 根据是否为 M3U8 创建对应的 MediaSource
         val mediaSource = VideoPlayerHelper.createMediaSource(mediaItem, dataSourceFactory, isM3u8)
+
+        exoPlayer!!.addListener(object : Player.Listener {
+            override fun onPlayerError(error: PlaybackException) {
+                super.onPlayerError(error)
+                // 打印基础错误信息
+                Log.e("ExoPlayerDebug", "播放发生错误: ${error.errorCodeName} (${error.errorCode})")
+                Log.e("ExoPlayerDebug", "错误详情: ${error.message}")
+
+                // 打印导致错误的根本原因（比如 HTTP 403, 404 或者解析错误）
+                val cause = error.cause
+                if (cause != null) {
+                    Log.e("ExoPlayerDebug", "错误原因: ", cause)
+
+                    // 如果是网络错误，通常可以转为 HttpDataSourceException
+                    if (cause is androidx.media3.datasource.HttpDataSource.HttpDataSourceException) {
+                        // 如果是 40x / 50x 错误，这里可以拿到具体的 HTTP 状态码
+                        if (cause is androidx.media3.datasource.HttpDataSource.InvalidResponseCodeException) {
+                            Log.e("ExoPlayerDebug", "HTTP 状态码: ${cause.responseCode}")
+                            Log.e("ExoPlayerDebug", "HTTP 响应头: ${cause.headerFields}")
+                        }
+                    }
+                }
+            }
+
+            override fun onPlaybackStateChanged(playbackState: Int) {
+                when (playbackState) {
+                    Player.STATE_BUFFERING -> Log.d("ExoPlayerDebug", "正在缓冲...")
+                    Player.STATE_READY -> Log.d("ExoPlayerDebug", "准备完毕，可以播放了")
+                    Player.STATE_ENDED -> Log.d("ExoPlayerDebug", "播放结束")
+                    Player.STATE_IDLE -> Log.d("ExoPlayerDebug", "空闲状态/播放失败")
+                }
+            }
+        })
 
         // 4. 设置数据源，准备并播放
         exoPlayer!!.setMediaSource(mediaSource)

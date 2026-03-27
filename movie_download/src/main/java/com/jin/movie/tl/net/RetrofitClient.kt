@@ -3,6 +3,7 @@ package com.jin.movie.tl.net
 
 import android.content.Context
 import com.jin.movie.MyApp
+import com.jin.movie.tl.utils.ConstPools
 import okhttp3.Interceptor
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
@@ -50,7 +51,7 @@ object RetrofitClient {
                 .header("Content-Type", "application/json; charset=UTF-8")
 
                 // 核心 Token
-                .header("token", "aiya_e39337b3-2ffd-41f1-9863-c987854bae9evq")
+                .header("token", ConstPools.token)
 //                .header("token", "aiya_$token")
 
                 // 复杂的 JSON 字符串，使用 Kotlin 的原始字符串(三引号)或者转义

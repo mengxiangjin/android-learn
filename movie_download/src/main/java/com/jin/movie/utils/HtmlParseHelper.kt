@@ -7,6 +7,8 @@ import com.jin.movie.bean.BigCategory
 import com.jin.movie.bean.FixedCategory
 import com.jin.movie.bean.SmallCategory
 import com.jin.movie.bean.Video
+import com.jin.movie.dog.DogMainActivity
+import com.jin.movie.tl.TaoLuMainActivity
 import org.jsoup.Jsoup
 import java.net.URLDecoder
 import java.util.regex.Pattern
@@ -395,7 +397,7 @@ object HtmlParseHelper {
             val aList = videos.select("div > a")?:return emptyList()
             aList.forEach {
                 val title = it.attr("title").trim()
-                val detailUrl = "https://taolu.dog/download/" + it.attr("data-id")
+                val detailUrl = "${DogMainActivity.BASE_URL}/download/" + it.attr("data-id")
                 val coverUrl = it.selectFirst("img").attr("data-src")
                 val durationDivs = it.selectFirst("div").select("div")
                 val duration = durationDivs[durationDivs.size - 1].text()
@@ -457,6 +459,29 @@ object HtmlParseHelper {
         val document = Jsoup.parse(html)
         val countStr = document.selectFirst("span#price-currency").text().replace(" ", "").replace("/","")
         return countStr.toInt()
+    }
+
+
+
+
+    /*
+    * dog
+    * */
+    fun parseDogUrlList(html: String,index: Int): List<String> {
+        try {
+            val doc = Jsoup.parse(html)
+
+
+            val firstDiv = doc.select("div.main")[index]
+            val aTags = firstDiv.select("a[target=_blank]")
+
+            val urlList: List<String> = aTags.map { it.attr("href") } ?: emptyList()
+            return urlList;
+
+        } catch (e: Exception) {
+            Log.e(TAG, "解析演员表失败: ${e.message}")
+        }
+        return emptyList();
     }
 
 

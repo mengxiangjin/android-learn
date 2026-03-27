@@ -55,10 +55,10 @@ public class SignedHttpDataSourceFactory implements HttpDataSource.Factory{
                     hashMap.put(str, dataSpec.httpRequestHeaders.get(str));
                 }
                 if (!hashMap.containsKey(HttpHeaders.REFERER)) {
-                    hashMap.put(HttpHeaders.REFERER, "https://video.taolu.app");
+                    hashMap.put(HttpHeaders.REFERER, ConstPools.referer);
                 }
                 if (!hashMap.containsKey("token")) {
-                    hashMap.put("token", "aiya_e39337b3-2ffd-41f1-9863-c987854bae9evq");
+                    hashMap.put("token", ConstPools.token);
                 }
                 if (SignedHttpDataSourceFactory.this.isTsFile(uri)) {
                     uri = SignedHttpDataSourceFactory.this.signGenerator.generateSign(uri);
