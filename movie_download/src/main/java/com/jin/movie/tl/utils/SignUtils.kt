@@ -19,15 +19,15 @@ object SignUtils {
         val params = HashMap<String, String>()
 
         // 1. 公共参数
-        params["uid"] = "218904"
+        params["uid"] = "559207"
         params["systemModel"] = "Pixel 2 XL"
         params["appType"] = "1"
-        params["appVer"] = "3.9.5.9"
+        params["appVer"] = "3.9.6.6"
         params["phoneBrand"] = "google"
-        params["version"] = "3.9.5.9"
-        params["deviceId"] = "63bd2e866c6ef324"
+        params["version"] = "3.9.6.6"
+        params["deviceId"] = "2079ef7da722b063"
         params["systemVersion"] = "11"
-        params["versionCode"] = "20260203"
+        params["versionCode"] = "20260228"
 
         // 2. 根据路径和页码生成动态 Sign
         val sign = generateSign(path, page, pageSize)

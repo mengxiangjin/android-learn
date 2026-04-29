@@ -39,6 +39,11 @@ object WebManager {
         CoroutineScope(Dispatchers.Main).launch {
             val request = Request.Builder()
                 .url(GUIDE_URL)
+                // 务必加上下面这三个 Header
+                .addHeader("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36")
+                .addHeader("Accept", "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8")
+                .addHeader("Accept-Language", "zh-CN,zh;q=0.9,en;q=0.8")
+                .addHeader("Connection", "keep-alive") // 保持连接
                 .get()
                 .build()
             // 1. 获取 HTML 结果 (先切到 IO 线程执行同步请求)
@@ -46,6 +51,8 @@ object WebManager {
                 try {
                     client.newCall(request).execute().body?.string()
                 } catch (e: Exception) {
+                    // 把真实错误打印在控制台 (Logcat)
+                    Log.e("HttpError", "请求彻底失败: ${e.message}", e)
                     null
                 }
             }

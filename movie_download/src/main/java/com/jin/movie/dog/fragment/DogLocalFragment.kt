@@ -289,7 +289,7 @@ class DogLocalFragment : Fragment() {
 
         NetManager.get(url, object : NetManager.Callback {
             override fun onSuccess(response: String) {
-                val videos = HtmlParseHelper.parseDogVideoList(response)
+                val videos = HtmlParseHelper.parseDogVideoList(response,1)
                 val pageCount = HtmlParseHelper.parseDogTotalPage(response)
 
                 videos.forEach { it.page = currentPage }

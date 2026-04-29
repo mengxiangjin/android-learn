@@ -4,6 +4,7 @@ package com.jin.movie.dog.fragment
 import android.content.Intent
 import android.graphics.Color
 import android.os.Bundle
+import android.util.Log
 import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
@@ -231,6 +232,7 @@ class DogHomeFragment : Fragment() {
 
 
     private fun fetchBigCategory() {
+        Log.d("TAG", "fetchBigCategory: " + DogMainActivity.BASE_URL)
         NetManager.get(DogMainActivity.BASE_URL, object : NetManager.Callback {
             override fun onSuccess(response: String) {
                 // 异步解析

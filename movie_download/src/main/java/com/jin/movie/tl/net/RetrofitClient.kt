@@ -55,10 +55,10 @@ object RetrofitClient {
 //                .header("token", "aiya_$token")
 
                 // 复杂的 JSON 字符串，使用 Kotlin 的原始字符串(三引号)或者转义
-                .header("appversion", "{\"uid\":\"218904\",\"systemModel\":\"Pixel 2 XL\",\"appType\":\"1\",\"appVer\":\"3.9.5.9\",\"phoneBrand\":\"google\",\"version\":\"3.9.5.9\",\"deviceId\":\"63bd2e866c6ef324\",\"systemVersion\":\"11\",\"versionCode\":\"20260203\"}")
+                .header("appversion", "{\"uid\":\"559207\",\"systemModel\":\"Pixel 2 XL\",\"appType\":\"1\",\"appVer\":\"3.9.6.6\",\"phoneBrand\":\"google\",\"version\":\"3.9.6.6\",\"deviceId\":\"2079ef7da722b063\",\"systemVersion\":\"11\",\"versionCode\":\"20260228\"}")
 
-                .header("versionname", "3.9.5.9")
-                .header("versioncode", "20260203")
+                .header("versionname", "3.9.6.6")
+                .header("versioncode", "20260228")
                 .header("clienttype", "Android")
                 .header("referer", "https://pro.api.taolu6.cc")
                 // --- 结束注入请求头 ---

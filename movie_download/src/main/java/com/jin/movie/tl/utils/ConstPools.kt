@@ -2,6 +2,6 @@ package com.jin.movie.tl.utils
 
 object ConstPools {
 
-    const val token = "aiya_41e9d628-aa7a-4eb9-b449-a941e71d26c58u";
+    const val token = "aiya_a1e5caa3-2639-4249-8564-328d6a85c015ov";
     const val referer = "https://video.taolu.app";
 }

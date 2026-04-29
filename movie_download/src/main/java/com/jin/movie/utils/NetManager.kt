@@ -9,6 +9,7 @@ import okhttp3.RequestBody.Companion.toRequestBody
 import okhttp3.logging.HttpLoggingInterceptor
 import java.io.IOException
 import java.net.InetAddress
+import java.net.Proxy
 import java.util.concurrent.TimeUnit
 
 
@@ -32,6 +33,7 @@ object NetManager {
 
         OkHttpClient.Builder()
             .dns(ResolvedDns())
+            .proxy(Proxy.NO_PROXY)
             .connectTimeout(15, TimeUnit.SECONDS) // 连接超时
             .readTimeout(20, TimeUnit.SECONDS)    // 读取超时
             .writeTimeout(20, TimeUnit.SECONDS)   // 写入超时

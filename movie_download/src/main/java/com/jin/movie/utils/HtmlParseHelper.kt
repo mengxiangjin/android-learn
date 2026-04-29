@@ -387,7 +387,7 @@ object HtmlParseHelper {
     }
 
 
-    fun parseDogVideoList(html: String): List<Video> {
+    fun parseDogVideoList(html: String,type: Int = 0): List<Video> {
         val videoList = mutableListOf<Video>()
         if (html.isEmpty()) return videoList
         try {
@@ -397,7 +397,11 @@ object HtmlParseHelper {
             val aList = videos.select("div > a")?:return emptyList()
             aList.forEach {
                 val title = it.attr("title").trim()
-                val detailUrl = "${DogMainActivity.BASE_URL}/download/" + it.attr("data-id")
+                val detailUrl =  if (type == 0) {
+                    "${DogMainActivity.BASE_URL}/download/" + it.attr("data-id")
+                } else {
+                    "${DogMainActivity.URL_LOCAL}/download/" + it.attr("data-id")
+                }
                 val coverUrl = it.selectFirst("img").attr("data-src")
                 val durationDivs = it.selectFirst("div").select("div")
                 val duration = durationDivs[durationDivs.size - 1].text()

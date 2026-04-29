@@ -15,7 +15,7 @@ data class Video(
     // 扩展属性：通过封面图地址推算 m3u8 地址
     // 逻辑：去掉最后一个 "/" 后的内容，替换为 "index.m3u8"
     val movieUrl: String
-        get() = if (detailUrl.startsWith("${DogMainActivity.BASE_URL}/download/")) {
+        get() = if (detailUrl.startsWith("${DogMainActivity.BASE_URL}/download/") || detailUrl.startsWith("${DogMainActivity.URL_LOCAL}/download/")) {
             detailUrl
         }else if(coverUrl.contains("/")) {
             coverUrl.substringBeforeLast("/") + "/index.m3u8"
